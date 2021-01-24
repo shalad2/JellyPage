@@ -9,42 +9,81 @@
     <!-- CSS -->
         <link rel="stylesheet" href="https://unpkg.com/ress@3.0.0/dist/ress.min.css">
         <link rel="stylesheet" href="css/style.css">
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+    <!-- js -->
+    <script src="js/menu.js" type="text/javascript"></script>
     </head>
 
 <body>
-    <div id="home" class="big-bg">
-        <header class="page-header wrapper">
-            <h1><a href="index.html"><img class="logo" src="images/logo.png" alt="JellyPageホーム"></a></h1>
+    <div class="page-contents">
+        <!-- Accordion Menu -->
+        <aside id="common-menu" class="side-bar">
+            <h1><a href="index.html"><img class="menu-logo" src="images/logo.png" alt="JellyPageホーム"></a></h1>
             <nav>
-                <ul class="top-nav">
-                    <li><a href="#contents">Contents</a></li>
-                    <li><a href="#lab">About Lab</a></li>
+                <ul class="menu-click">
+                    <li>
+                        <div class="menu">GROMACS</div>
+                        <ul>
+                            <li>CLICKメニュー1</li>
+                            <li>CLICKメニュー2</li>
+                            <li>CLICKメニュー3</li>
+                            <li>CLICKメニュー4</li>
+                            <li>CLICKメニュー5</li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="menu-click">
+                    <li>
+                        <div class="menu">LAMMPS</div>
+                        <ul>
+                            <li>HOVERメニュー1</li>
+                            <li>HOVERメニュー2</li>
+                            <li>HOVERメニュー3</li>
+                            <li>HOVERメニュー4</li>
+                            <li>HOVERメニュー5</li>
+                        </ul>
+                    </li>
                 </ul>
             </nav>
-        </header>
+        </aside>
 
-        <div class="home-content wrapper">
-            <h2 class="page-title">Welcome to Jelly Page!</h2>
-            <p>分子動力学シミュレーションに役立つ情報をまとめました。</p>
+        <!-- MAIN CONTENTS -->
+        <div class="main-contents">
+            <!-- HEADER IMAGE -->
+            <div id="home" class="big-bg">
+                <header class="wrapper">
+                    <ul class="top-nav">
+                        <li><a href="#contents">Contents</a></li>
+                        <li><a href="#lab">About This Page</a></li>
+                    </ul>
+                </header>
+
+                <div class="title-contents wrapper">
+                    <h2 class="page-title">Welcome to Jelly Page!</h2>
+                    <p>分子動力学シミュレーションに役立つ情報をまとめました。</p>
+                </div>
+            </div>
+
+            <!-- CONTENTS -->
+            <div class="wrapper">
+                <h2 id="contents" class="content-title">Contents</h2>
+                <div class="grid">
+                    <a class="button" href="lammps.html">LAMMPS</a>
+                    <a class="button" href="gromacs/gromacs.html">GROMACS</a>
+                    <a class="button" href="linux.html">LINUX</a>
+                    <a class="button" href="python.html">PYTHON</a>
+                    <a class="button" href="html&css.html">HTML&CSS</a>
+                </div>
+            </div>
+            <div class="wrapper">
+                <h2 id="lab" class="content-title">About Lab</h2>
+                <div class="lab-content">
+                    <img class="home-content-image" src="images/main-bg.jpg" alt="研究室について">
+                    <p>ここで研究室の紹介文を入れたいかも</p>
+                </div>
+            </div>
         </div>
     </div>
-
-    <div class="wrapper">
-        <h2 id="contents" class="content-title">Contents</h2>
-        <div class="grid">
-            <a class="button" href="lammps.html">LAMMPS</a>
-            <a class="button" href="gromacs/gromacs.html">GROMACS</a>
-            <a class="button" href="linux.html">LINUX</a>
-            <a class="button" href="python.html">PYTHON</a>
-            <a class="button" href="html&css.html">HTML&CSS</a>
-        </div>
-    </div>
-    <div class="wrapper">
-        <h2 id="lab" class="content-title">About Lab</h2>
-        <div class="lab-content">
-            <img class="home-content-image" src="images/main-bg.jpg" alt="研究室について">
-            <p>ここで研究室の紹介文を入れたいかも</p>
-        </div>
-
 </body>
 </html>

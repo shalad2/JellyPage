@@ -17,81 +17,136 @@ img {
     max-width: 100%;
 }
 
-/* HEADER
+/* レイアウト
 ---------------------------------------- */
-.logo {
-    width: 210px;
-    margin-top: 28px;
-}
-.top-nav {
+.page-contents {
     display: flex;
-    font-size: 1.25rem;
-    text-transform: uppercase;
-    margin-top: 34px;
+}
+.side-bar {
+    flex: 0 0 300px;
+    display: block;
+}
+.side-bar h1 {
+    background: #101f52;
+    text-align: center;
+    padding: 30px 0px 20px;
+    margin: 0px auto;
+}
+.menu-logo {
+    width: 80%;
+}
+.main-contents {
+    flex: 1 1 auto;
+}
+
+/* MENU
+---------------------------------------- */
+nav {
+    width: 100%;
+}
+ul, li {
     list-style: none;
 }
-.top-nav li {
-    margin-left: 36px;
-}
-.top-nav a {
-    color: #432;
-}
-.top-nav a:hover {
-    color: #0bd;
-}
-.page-header {
-    display: flex;
-    justify-content: space-between;
-}
-.wrapper {
-    max-width: 1100px;
+.menu-click {
+    width: 100%;
     margin: 0 auto;
-    padding: 0 4%;
+}
+.menu-click ul {
+    display: none;
+}
+.menu-click div {
+    color: #FFFFFF;
+    background-color: #101f52;
+    cursor: pointer;
+}
+.menu {
+    text-align: left;
+    margin: 0;
+    padding: 15px 50px;
+}
+.menu + ul {
+    margin: 0;
+    padding: 0;
+}
+.menu + ul li {
+    color: #000000;
+    background-color: #CCCCCC;
+    padding: 15px 80px;
 }
 
-/* CONTENT HEADER
+/* GENERAL HEADER
 ---------------------------------------- */
-#content-header {
-    background-image: url(../images/main-bg.jpg);
-    height: 250px;
-    margin-bottom: 40px;
-}
-
-/* HOME
----------------------------------------- */
-.home-content {
+.title-contents {
     text-align: center;
-    margin-top: 10%;
-}
-.home-content p {
-    font-size: 1.125rem;
-    margin: 10px 0 42px;
+    margin-top: 8px;
 }
 .page-title {
     font-size: 4rem;
     text-transform: uppercase;
     font-weight: normal;
 }
-#content-header .home-content {
-    margin-top: 8px;
-}
 
-/* BACKGROUND IMAGE
----------------------------------------- */
-.big-bg {
-    background-size: cover;
-    background-position: center top;
-    background-repeat: none;
-}
-#home {
-    background-image: url(../images/main-bg.jpg);
-    background-color: #0bd;
-    background-blend-mode: screen;
-    height: 500px;
-}
-#home .page-title {
-    text-transform: none;
-}
+
+/* TOP PAGE */
+
+    /* HEADER
+    ---------------------------------------- */
+    .top-nav {
+        display: flex;
+        justify-content: flex-end;
+        font-size: 1.25rem;
+        text-transform: uppercase;
+        margin-top: 0px;
+        padding: 34px 15px 0px 0px;
+        list-style: none;
+    }
+    .top-nav li {
+        margin-left: 36px;
+    }
+    .top-nav a {
+        color: #432;
+    }
+    .top-nav a:hover {
+        color: #0bd;
+    }
+    .wrapper {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 4%;
+    }
+
+    /* HOME
+    ---------------------------------------- */
+    #home .title-contents {
+        margin-top: 10%;
+        padding-top: 0%;
+    }
+    #home .title-contents p {
+        font-size: 1.125rem;
+        margin: 10px 0 42px;
+    }
+    #home .page-title {
+        font-size: 4rem;
+        text-transform: uppercase;
+        font-weight: normal;
+    }
+
+    /* BACKGROUND IMAGE
+    ---------------------------------------- */
+    .big-bg {
+        background-size: cover;
+        background-position: center top;
+        background-repeat: none;
+    }
+    #home {
+        background-image: url(../images/main-bg.jpg);
+        background-color: #0bd;
+        background-blend-mode: screen;
+        height: 500px;
+    }
+    #home .page-title {
+        text-transform: none;
+    }
 
 /* CONTENTS
 ---------------------------------------- */
@@ -164,4 +219,17 @@ img {
     .home-content-image {
         max-width: 90vw;
     }
+}
+
+/* CONTENT HEADER
+---------------------------------------- */
+#gromacs {
+    background-image: url(../images/main-bg.jpg);
+    height: 250px;
+    margin-bottom: 40px;
+}
+
+.title-contents {
+    text-align: center;
+    padding-top: 3%;
 }

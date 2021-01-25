@@ -18,35 +18,7 @@
 <body>
     <div class="page-contents">
         <!-- Accordion Menu -->
-        <aside id="common-menu" class="side-bar">
-            <h1><a href="index.html"><img class="menu-logo" src="images/logo.png" alt="JellyPageホーム"></a></h1>
-            <nav>
-                <ul class="menu-click">
-                    <li>
-                        <div class="menu">GROMACS</div>
-                        <ul>
-                            <li>CLICKメニュー1</li>
-                            <li>CLICKメニュー2</li>
-                            <li>CLICKメニュー3</li>
-                            <li>CLICKメニュー4</li>
-                            <li>CLICKメニュー5</li>
-                        </ul>
-                    </li>
-                </ul>
-                <ul class="menu-click">
-                    <li>
-                        <div class="menu">LAMMPS</div>
-                        <ul>
-                            <li>HOVERメニュー1</li>
-                            <li>HOVERメニュー2</li>
-                            <li>HOVERメニュー3</li>
-                            <li>HOVERメニュー4</li>
-                            <li>HOVERメニュー5</li>
-                        </ul>
-                    </li>
-                </ul>
-            </nav>
-        </aside>
+        <script type="text/javascript">loadMenu('');</script>
 
         <!-- MAIN CONTENTS -->
         <div class="main-contents">
@@ -66,17 +38,17 @@
             </div>
 
             <!-- CONTENTS -->
-            <div class="wrapper">
+            <div id="home-content" class="wrapper">
                 <h2 id="contents" class="content-title">Contents</h2>
                 <div class="grid">
                     <a class="button" href="lammps.html">LAMMPS</a>
-                    <a class="button" href="gromacs/gromacs.html">GROMACS</a>
+                    <a class="button" href="gromacs/gromacs_tutorial1_top.html">GROMACSチュートリアル①</a>
                     <a class="button" href="linux.html">LINUX</a>
                     <a class="button" href="python.html">PYTHON</a>
                     <a class="button" href="html&css.html">HTML&CSS</a>
                 </div>
             </div>
-            <div class="wrapper">
+            <div id="home-content" class="wrapper">
                 <h2 id="lab" class="content-title">About Lab</h2>
                 <div class="lab-content">
                     <img class="home-content-image" src="images/main-bg.jpg" alt="研究室について">

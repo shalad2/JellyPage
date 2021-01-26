@@ -29,12 +29,15 @@
 
             <!-- CONTENTS -->
             <div class="main-text wrapper">
-                <p><a href="">HOME</a> > <a href="gromacs_tutorial1_top.html">GROMACSチュートリアル①</a> > シミュレーションの準備</p>
-                <div class="content-title">
+                <div class="hierarchie">
+                    <a href="../index.html"><img class="home-icon" src="../images/logo_original.png" alt="home"></a>
+                    <p> ＞ <a href="gromacs_tutorial1_top.html">GROMACSチュートリアル①</a> ＞ シミュレーションの準備</p>
+                </div>
+                <div>
                     <h2 class="content-title">【GROMACSチュートリアル①】 シミュレーションの準備</h2>
                     <p>
-                        タンパク質（Lysozyme）のシミュレーションを行うにあたって, まずは対象とする系を作成する必要がある.
-                        系の作成は次の3つのステップで行う.
+                        タンパク質（Lysozyme）のシミュレーションを行うにあたって、まずは対象とする系を作成する必要がある。
+                        系の作成は次の3つのステップで行う。
                     </p>
                     <div id="list" class="table-of-contents">
                         <ol>
@@ -44,15 +47,129 @@
                         </ol>
                     </div>
                     <p>
-                        今回作成する系は図のようになる. 
-                        水とイオンが入ったボックスにタンパク質が入るような構造を作成する.
+                        今回作成する系は図のようになる。
+                        水とイオンが入ったボックスにタンパク質が入るような構造を作成する。
                     </p>
-                    <img src="images/system.png" alt="Lysozyme in Water">
+                    <div class="image-center">
+                        <img id="lysozyme-structure-top" src="images/1aki_solv_ion.png" alt="Lysozyme in Water">
+                    </div>
                     
                 </div>
+
                 <div class="content-block">
                     <h3>タンパク質の構造を準備</h3>
-                    <p></p>
+                    <p>
+                        まず、タンパク質の構造ファイルをダウンロードする必要がある。
+                        <a href="https://www.rcsb.org/">RCSB</a>のサイトからlysozyme（PDBコード：1AKI）を検索し、PDBファイルをダウンロードする。
+                        ダウンロードできない場合は<a download="1aki.pdb" href="download/1aki.pdb">ここ</a>からダウンロードしてほしい。
+                        <br>
+                        このファイルをVMDで確認すると、タンパク質とその周りの結晶水の構造を確認することができる。
+                    </p>
+                    <div class="image-center">
+                        <img id="lysozyme-water" src="images/1aki_water.png" alt="1aki_water">
+                    </div>
+                    <p>
+                        今回は結晶水の構造は必要ないので、PDBファイルのHOHを含む行をgrep -vで除いておく。
+                    </p>
+
+                    <div class="code-block">
+                        <p class="terminal">$</p>
+                        <p>
+                            grep -v HOH 1aki.pdb > 1AKI_clean.pdb
+                        </p>
+                    </div>
+                    
+                    <p>
+                        これで新しく作成したファイルをVMDで確認すると、結晶水が取り除かれている。
+                    </p>
+                    <div class="image-display caption">
+                        <div>
+                            <img id="lysozyme-water-before" src="images/1aki_water.png" alt="1aki_water">
+                            <p>Before : 1aki.pdb</p>
+                        </div>
+                        <div>
+                            <img id="lysozyme-water-after" src="images/1aki.png" alt="1aki">
+                            <p>After : 1AKI_clean.pdb</p>
+                        </div>
+                    </div>
+
+                    <p>    
+                        次に、タンパク質の構造ファイルからMD計算に使用する以下のファイルを作成する。
+                        <div id="list" class="table-of-contents">
+                            <ol>
+                                <li>トポロジーファイル（topol.top）</li>
+                                <li>位置拘束ファイル（posre.itp）</li>
+                                <li>GROMACSフォーマットの構造ファイル（1AKI_processed.gro）</li>
+                            </ol>
+                        </div>
+                        これらのファイルはgmx pdb2gmxを使用してPDBファイルから一括で作成できる。
+                        -waterを指定することで、計算で使用する水モデルの種類を指定することができる。
+                    </p>
+
+                    <table>
+                        <tr>
+                            <th>gmx pdb2gmxオプション</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>-f</td>
+                            <td>入力ファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-o</td>
+                            <td>出力ファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-water</td>
+                            <td>水モデルの指定（今回はSPE/C）</td>
+                        </tr>
+                    </table>
+
+                    <div class="code-block">
+                        <p class="terminal">$</p>
+                        <p>
+                            gmx pdb2gmx -f 1AKI_clean.pdb -o 1AKI_processed.gro -water spce
+                        </p>
+                    </div>
+
+                    <p>
+                        コマンドを実行すると使用する力場を聞かれるので、今回はOPLS-AAを選択する。15と入力してEnterキーを押す。
+                    </p>
+                    <div class="code-block">
+                        <p>
+                            Select the Force Field:<br>
+                            From '/usr/local/gromacs/share/gromacs/top':<br>
+                            1: AMBER03 protein, nucleic AMBER94 (Duan et al., J. Comp. Chem. 24, 1999-2012, 2003)<br>
+                            2: AMBER94 force field (Cornell et al., JACS 117, 5179-5197, 1995)<br>
+                            3: AMBER96 protein, nucleic AMBER94 (Kollman et al., Acc. Chem. Res. 29, 461-469, 1996)<br>
+                            4: AMBER99 protein, nucleic AMBER94 (Wang et al., J. Comp. Chem. 21, 1049-1074, 2000)<br>
+                            5: AMBER99SB protein, nucleic AMBER94 (Hornak et al., Proteins 65, 712-725, 2006)<br>
+                            6: AMBER99SB-ILDN protein, nucleic AMBER94 (Lindorff-Larsen et al., Proteins 78, 1950-58, 2010)<br>
+                            7: AMBERGS force field (Garcia & Sanbonmatsu, PNAS 99, 2782-2787, 2002)<br>
+                            8: CHARMM27 all-atom force field (CHARM22 plus CMAP for proteins)<br>
+                            9: GROMOS96 43a1 force field<br>
+                            10: GROMOS96 43a2 force field (improved alkane dihedrals)<br>
+                            11: GROMOS96 45a3 force field (Schuler JCC 2001 22 1205)<br>
+                            12: GROMOS96 53a5 force field (JCC 2004 vol 25 pag 1656)<br>
+                            13: GROMOS96 53a6 force field (JCC 2004 vol 25 pag 1656)<br>
+                            14: GROMOS96 54a7 force field (Eur. Biophys. J. (2011), 40,, 843-856, DOI: 10.1007/s00249-011-0700-9)<br>
+                            15: OPLS-AA/L all-atom force field (2001 aminoacid dihedrals)<br>
+                        </p>
+                    </div>
+                    <p>
+                        これで必要なファイルが作成されているはずだ。
+                        <br>
+                        なお、作成したトポロジーファイルの詳細については<a href="gromacs_tutorial1_4.html">【GROMACSチュートリアル①補足】トポロジーファイルの詳細</a>を参照してほしい。
+                    </p>
+                </div>
+
+                <div class="content-block">
+                    <h3>シミュレーションボックスの作成と溶媒の追加</h3>
+                    <p>
+                        gmx pdb2gmxで作成したGROMACSフォーマットの構造ファイル（1AKI_processed.gro）にはまだタンパク質の構造しか含まれていない。
+                        そこで次にタンパク質が入るようなシミュレーションボックスを作成し、その中を溶媒で満たす操作を行う。
+                        シミュレーションボックスの作成はgmx editconfで行う。
+                    </p>
                 </div>
 
             </div>

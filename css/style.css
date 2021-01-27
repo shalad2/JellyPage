@@ -20,6 +20,7 @@ img {
 /* TABLE
 ---------------------------------------- */
 table {
+    font-size: 90%;
     margin: 20px auto 30px auto;
     border-collapse: collapse;
     border-spacing: 0;
@@ -34,6 +35,38 @@ table th{
     background-color: rgb(213, 229, 243);
     border-bottom: solid 1px #1e366a;
     text-align: center;
+}
+
+/* CODE
+---------------------------------------- */
+code {
+    font-size: 90%;
+    font-family: Consolas, Menlo, Monaco, -apple-system, BlinkMacSystemFont, "Segoe UI", Meiryo, monospace;
+}
+p code, li code {
+    display: inline-block;
+    padding: 0px 8px;
+    margin: 0px 3px;
+    color: #432;
+    background-color: #e7edf3;
+    border-radius: 3px;
+    border: solid 1px #d6dde4;
+}
+pre {
+    margin: 20px 0px;
+    padding: 1% 3%;
+    border-radius: 5px;
+    background: rgb(65, 61, 75);
+    color: #fff;
+    white-space: pre-wrap;
+}
+.filename {
+    color: rgb(250, 250, 250);
+    font-size: 90%;
+    display: inline-block;
+    background: #66696d;
+    margin-bottom: 10px;
+    padding: 0px 10px;
 }
 
 /* レイアウト
@@ -260,6 +293,19 @@ ul, li {
         list-style-type: square;
         margin-left: 1rem;
     }
+    #summary ol {
+        background: #e7edf3;
+        border-radius: 3px;
+        margin: 10px 0px;
+        border: none;
+    }
+    #summary li {
+        margin: 0rem 1rem;
+    }
+    #summary li code {
+        color: #1e366a;
+        background: #fff;
+    }
 
     /* IMAGE
     ---------------------------------------- */
@@ -288,16 +334,6 @@ ul, li {
         box-shadow: 0px 0px 0px 5px powderblue;
         border: dashed 2px white;
         padding: 0.3em 0.5em 0.2em 0.5em;
-    }
-    .code-block {
-        display: flex;
-        color: #fff;
-        background: rgb(60, 55, 75);
-        padding: 1% 3%;
-        margin: 20px 0px;
-    }
-    .terminal {
-        padding-right: 2%;
     }
 
 
@@ -343,7 +379,7 @@ ul, li {
     background-image: url(../images/main-bg.jpg);
 }
 
-#lysozyme-structure-top {
+#lysozyme-structure-top, #lysozyme-newbox, #lysozyme-solv, #lysozyme-solv-ion {
     width: 500px;
 }
 #lysozyme-water {
@@ -374,4 +410,8 @@ ul, li {
     background-size: cover;
     background-position: center top;
     background-repeat: none;
+}
+
+#force-field code {
+    font-size: 78%;
 }

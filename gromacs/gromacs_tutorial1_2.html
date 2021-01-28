@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>GROMACSチュートリアル①MDシミュレーションの実行</title>
+        <meta name="description" content="【GROMACSのチュートリアル①】Lysozyme in Water MDシミュレーションの実行ページ">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <!-- CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/ress@3.0.0/dist/ress.min.css">
+        <link rel="stylesheet" href="../css/style.css">
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+    <script src="../js/menu.js" type="text/javascript"></script>
+    <script src="../js/footer.js" type="text/javascript"></script>
+    </head>
+
+<body>
+    <div class="page-contents">
+        <!-- Accordion Menu -->
+        <script type="text/javascript">loadMenu('../');</script>
+        <!-- MAIN CONTENTS -->
+        <div class="main-contents">
+            <!-- HEADER IMAGE -->
+            <div id="gromacs" class="big-bg">
+                <div class="title-contents wrapper">
+                    <h2 class="page-title">GROMACS</h2>
+                </div>
+            </div>
+
+            <!-- CONTENTS -->
+            <div class="main-text wrapper">
+                <div class="hierarchie">
+                    <a href="../index.html"><img class="home-icon" src="../images/logo_original.png" alt="home"></a>
+                    <p> ＞ <a href="gromacs_tutorial1_top.html">GROMACSチュートリアル①</a> ＞ MDシミュレーションの実行</p>
+                </div>
+                <div>
+                    <h2 class="content-title">【GROMACSチュートリアル①】 MDシミュレーションの実行</h2>
+                    <p>
+                        前回、水とイオンの入ったボックス内にタンパク質が含まれる系を作成した。
+                        今回はいよいよ、実際にMD計算を行っていく。
+                        <br><br>
+                        はじめに、MD計算の大まかな手順を解説する。
+                        MD計算では系を作成した後、エネルギー最小化、平衡化を経てようやく本計算を行うことになる。
+                        本計算の前に作成した系の構造を安定化しておくことで、シミュレーションをより現実の系に近づけることが可能となる。
+                    </p>
+                    <div id="list-bottom" class="table-of-contents">
+                        <ol>
+                            <li>エネルギー最小化</li>
+                            <li>NVT平衡化</li>
+                            <li>NPT平衡化</li>
+                            <li>本計算（Production Run）</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>エネルギー最小化</h3>
+                    <p>
+                        系が作成できたら、まずはエネルギー最小化（Energy minimization）を行う。
+                        これは、系に立体的な衝突や不適切なジオメトリがないように構造緩和を行う操作である。
+                        <br>
+                        エネルギー最小化のための入力ファイルはtprファイルであり、<code>gmx grommp</code>を使用して用意する。
+                        エネルギー最小化における設定ファイルであるminim.mdpを<a download="minim.mdp" href="download/minim.mdp">ここ</a>からダウンロードし、系の構造ファイル、トポロジーファイルとともに<code>gmx grommp</code>を実行する。
+                    </p>
+
+<pre><code>gmx grompp -f minim.mdp -c 1AKI_solv_ions.gro -p topol.top -o em.tpr</code></pre>
+
+                    <p>
+                        前回のイオンの追加ではtprファイルを<code>gmx genion</code>に渡したが、エネルギー最小化では<code>gmx mdrun</code>を用いる。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>gmx mdrunオプション</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>-v</td>
+                            <td>計算ステップを画面表示する</td>
+                        </tr>
+                        <tr>
+                            <td>-deffnm</td>
+                            <td>入力ファイル名と出力ファイル名の指定</td>
+                        </tr>
+                    </table>
+
+<pre><code>gmx mdrun -v -deffnm em</code></pre>
+                
+                    <p>
+                        <code>gmx mdrun</code>の実行が終了すると、以下のファイルが得られる。
+                    </p>
+                    <div id="list" class="table-of-contents">
+                        <ol>
+                            <li>em.log : エネルギー最小化のログファイル</li>
+                            <li>em.edr : バイナリのエネルギーファイル</li>
+                            <li>em.trr : バイナリのトラジェクトリファイル</li>
+                            <li>em.gro : エネルギー最小化が完了した構造ファイル</li> 
+                        </ol>
+                    </div>
+                    <p>
+                        エネルギー最小化が成功しているかを判断するために、画面に出力されたポテンシャルエネルギーE<sub>pot</sub>と最大力F<sub>max</sub>の値を確認しておく。
+                        <br><br>
+                        まず、ポテンシャルエネルギーE<sub>pot</sub>は負の値であり、系の大きさや水分子の数によるが、10<sup>5</sup>から10<sup>6</sup>のオーダーとなる。
+                        また、最大力F<sub>max</sub>は1000 kJ mol<sup>-1</sup> nm<sup>-1</sup>以下の値となる。
+                        これはmdpファイルにおいて、最大力がが1000 kJ mol<sup>-1</sup> nm<sup>-1</sup>より小さくなるまでエネルギー最小化を行うように設定したためである。
+                        mdpファイルの詳細については<a href="gromacs_tutorial1_5.html">【GROMACSチュートリアル①補足】mdpファイルの詳細</a>を参照してほしい。
+                        <br><br>
+                        ここで、エネルギー最小化におけるポテンシャルエネルギーの変化を調べてみる。
+                        <code>gmx energy</code>を用いると、バイナリのエネルギーファイルem.edrからポテンシャルエネルギーのデータを取り出すことができる。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>gmx energyオプション</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>-f</td>
+                            <td>入力edrファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-o</td>
+                            <td>出力ファイルの指定</td>
+                        </tr>
+                    </table>
+
+<pre><code>gmx energy -f em.edr -o potential.xvg</code></pre>                    
+
+                    <p>
+                        対話形式で出力するエネルギーの種類を聞かれるので<code>10</code>（Potential）を入力し、終了のために<code>0</code>を追加で入力すると（<code>10 0</code>としてEnter）、画面にE<sub>tot</sub>の平均値が表示され、potential.xvgにポテンシャルエネルギーが書き込まれる。
+                        potential.xvgをグラフにプロットすると、エネルギー最小化のステップに伴ってポテンシャルエネルギーが安定に収束していることを確認できる。
+                    </p>
+                    <div class="image-center">
+                        <img id="lysozyme-em-plot" src="images/1aki_em_plot.png" alt="1aki_em_plot">
+                    </div>
+                    <p>    
+                        これにて系のエネルギーが最小化されたので、実際のダイナミクスに取り掛かる。
+                    </p>
+                </div>
+
+                <div class="content-block">
+                    <h3>NVT平衡化</h3>
+                    <p>
+                        次のステップはNVT平衡化である。
+                        実際のダイナミクスを行うためには、タンパク質周りの溶媒とイオンを平衡化しなければならない。
+                        ここではNVTアンサンブルを適用して、300 Kで100 psの平衡化を行う。
+                        <br><br>
+                        NVT平衡化はエネルギー最小化と同様に<code>gmx grompp</code>と<code>gmx mdrun</code>を用いて行う。
+                        <code>gmx grompp</code>に必要なmdpファイルは<a download="nvt.mdp" href="download/nvt.mdp">ここ</a>からダウンロードする。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>gmx grommpオプション</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>-r</td>
+                            <td>位置拘束パラメータの付与</td>
+                    </table>
+
+<pre><code>gmx grompp -f nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr
+gmx mdrun -deffnm nvt</code></pre>
+
+                    <p>
+                        NVT平衡化における<code>gmx grompp</code>では<code>-r</code>オプションで構造ファイルを指定することで、構造ファイルの座標に前回作成したposre.itpを適用し、タンパク質の重たい原子に対して位置拘束のパラメータを付与している。
+                        これにより、タンパク質の構造変化を記述するための変数を追加することなく溶媒の平衡化を行うことができる。
+                        <br><br>
+                        NVT平衡化が完了したら、系の温度制御が正しく行われていることを確認する。
+                        <code>gmx energy</code>で<code>16</code>（Temperature）と<code>0</code>を選択してtemperature.xvgを出力する。
+                    </p>
+                    
+<pre><code>gmx energy -f nvt.edr -o temperature.xvg</code></pre>
+
+                    <p>
+                        グラフにプロットすると、系の温度がすぐに300 Kに達し、100 psの平衡化の間で安定していることを確認できる。
+                    </p>
+                    <div class="image-center">
+                        <img id="lysozyme-nvt-plot" src="images/1aki_nvt_plot.png" alt="1aki_nvt_plot">
+                    </div>
+
+                <div class="content-block">
+                    <h3>NPT平衡化</h3>
+                    <p>
+                        さらに、系に対してイオンを追加する。
+                        トポロジーファイルを確認するとわかるが、タンパク質（lysozyme）の電荷は+8（qtot 8）であるため、イオンを加えて電荷を打ち消す必要がある。
+                        イオンの追加には<code>gmx genion</code>を用いるが、その入力ファイルには系の全原子のパラメータを含む形式であるtprファイルを作成しなければならない。
+                        tprファイルは、系の構造ファイルとトポロジーファイルの両方を使用することで<code>gmx grompp</code>によって作成することができる。
+                        <br>
+                        加えて、<code>gmx grompp</code>を実行するためにはさらに追加でmdpファイル（molecular dynamics parameter file）を用意する必要がある。
+                        mdpファイルはMD計算で使用するパラメータの設定ファイルである。
+                        mdpファイルは通常、MD計算の条件（温度、圧力、タイムステップなど）を記述し、<code>gmx grompp</code>によって実際にMD計算を行う際の入力ファイル（tprファイル）を作成するために使用される。
+                        ただし現時点ではイオンを追加するだけなので、今回使用するmdpファイルはその設定のみが記述されている。
+                        <br>
+                    </p>
+                    <p>
+                        ions.mdpを<a download="ions.mdp" href="download/ions.mdp">ここ</a>からダウンロードして<code>gmx grompp</code>を実行する。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>gmx gromppオプション</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>-f</td>
+                            <td>入力mdpファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-c</td>
+                            <td>入力構造ファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-p</td>
+                            <td>トポロジーファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-o</td>
+                            <td>出力tprファイルの指定</td>
+                        </tr>
+                    </table>
+
+<pre><code>gmx grompp -f ions.mdp -c 1AKI_solv.gro -p topol.top -o ions.tpr</code></pre>
+
+                    <p>tprファイルは系の全原子の情報を記述したバイナリファイルであり、これを用いて系にイオンを追加する。</p>
+                    <table>
+                        <tr>
+                            <th>gmx genionオプション</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>-s</td>
+                            <td>入力tprファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-o</td>
+                            <td>出力構造ファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-p</td>
+                            <td>トポロジーファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-pname</td>
+                            <td>追加する陽イオンの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-nname</td>
+                            <td>追加する陰イオンの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-neutral</td>
+                            <td>系全体の電荷が0になるようにイオンを追加</td>
+                        </tr>
+                    </table>
+
+<pre><code>gmx genion -s ions.tpr -o 1AKI_solv_ions.gro -p topol.top -pname NA -nname CL -neutral</code></pre>
+                   
+                    <p>
+                        実行すると溶媒として利用する分子を聞かれるので、<code>13 （SOL）</code>を選択する。
+                        これにより、溶媒の水分子の一部をイオンに置き換えることができる。
+                        今回は+8の電荷を打ち消すために8つのClイオンが追加されており、トポロジーファイルを確認すると[ molecules ]にイオンが反映されている。
+                    </p>
+
+<pre><code><p class="filename">topol.top</p>    
+[ molecules ]
+; Compound      #mols
+Protein_A         1
+SOL           10636
+CL                8</code></pre>
+
+                    <p>
+                        以上で、系の構築は完了である。VMDで確認してみると、下図のような構造が見られるであろう。
+                    </p>
+                    <div class="image-center">
+                        <img id="lysozyme-solv-ion" src="images/1aki_solv_ion.png" alt="1aki_solv_ion">
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>まとめ</h3>
+                    <p>これまでの内容をまとめる。系の構築のために以下の手順を踏んだ。</p>
+                    <div id="summary" class="table-of-contents">
+                        <ol>
+                            <li>タンパク質のPDBファイルを<code>gmx pdb2gmx</code>によりGROMACSフォーマットに変換した。</li>
+                            <li>シミュレーションボックスを<code>gmx editconf</code>で作成し、<code>gmx solvate</code>によりボックス内を溶媒で満たした。</li>
+                            <li>ボックス内に<code>gmx genion</code>でイオンを追加した。</li>
+                        </ol>
+                    </div>
+                    <p>次回は作成した系を用いて実際にMD計算をしていく。</p>
+                </div>
+                
+                <div class="hierarchie-bottom">
+                    <a href="">PREVIOUS</a>
+                    <a href="">TOP</a>
+                    <a href="">NEXT</a>
+                </div>
+
+            </div>
+            <script type="text/javascript">loadFooter();</script>
+        </div>
+    </div>
+</body>
+</html>

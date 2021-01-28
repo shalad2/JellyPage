@@ -16,6 +16,12 @@ a {
 img {
     max-width: 100%;
 }
+footer {
+    padding: 3%;
+    background: rgb(213, 229, 243);
+    text-align: center;
+    font-size: 80%;
+}
 
 /* TABLE
 ---------------------------------------- */
@@ -242,7 +248,7 @@ ul, li {
 /* CONTENTS PAGES */
 
     .main-text a {
-        color: #1e366a;
+        color: #1b57d8;
     }
     .main-text a:hover {
         color: #0bd;
@@ -259,6 +265,15 @@ ul, li {
         width: 20px;
         margin-top: 2px;
         margin-right: 8px;
+    }
+    .hierarchie-bottom {
+        font-size: 80%;
+        border-top: solid 1px #1e366a;
+        border-bottom: solid 1px #1e366a;
+        padding: 1% 15%;
+        margin-bottom: 3%;
+        display: flex;
+        justify-content: space-between;
     }
 
     /* CONTENT-TITLE
@@ -286,6 +301,13 @@ ul, li {
         margin-left: 1rem;
     }
 
+    #list-bottom ol {
+        margin: 20px 0px 50px 0px;
+    }
+    #list-bottom ol li{
+        list-style-type: square;
+        margin-left: 1rem;
+    }
     #list ol {
         margin: 20px 0px;
     }
@@ -376,7 +398,10 @@ ul, li {
 /* GROMACS
 ---------------------------------------- */
 #gromacs {
-    background-image: url(../images/main-bg.jpg);
+    background-image: url(../gromacs/images/main-bg.png);
+    background-position: center;
+    background-color: rgba(255,255,255,0.5);
+    background-blend-mode:lighten;
 }
 
 #lysozyme-structure-top, #lysozyme-newbox, #lysozyme-solv, #lysozyme-solv-ion {

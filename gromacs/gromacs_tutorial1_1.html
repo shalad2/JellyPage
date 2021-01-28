@@ -12,6 +12,7 @@
     <!-- JQuery -->
     <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
     <script src="../js/menu.js" type="text/javascript"></script>
+    <script src="../js/footer.js" type="text/javascript"></script>
     </head>
 
 <body>
@@ -61,7 +62,7 @@
                     <p>
                         まず、タンパク質の構造ファイルをダウンロードする必要がある。
                         <a href="https://www.rcsb.org/">RCSB</a>のサイトからlysozyme（PDBコード：1AKI）を検索し、PDBファイルをダウンロードする。
-                        ダウンロードできない場合は<a download="1aki.pdb" href="download/1aki.pdb">ここ</a>からダウンロードしてほしい。
+                        サイトからダウンロードできない場合は<a download="1aki.pdb" href="download/1aki.pdb">ここ</a>からダウンロードしてほしい。
                         <br>
                         このファイルをVMDで確認すると、タンパク質とその周りの結晶水の構造を確認することができる。
                     </p>
@@ -69,16 +70,11 @@
                         <img id="lysozyme-water" src="images/1aki_water.png" alt="1aki_water">
                     </div>
                     <p>
-                        今回は結晶水の構造は必要ないので、PDBファイルのHOHを含む行をgrep -vで除いておく。
+                        今回は結晶水の構造は必要ないので、PDBファイルのHOHを含む行を<code>grep -v</code>で除いておく。
                     </p>
 
-                    <div class="code-block">
-                        <p class="terminal">$</p>
-                        <p>
-                            grep -v HOH 1aki.pdb > 1AKI_clean.pdb
-                        </p>
-                    </div>
-                    
+<pre><code>grep -v HOH 1aki.pdb > 1AKI_clean.pdb</code></pre>   
+
                     <p>
                         これで新しく作成したファイルをVMDで確認すると、結晶水が取り除かれている。
                     </p>
@@ -92,20 +88,19 @@
                             <p>After : 1AKI_clean.pdb</p>
                         </div>
                     </div>
-
                     <p>    
                         次に、タンパク質の構造ファイルからMD計算に使用する以下のファイルを作成する。
-                        <div id="list" class="table-of-contents">
-                            <ol>
-                                <li>トポロジーファイル（topol.top）</li>
-                                <li>位置拘束ファイル（posre.itp）</li>
-                                <li>GROMACSフォーマットの構造ファイル（1AKI_processed.gro）</li>
-                            </ol>
-                        </div>
-                        これらのファイルはgmx pdb2gmxを使用してPDBファイルから一括で作成できる。
-                        -waterを指定することで、計算で使用する水モデルの種類を指定することができる。
                     </p>
-
+                    <div id="list" class="table-of-contents">
+                        <ol>
+                            <li>トポロジーファイル（topol.top）</li>
+                            <li>位置拘束ファイル（posre.itp）</li>
+                            <li>GROMACSフォーマットの構造ファイル（1AKI_processed.gro）</li>                            </ol>
+                    </div>
+                    <p>
+                        これらのファイルは<code>gmx pdb2gmx</code>を使用してPDBファイルから一括で作成できる。
+                        <code>-water</code>を指定することで、計算で使用する水モデルの種類を指定することができる。
+                    </p>
                     <table>
                         <tr>
                             <th>gmx pdb2gmxオプション</th>
@@ -113,11 +108,11 @@
                         </tr>
                         <tr>
                             <td>-f</td>
-                            <td>入力ファイルの指定</td>
+                            <td>入力pdbファイルの指定</td>
                         </tr>
                         <tr>
                             <td>-o</td>
-                            <td>出力ファイルの指定</td>
+                            <td>出力groファイルの指定</td>
                         </tr>
                         <tr>
                             <td>-water</td>
@@ -125,37 +120,30 @@
                         </tr>
                     </table>
 
-                    <div class="code-block">
-                        <p class="terminal">$</p>
-                        <p>
-                            gmx pdb2gmx -f 1AKI_clean.pdb -o 1AKI_processed.gro -water spce
-                        </p>
-                    </div>
-
+<pre><code>gmx pdb2gmx -f 1AKI_clean.pdb -o 1AKI_processed.gro -water spce</code></pre>
+                    
                     <p>
-                        コマンドを実行すると使用する力場を聞かれるので、今回はOPLS-AAを選択する。15と入力してEnterキーを押す。
+                        コマンドを実行すると使用する力場を聞かれるので、今回はOPLS-AAを選択する。<code>15</code>と入力してEnterキーを押す。
                     </p>
-                    <div class="code-block">
-                        <p>
-                            Select the Force Field:<br>
-                            From '/usr/local/gromacs/share/gromacs/top':<br>
-                            1: AMBER03 protein, nucleic AMBER94 (Duan et al., J. Comp. Chem. 24, 1999-2012, 2003)<br>
-                            2: AMBER94 force field (Cornell et al., JACS 117, 5179-5197, 1995)<br>
-                            3: AMBER96 protein, nucleic AMBER94 (Kollman et al., Acc. Chem. Res. 29, 461-469, 1996)<br>
-                            4: AMBER99 protein, nucleic AMBER94 (Wang et al., J. Comp. Chem. 21, 1049-1074, 2000)<br>
-                            5: AMBER99SB protein, nucleic AMBER94 (Hornak et al., Proteins 65, 712-725, 2006)<br>
-                            6: AMBER99SB-ILDN protein, nucleic AMBER94 (Lindorff-Larsen et al., Proteins 78, 1950-58, 2010)<br>
-                            7: AMBERGS force field (Garcia & Sanbonmatsu, PNAS 99, 2782-2787, 2002)<br>
-                            8: CHARMM27 all-atom force field (CHARM22 plus CMAP for proteins)<br>
-                            9: GROMOS96 43a1 force field<br>
-                            10: GROMOS96 43a2 force field (improved alkane dihedrals)<br>
-                            11: GROMOS96 45a3 force field (Schuler JCC 2001 22 1205)<br>
-                            12: GROMOS96 53a5 force field (JCC 2004 vol 25 pag 1656)<br>
-                            13: GROMOS96 53a6 force field (JCC 2004 vol 25 pag 1656)<br>
-                            14: GROMOS96 54a7 force field (Eur. Biophys. J. (2011), 40,, 843-856, DOI: 10.1007/s00249-011-0700-9)<br>
-                            15: OPLS-AA/L all-atom force field (2001 aminoacid dihedrals)<br>
-                        </p>
-                    </div>
+
+<pre id="force-field"><code>Select the Force Field:
+From '/usr/local/gromacs/share/gromacs/top':
+1: AMBER03 protein, nucleic AMBER94 (Duan et al., J. Comp. Chem. 24, 1999-2012, 2003)
+2: AMBER94 force field (Cornell et al., JACS 117, 5179-5197, 1995)
+3: AMBER96 protein, nucleic AMBER94 (Kollman et al., Acc. Chem. Res. 29, 461-469, 1996)
+4: AMBER99 protein, nucleic AMBER94 (Wang et al., J. Comp. Chem. 21, 1049-1074, 2000)
+5: AMBER99SB protein, nucleic AMBER94 (Hornak et al., Proteins 65, 712-725, 2006)
+6: AMBER99SB-ILDN protein, nucleic AMBER94 (Lindorff-Larsen et al., Proteins 78, 1950-58, 2010)
+7: AMBERGS force field (Garcia & Sanbonmatsu, PNAS 99, 2782-2787, 2002)
+8: CHARMM27 all-atom force field (CHARM22 plus CMAP for proteins)
+9: GROMOS96 43a1 force field
+10: GROMOS96 43a2 force field (improved alkane dihedrals)
+11: GROMOS96 45a3 force field (Schuler JCC 2001 22 1205)
+12: GROMOS96 53a5 force field (JCC 2004 vol 25 pag 1656)
+13: GROMOS96 53a6 force field (JCC 2004 vol 25 pag 1656)                            
+14: GROMOS96 54a7 force field (Eur. Biophys. J. (2011), 40,, 843-856, DOI: 10.1007/s00249-011-0700-9)
+15: OPLS-AA/L all-atom force field (2001 aminoacid dihedrals)</code></pre>
+
                     <p>
                         これで必要なファイルが作成されているはずだ。
                         <br>
@@ -166,13 +154,215 @@
                 <div class="content-block">
                     <h3>シミュレーションボックスの作成と溶媒の追加</h3>
                     <p>
-                        gmx pdb2gmxで作成したGROMACSフォーマットの構造ファイル（1AKI_processed.gro）にはまだタンパク質の構造しか含まれていない。
+                        <code>gmx pdb2gmx</code>で作成したGROMACSフォーマットの構造ファイル（1AKI_processed.gro）にはまだタンパク質の構造しか含まれていない。
                         そこで次にタンパク質が入るようなシミュレーションボックスを作成し、その中を溶媒で満たす操作を行う。
-                        シミュレーションボックスの作成はgmx editconfで行う。
+                        <br>
+                        シミュレーションボックスの作成は<code>gmx editconf</code>で行う。今回、シミュレーションボックスには周期的境界条件を満たす立方体を用いる。
+                        この時、タンパク質とボックスの境界との距離を1.0 nm以上空けることで、周期的境界条件では隣のタンパク質との距離を2.0 nm以上確保することができる。
+                        いくつかのオプションを指定してコマンドを実行する。
                     </p>
+                    <table>
+                        <tr>
+                            <th>gmx editconfオプション</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>-f</td>
+                            <td>入力構造ファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-o</td>
+                            <td>出力構造ファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-c</td>
+                            <td>タンパク質をボックスの中央に配置</td>
+                        </tr>
+                        <tr>
+                            <td>-d</td>
+                            <td>タンパク質とボックス境界との距離を指定</td>
+                        </tr>
+                        <tr>
+                            <td>-bt</td>
+                            <td>ボックスタイプの指定</td>
+                        </tr>
+                    </table>
+
+<pre><code>gmx editconf -f 1AKI_processed.gro -o 1AKI_newbox.gro -c -d 1.0 -bt cubic</code></pre>
+
+                    <p>
+                        生成した1AKI_newbox.groをVMDで確認すると、シミュレーションボックスが定義されている。
+                    </p>
+                    <div class="image-center">
+                        <img id="lysozyme-newbox" src="images/1aki_newbox.png" alt="1aki_newbox">
+                    </div>
+                    <p>
+                        ボックスが定義できたので、続いて<code>gmx solvate</code>により溶媒で系を満たす。
+                        今回の溶媒は水であり、SPCモデルを用いている。
+                        SPCの構造ファイル（spc216.gro）はGROMACSに標準でインストールされているので、特別にファイルを用意する必要はない。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>gmx solvateオプション</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>-cp</td>
+                            <td>タンパク質（溶質）構造ファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-cs</td>
+                            <td>溶媒（SPC水モデル）構造ファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-o</td>
+                            <td>出力構造ファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-p</td>
+                            <td>トポロジーファイルの指定</td>
+                        </tr>
+                    </table>
+
+<pre><code>gmx solvate -cp 1AKI_newbox.gro -cs spc216.gro -o 1AKI_solv.gro -p topol.top</code></pre>
+
+                    <p>
+                        これでボックス内を溶媒で満たすことができた。VMDで確認すると、水分子がタンパク質の周りに配置されている様子が見える。
+                    </p>
+                    <div class="image-center">
+                        <img id="lysozyme-solv" src="images/1aki_solv.png" alt="1aki_solv">
+                    </div>
+                    <p>
+                        また、<code>gmx solvate</code>ではオプションにトポロジーファイル（topol.top）を指定している。
+                        溶媒の追加によりトポロジーファイルの[ molecules ]のセクションが更新されており、SOL（溶媒）が記述されていることがわかるだろう。
+                    </p>
+
+<pre><code><p class="filename">topol.top</p>
+[ molecules ]
+; Compound  #mols
+Protein_A       1 
+SOL         10832</code></pre>
+
+                </div>
+
+                <div class="content-block">
+                    <h3>イオンの追加</h3>
+                    <p>
+                        さらに、系に対してイオンを追加する。
+                        トポロジーファイルを確認するとわかるが、タンパク質（lysozyme）の電荷は+8（qtot 8）であるため、イオンを加えて電荷を打ち消す必要がある。
+                        イオンの追加には<code>gmx genion</code>を用いるが、その入力ファイルには系の全原子のパラメータを含む形式であるtprファイルを作成しなければならない。
+                        tprファイルは、系の構造ファイルとトポロジーファイルの両方を使用することで<code>gmx grompp</code>によって作成することができる。
+                        <br>
+                        加えて、<code>gmx grompp</code>を実行するためにはさらに追加でmdpファイル（molecular dynamics parameter file）を用意する必要がある。
+                        mdpファイルはMD計算で使用するパラメータの設定ファイルである。
+                        mdpファイルは通常、MD計算の条件（温度、圧力、タイムステップなど）を記述し、<code>gmx grompp</code>によって実際にMD計算を行う際の入力ファイル（tprファイル）を作成するために使用される。
+                        ただし現時点ではイオンを追加するだけなので、今回使用するmdpファイルはその設定のみが記述されている。
+                        <br>
+                    </p>
+                    <p>
+                        ions.mdpを<a download="ions.mdp" href="download/ions.mdp">ここ</a>からダウンロードして<code>gmx grompp</code>を実行する。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>gmx gromppオプション</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>-f</td>
+                            <td>入力mdpファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-c</td>
+                            <td>入力構造ファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-p</td>
+                            <td>トポロジーファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-o</td>
+                            <td>出力tprファイルの指定</td>
+                        </tr>
+                    </table>
+
+<pre><code>gmx grompp -f ions.mdp -c 1AKI_solv.gro -p topol.top -o ions.tpr</code></pre>
+
+                    <p>tprファイルは系の全原子の情報を記述したバイナリファイルであり、これを用いて系にイオンを追加する。</p>
+                    <table>
+                        <tr>
+                            <th>gmx genionオプション</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>-s</td>
+                            <td>入力tprファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-o</td>
+                            <td>出力構造ファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-p</td>
+                            <td>トポロジーファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-pname</td>
+                            <td>追加する陽イオンの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-nname</td>
+                            <td>追加する陰イオンの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-neutral</td>
+                            <td>系全体の電荷が0になるようにイオンを追加</td>
+                        </tr>
+                    </table>
+
+<pre><code>gmx genion -s ions.tpr -o 1AKI_solv_ions.gro -p topol.top -pname NA -nname CL -neutral</code></pre>
+                   
+                    <p>
+                        実行すると溶媒として利用する分子を聞かれるので、<code>13 （SOL）</code>を選択する。
+                        これにより、溶媒の水分子の一部をイオンに置き換えることができる。
+                        今回は+8の電荷を打ち消すために8つのClイオンが追加されており、トポロジーファイルを確認すると[ molecules ]にイオンが反映されている。
+                    </p>
+
+<pre><code><p class="filename">topol.top</p>    
+[ molecules ]
+; Compound      #mols
+Protein_A         1
+SOL           10636
+CL                8</code></pre>
+
+                    <p>
+                        以上で、系の構築は完了である。VMDで確認してみると、下図のような構造が見られるであろう。
+                    </p>
+                    <div class="image-center">
+                        <img id="lysozyme-solv-ion" src="images/1aki_solv_ion.png" alt="1aki_solv_ion">
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>まとめ</h3>
+                    <p>これまでの内容をまとめる。系の構築のために以下の手順を踏んだ。</p>
+                    <div id="summary" class="table-of-contents">
+                        <ol>
+                            <li>タンパク質のPDBファイルを<code>gmx pdb2gmx</code>によりGROMACSフォーマットに変換した。</li>
+                            <li>シミュレーションボックスを<code>gmx editconf</code>で作成し、<code>gmx solvate</code>によりボックス内を溶媒で満たした。</li>
+                            <li>ボックス内に<code>gmx genion</code>でイオンを追加した。</li>
+                        </ol>
+                    </div>
+                    <p>次回は作成した系を用いて実際にMD計算をしていく。</p>
+                </div>
+                
+                <div class="hierarchie-bottom">
+                    <a href="">PREVIOUS</a>
+                    <a href="">TOP</a>
+                    <a href="">NEXT</a>
                 </div>
 
             </div>
+            <script type="text/javascript">loadFooter();</script>
         </div>
     </div>
 </body>

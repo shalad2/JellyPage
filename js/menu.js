@@ -20,8 +20,9 @@ function loadMenu(rootDir){
                     '<li>' +
                         '<div class="menu">GROMACS</div>' +
                         '<ul>' +
+                            '<li><a href="' + rootDir + 'gromacs/gromacs_install.html">GROMACSのインストール</a></li>' +
                             '<li><a href="' + rootDir + 'gromacs/gromacs_tutorial1_top.html">GROMACSチュートリアル①</a></li>' +
-                            '<li>CLICKメニュー2</li>' +
+                            '<li><a href="' + rootDir + 'gromacs/gromacs_tutorial2_top.html">GROMACSチュートリアル②</a></li>' +
                             '<li>CLICKメニュー3</li>' +
                             '<li>CLICKメニュー4</li>' + 
                             '<li>CLICKメニュー5</li>' +

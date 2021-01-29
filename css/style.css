@@ -226,12 +226,14 @@ ul, li {
         font-size: 1.375rem;
         text-align: center;
         color: #432;
-        background: aquamarine;
+        background-size: cover;
+        background-repeat: none;
+        border: solid #fff;
         border-radius: 5px;
         padding: 64px;
     }
     .button:hover {
-        background: cyan;
+        border: solid aqua;
     }
 
     /* ABOUT LAB
@@ -274,6 +276,9 @@ ul, li {
         margin-bottom: 3%;
         display: flex;
         justify-content: space-between;
+    }
+    .hierarchie-bottom a, .hierarchie-bottom p {
+        color: #1e366a;
     }
 
     /* CONTENT-TITLE

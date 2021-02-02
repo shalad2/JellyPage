@@ -1,19 +1,33 @@
-$(function() { 
+$(function() {
     var mclick = $('.menu-click > li');
 
     $(mclick).click(function() {
-        $(this).toggleClass('menu-open');
+
+        // openしているところに'menu-open'を与える
+        if ($(this).hasClass('menu-open')) {
+            $('ul', this).slideUp();
+            $(this).removeClass('menu-open');
+
+        } else {
+            $(mclick).removeClass('menu-open');
+            $(this).addClass('menu-open');
+            $('ul', mclick).slideUp();
+            $('ul', this).slideDown();
+        }
+        
+        /*$(this).toggleClass('menu-open');
         if ($(this).hasClass('menu-open')) {
             $('ul', this).slideDown();
         } else {
             $('ul', this).slideUp();
-        }
+        }*/
     });
 });
 
 function loadMenu(rootDir){
     var html = "";
-    html += '<aside class="side-bar">';
+    html += '<div class="side-bar">';
+    html += '<aside>'
     html += '<h1><a href="' + rootDir + 'index.html"><img class="menu-logo" src="' + rootDir + 'images/logo.png" alt="JellyPageホーム"></a></h1>';
     html += '<nav>' +
                 '<ul class="menu-click">' +
@@ -41,7 +55,32 @@ function loadMenu(rootDir){
                         '</ul>' +
                     '</li>' +
                 '</ul>' +
+                '<ul class="menu-click">' +
+                    '<li>' +
+                        '<div class="menu">Linux</div>' +
+                        '<ul>' +
+                            '<li>メニュー1</li>' +
+                            '<li>メニュー2</li>' +
+                            '<li>メニュー3</li>' +
+                            '<li>メニュー4</li>' + 
+                            '<li>メニュー5</li>' +
+                        '</ul>' +
+                    '</li>' +
+                '</ul>' +
+                '<ul class="menu-click">' +
+                    '<li>' +
+                        '<div class="menu">Python</div>' +
+                        '<ul>' +
+                            '<li>メニュー1</li>' +
+                            '<li>メニュー2</li>' +
+                            '<li>メニュー3</li>' +
+                            '<li>メニュー4</li>' + 
+                            '<li>メニュー5</li>' +
+                        '</ul>' +
+                    '</li>' +
+                '</ul>' +
             '</nav>';
     html += '</aside>';
+    html += '</div>'
     document.write(html);
 }

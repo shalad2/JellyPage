@@ -80,10 +80,15 @@ code span {
 
 /* レイアウト
 ---------------------------------------- */
+aside {
+    position: fixed;
+    width: 300px;
+}
 .page-contents {
     display: flex;
 }
 .side-bar {
+    background: #101f52;
     flex: 0 0 300px;
     display: block;
 }
@@ -105,6 +110,12 @@ code span {
 nav {
     width: 100%;
 }
+nav a {
+    color: #101f52;
+}
+nav a:hover {
+    color: #345db6;
+}
 ul, li {
     list-style: none;
 }
@@ -116,8 +127,9 @@ ul, li {
     display: none;
 }
 .menu-click div {
-    color: #FFFFFF;
+    color: #e4e4e4;
     background-color: #101f52;
+    border-bottom: solid 0.5px #e4e4e4;
     cursor: pointer;
 }
 .menu {
@@ -130,8 +142,8 @@ ul, li {
     padding: 0;
 }
 .menu + ul li {
-    color: #000000;
-    background-color: #CCCCCC;
+    color: #432;
+    background-color: #e4e4e4;
     padding: 15px 40px;
 }
 
@@ -253,7 +265,7 @@ ul, li {
 /* CONTENTS PAGES */
 
     .main-text a {
-        color: #1b57d8;
+        color: #345db6;
     }
     .main-text a:hover {
         color: #0bd;
@@ -295,6 +307,9 @@ ul, li {
 
     /* TABLE OF CONTENTS AND LIST
     ---------------------------------------- */
+    .table-of-contents {
+        margin: 3% 0%;
+    }
     .table-of-contents ol {
         color: #1e366a;
         border-top: solid #1e366a 1px;
@@ -303,10 +318,11 @@ ul, li {
     }
     .table-of-contents ol li{
         list-style-type: decimal;
+        padding-top: 0.1rem;
     }
     .table-of-contents ul li{
         list-style-type: square;
-        margin-left: 1rem;
+        margin-left: 1.5rem;
     }
 
     #list-bottom ol {
@@ -418,8 +434,18 @@ ul, li {
     background-blend-mode:lighten;
 }
 
-#lysozyme-structure-top, #lysozyme-newbox, #lysozyme-solv, #lysozyme-solv-ion {
+#lysozyme-structure-top,
+#lysozyme-newbox, 
+#lysozyme-solv,
+#lysozyme-solv-ion,
+#lysozyme-movie {
     width: 500px;
+}
+#lysozyme-em-plot,
+#lysozyme-temp-plot,
+#lysozyme-press-plot,
+#lysozyme-dens-plot {
+    width: 550px;
 }
 #lysozyme-water {
     width: 350px;
@@ -433,7 +459,9 @@ ul, li {
     margin-bottom: 0%;
     object-position: 40% 50%;
 }
-#lysozyme-water-after {
+#lysozyme-water-after,
+#lysozyme-trjconv-before,
+#lysozyme-trjconv-after {
     width: 300px;
     height: 300px;
     object-fit: cover;

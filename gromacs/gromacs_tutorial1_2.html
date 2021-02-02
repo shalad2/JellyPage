@@ -145,7 +145,7 @@
                         ここではNVTアンサンブルを適用して、300 Kで100 psの平衡化を行う。
                         <br><br>
                         NVT平衡化はエネルギー最小化と同様に<code>gmx grompp</code>と<code>gmx mdrun</code>を用いて行う。
-                        <code>gmx grompp</code>に必要なmdpファイルは<a download="nvt.mdp" href="download/nvt.mdp">ここ</a>からダウンロードする。
+                        NVT平衡化の<code>gmx grompp</code>に必要なmdpファイルは<a download="nvt.mdp" href="download/nvt.mdp">ここ</a>からダウンロードする。
                     </p>
                     <table>
                         <tr>
@@ -161,7 +161,7 @@
 gmx mdrun -deffnm nvt</code></pre>
 
                     <p>
-                        NVT平衡化における<code>gmx grompp</code>では<code>-r</code>オプションで構造ファイルを指定することで、構造ファイルの座標に前回作成したposre.itpを適用し、タンパク質の重たい原子に対して位置拘束のパラメータを付与している。
+                        NVT平衡化における<code>gmx grompp</code>では<code>-r</code>オプションに構造ファイルを指定することで、構造ファイルの座標に前回作成したposre.itpを適用し、タンパク質の重たい原子に対して位置拘束のパラメータを付与している。
                         これにより、タンパク質の構造変化を記述するための変数を追加することなく溶媒の平衡化を行うことができる。
                         <br><br>
                         NVT平衡化が完了したら、系の温度制御が正しく行われていることを確認する。
@@ -174,117 +174,100 @@ gmx mdrun -deffnm nvt</code></pre>
                         グラフにプロットすると、系の温度がすぐに300 Kに達し、100 psの平衡化の間で安定していることを確認できる。
                     </p>
                     <div class="image-center">
-                        <img id="lysozyme-nvt-plot" src="images/1aki_nvt_plot.png" alt="1aki_nvt_plot">
-                    </div>
-
-                <div class="content-block">
-                    <h3>NPT平衡化</h3>
-                    <p>
-                        さらに、系に対してイオンを追加する。
-                        トポロジーファイルを確認するとわかるが、タンパク質（lysozyme）の電荷は+8（qtot 8）であるため、イオンを加えて電荷を打ち消す必要がある。
-                        イオンの追加には<code>gmx genion</code>を用いるが、その入力ファイルには系の全原子のパラメータを含む形式であるtprファイルを作成しなければならない。
-                        tprファイルは、系の構造ファイルとトポロジーファイルの両方を使用することで<code>gmx grompp</code>によって作成することができる。
-                        <br>
-                        加えて、<code>gmx grompp</code>を実行するためにはさらに追加でmdpファイル（molecular dynamics parameter file）を用意する必要がある。
-                        mdpファイルはMD計算で使用するパラメータの設定ファイルである。
-                        mdpファイルは通常、MD計算の条件（温度、圧力、タイムステップなど）を記述し、<code>gmx grompp</code>によって実際にMD計算を行う際の入力ファイル（tprファイル）を作成するために使用される。
-                        ただし現時点ではイオンを追加するだけなので、今回使用するmdpファイルはその設定のみが記述されている。
-                        <br>
-                    </p>
-                    <p>
-                        ions.mdpを<a download="ions.mdp" href="download/ions.mdp">ここ</a>からダウンロードして<code>gmx grompp</code>を実行する。
-                    </p>
-                    <table>
-                        <tr>
-                            <th>gmx gromppオプション</th>
-                            <th>説明</th>
-                        </tr>
-                        <tr>
-                            <td>-f</td>
-                            <td>入力mdpファイルの指定</td>
-                        </tr>
-                        <tr>
-                            <td>-c</td>
-                            <td>入力構造ファイルの指定</td>
-                        </tr>
-                        <tr>
-                            <td>-p</td>
-                            <td>トポロジーファイルの指定</td>
-                        </tr>
-                        <tr>
-                            <td>-o</td>
-                            <td>出力tprファイルの指定</td>
-                        </tr>
-                    </table>
-
-<pre><code>gmx grompp -f ions.mdp -c 1AKI_solv.gro -p topol.top -o ions.tpr</code></pre>
-
-                    <p>tprファイルは系の全原子の情報を記述したバイナリファイルであり、これを用いて系にイオンを追加する。</p>
-                    <table>
-                        <tr>
-                            <th>gmx genionオプション</th>
-                            <th>説明</th>
-                        </tr>
-                        <tr>
-                            <td>-s</td>
-                            <td>入力tprファイルの指定</td>
-                        </tr>
-                        <tr>
-                            <td>-o</td>
-                            <td>出力構造ファイルの指定</td>
-                        </tr>
-                        <tr>
-                            <td>-p</td>
-                            <td>トポロジーファイルの指定</td>
-                        </tr>
-                        <tr>
-                            <td>-pname</td>
-                            <td>追加する陽イオンの指定</td>
-                        </tr>
-                        <tr>
-                            <td>-nname</td>
-                            <td>追加する陰イオンの指定</td>
-                        </tr>
-                        <tr>
-                            <td>-neutral</td>
-                            <td>系全体の電荷が0になるようにイオンを追加</td>
-                        </tr>
-                    </table>
-
-<pre><code>gmx genion -s ions.tpr -o 1AKI_solv_ions.gro -p topol.top -pname NA -nname CL -neutral</code></pre>
-                   
-                    <p>
-                        実行すると溶媒として利用する分子を聞かれるので、<code>13 （SOL）</code>を選択する。
-                        これにより、溶媒の水分子の一部をイオンに置き換えることができる。
-                        今回は+8の電荷を打ち消すために8つのClイオンが追加されており、トポロジーファイルを確認すると[ molecules ]にイオンが反映されている。
-                    </p>
-
-<pre><code><p class="filename">topol.top</p>    
-[ molecules ]
-; Compound      #mols
-Protein_A         1
-SOL           10636
-CL                8</code></pre>
-
-                    <p>
-                        以上で、系の構築は完了である。VMDで確認してみると、下図のような構造が見られるであろう。
-                    </p>
-                    <div class="image-center">
-                        <img id="lysozyme-solv-ion" src="images/1aki_solv_ion.png" alt="1aki_solv_ion">
+                        <img id="lysozyme-temp-plot" src="images/1aki_temp_plot.png" alt="1aki_temp_plot">
                     </div>
                 </div>
 
                 <div class="content-block">
+                    <h3>NPT平衡化</h3>
+                    <p>
+                        NVT平衡化により系の温度が安定したら、続いてNPT平衡化により圧力制御を行う。
+                        NPTアンサンブルを用いて、300 K、1 barで100 psの平衡化を行う。
+                        <br><br>
+                        NVT平衡化と同様に<code>gmx grompp</code>と<code>gmx mdrun</code>を行う。
+                        NPT平衡化のためのmdpファイルは<a download="npt.mdp" href="download/npt.mdp">ここ</a>からダウンロードして使用する。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>gmx grommpオプション</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>-t</td>
+                            <td>チェックポイントファイルの指定</td>
+                    </table>
+
+<pre><code>gmx grompp -f npt.mdp -c nvt.gro -r nvt.gro -t nvt.cpt -p topol.top -o npt.tpr
+gmx mdrun -deffnm npt</code></pre>
+
+                    <p>
+                        ここで<code>gmx grompp</code>において<code>-t</code>オプションを指定している。
+                        これはNVT平衡化からシミュレーションを継続するためのチェックポイントファイル（cptファイル）を指定するものであり、NVT平衡化により生成した速度を引き継いでNPT平衡化を行うことができる。
+                        <br><br>
+                        NPT平衡化が完了したら、今度は系の圧力制御が正しく行われていることを確認する。
+                        <code>gmx energy</code>で<code>18</code>（Pressure）と<code>0</code>を選択してpressure.xvgを出力する。
+                    </p>
+                    
+<pre><code>gmx energy -f npt.edr -o pressure.xvg</code></pre>
+
+                    <p>
+                        グラフにプロットすると、圧力の変動はかなり大きいことが確認できる。
+                        今回設定した基準圧力が1 barであるのに対して、平衡化での平均値は-25.6±157.9 barとなっている。
+                        このように、圧力はMD計算において大きく変動する量であることを注記しておく。
+                    </p>
+                    <div class="image-center">
+                        <img id="lysozyme-press-plot" src="images/1aki_press_plot.png" alt="1aki_press_plot">
+                    </div>
+                    <p>
+                        同様にして、密度変化も確認しておく。
+                        <code>gmx energy</code>で<code>24</code>（Density）と<code>0</code>を選択し、出力されたdensity.xvgをグラフにプロットする。
+                    </p>
+                    
+<pre><code>gmx energy -f npt.edr -o density.xvg</code></pre>
+                   
+                    <p>
+                        密度の平均値は1018±3 kg m<sup>-3</sup>であり、実験値の1000 kg m<sup>-3</sup>やSPC/E水モデルの1008 kg m<sup>-3</sup>と近い値になっている。
+                        密度の値は100 psの間非常に安定しており、これで系は圧力と密度に関して平衡化されたと判断することができる。
+                    </p>
+                    <div class="image-center">
+                        <img id="lysozyme-dens-plot" src="images/1aki_dens_plot.png" alt="1aki_dens_plot">
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>本計算（Production Run）</h3>
+                    <p>
+                        NVT平衡化、NPT平衡化のステップが完了すると、系は目的の温度と圧力で十分に平衡化されている。
+                        ここからはようやく、シミュレーションデータを収集するための本計算（Production run）を行う。
+                        今回は300 K、1 barを保ったまま1 nsのシミュレーションを行い、構造の変化とその軌跡をデータとして出力する。
+                        <br><br>
+                        <code>-r</code>で指定していた平衡化での位置拘束を外し、<code>-t</code>でNPT平衡化のチェックポイントファイルを指定して<code>gmx grompp</code>と<code>gmx mdrun</code>を行う。
+                        本計算のためのmdpファイルは<a download="md.mdp" href="download/md.mdp">ここ</a>からダウンロードして使用する。
+                    </p>
+
+<pre><code>gmx grompp -f md.mdp -c npt.gro -t npt.cpt -p topol.top -o md_0_1.tpr
+gmx mdrun -deffnm md_0_1</code></pre>
+
+                <p>
+                    計算が終了すると、最終的な構造ファイルと1 nsのトラジェクトリファイルが出力される。
+                    以降はこれらのファイルを用いて、様々な解析を行うことになる。
+                </p>
+                </div>
+
+                <div class="content-block">
                     <h3>まとめ</h3>
-                    <p>これまでの内容をまとめる。系の構築のために以下の手順を踏んだ。</p>
+                    <p>
+                        今回はMD計算の一連の流れを見てきた。手順をまとめておく。
+                    </p>
                     <div id="summary" class="table-of-contents">
                         <ol>
-                            <li>タンパク質のPDBファイルを<code>gmx pdb2gmx</code>によりGROMACSフォーマットに変換した。</li>
-                            <li>シミュレーションボックスを<code>gmx editconf</code>で作成し、<code>gmx solvate</code>によりボックス内を溶媒で満たした。</li>
-                            <li>ボックス内に<code>gmx genion</code>でイオンを追加した。</li>
+                            <li>エネルギー最小化により、系の構造緩和を行った。</li>
+                            <li>NVT平衡化を行い、系の温度制御がなされていることを確認した。</li>
+                            <li>NPT平衡化を行い、系の圧力制御がなされていることを確認した。</li>
+                            <li>本計算を行い、解析に使用するシミュレーションデータを得た。</li>
                         </ol>
                     </div>
-                    <p>次回は作成した系を用いて実際にMD計算をしていく。</p>
+                    <p>次回は得られたデータを用いた分析の例を示していく。</p>
                 </div>
                 
                 <div class="hierarchie-bottom">
@@ -292,7 +275,6 @@ CL                8</code></pre>
                     <a href="gromacs_tutorial1_top.html">TOP</a>
                     <a href="gromacs_tutorial1_3.html">NEXT</a>
                 </div>
-
             </div>
             <script type="text/javascript">loadFooter();</script>
         </div>

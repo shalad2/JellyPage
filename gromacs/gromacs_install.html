@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>GROMACSのインストール</title>
+        <meta name="description" content="GROMACSのインストールページ">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <!-- CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/ress@3.0.0/dist/ress.min.css">
+        <link rel="stylesheet" href="../css/style.css">
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+    <script src="../js/menu.js" type="text/javascript"></script>
+    <script src="../js/footer.js" type="text/javascript"></script>
+    </head>
+
+<body>
+    <div class="page-contents">
+        <!-- Accordion Menu -->
+        <script type="text/javascript">loadMenu('../');</script>
+        <!-- MAIN CONTENTS -->
+        <div class="main-contents">
+            <!-- HEADER IMAGE -->
+            <div id="gromacs" class="big-bg">
+                <div class="title-contents wrapper">
+                    <h2 class="page-title">GROMACS</h2>
+                </div>
+            </div>
+
+            <!-- CONTENTS -->
+            <div class="main-text wrapper">
+                <div class="hierarchie">
+                    <a href="../index.html"><img class="home-icon" src="../images/logo_original.png" alt="home"></a>
+                    <p> ＞ GROMACSのインストール</p>
+                </div>
+                <div>
+                    <h2 class="content-title">GROMACSのインストール</h2>
+                    <p>
+                        ここではGROMACSのインストール方法をまとめている。
+                        GROMACSのバージョンはgromacs-XXXとして表記しているので、基本的には最新のものを選んでインストールする。
+                    </p>
+                </div>
+
+                <div class="content-block">
+                    <h3>インストール手順</h3>
+                    <p>
+                        まず、GROMACSをダウンロードする必要がある。
+                        <a href="https://manual.gromacs.org/documentation/">GROMACS documentation</a>にアクセスし、適切なバージョンのDownloadから「gromacs-XXX.tar.gz」をダウンロードする。
+                        または<code>wget</code>を用いてターミナルで直接ダウンロードしてもよい。
+                    </p>
+
+<pre><code><span id="comment"># GROMACSのインストール先へ移動
+# インストール先のディレクトリにgromacs-XXX.tar.gzを用意しておく</span>
+cd ~/App
+<span id="comment"># ターミナルで直接ダウンロードする場合はここで
+# wget  https://ftp.gromacs.org/gromacs/gromacs-XXX.tar.gz</span>
+tar -xzvf gromacs-XXX.tar.gz
+cd gromacs-XXX
+</code></pre>   
+
+                    <p>
+                        gromacs-XXXのディレクトリへ移動したら<code>ls</code>で中身を確認しておく。
+                        <br><br>
+                        次に、ビルド用のディレクトリとGROMACSをインストールするディレクトリを作成する。
+                    </p>
+
+<pre><code>mkdir build
+mkdir gmx_install
+</code></pre>
+
+                    <p>    
+                        作成したbuildディレクトリへ移動し、<code>cmake</code>を行う。
+                        この時、GROMACSの様々なオプションを指定してインストールすることが多い。
+                        ここではその一例を示す。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>GROMACSインストールオプション</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>-DGMX_BUILD_OWN_FFTW</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>-DREGRESSIONTEST_DOWNLOAD</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>-DCMAKE_INSTALL_PREFIX</td>
+                            <td>GROMACSインストール先の指定</td>
+                        </tr>
+                        <tr>
+                            <td>-DGMX_MPI</td>
+                            <td>並列計算を利用するための設定</td>
+                        </tr>
+                        <tr>
+                            <td>-DGMX_GPU</td>
+                            <td>GPU版のインストール設定</td>
+                        </tr>
+                    </table>
+
+<pre><code>cd build
+cmake ../ \
+-DGMX_BUILD_OWN_FFTW=ON \
+-DREGRESSIONTEST_DOWNLOAD=ON \
+-DCMAKE_INSTALL_PREFIX=${HOME}/App/gromacs-XXX/gmx_install \
+-DGMX_MPI=OFF \
+-DGMX_GPU=OFF
+make -j 4
+make install
+</code></pre>
+                    <p>
+                        Under Constructing ...
+                    </p>
+                </div>
+                
+                <div class="hierarchie-bottom">
+                    <p>PREVIOUS</p>
+                    <a href="../index.html">HOME</a>
+                    <a href="gromacs_tutorial1_top.html">NEXT</a>
+                </div>
+
+            </div>
+            <script type="text/javascript">loadFooter();</script>
+        </div>
+    </div>
+</body>
+</html>

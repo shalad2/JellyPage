@@ -69,8 +69,11 @@ pre {
 code span {
     color: #0bd;
 }
+#comment {
+    color: rgb(163, 163, 163);
+}
 .filename {
-    color: rgb(250, 250, 250);
+    color: rgb(235, 235, 235);
     font-size: 90%;
     display: inline-block;
     background: #66696d;
@@ -444,7 +447,9 @@ ul, li {
 #lysozyme-em-plot,
 #lysozyme-temp-plot,
 #lysozyme-press-plot,
-#lysozyme-dens-plot {
+#lysozyme-dens-plot,
+#lysozyme-rmsd-plot,
+#lysozyme-rg-plot {
     width: 550px;
 }
 #lysozyme-water {

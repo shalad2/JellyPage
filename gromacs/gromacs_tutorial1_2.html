@@ -155,6 +155,7 @@
                         <tr>
                             <td>-r</td>
                             <td>位置拘束パラメータの付与</td>
+                        </tr>
                     </table>
 
 <pre><code>gmx grompp -f nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr
@@ -195,6 +196,7 @@ gmx mdrun -deffnm nvt</code></pre>
                         <tr>
                             <td>-t</td>
                             <td>チェックポイントファイルの指定</td>
+                        </tr>
                     </table>
 
 <pre><code>gmx grompp -f npt.mdp -c nvt.gro -r nvt.gro -t nvt.cpt -p topol.top -o npt.tpr

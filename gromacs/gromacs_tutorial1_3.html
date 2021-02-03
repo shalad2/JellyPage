@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>GROMACSチュートリアル①シミュレーション結果の解析</title>
+        <meta name="description" content="【GROMACSのチュートリアル①】Lysozyme in Water シミュレーション結果の解析ページ">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <!-- CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/ress@3.0.0/dist/ress.min.css">
+        <link rel="stylesheet" href="../css/style.css">
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+    <script src="../js/menu.js" type="text/javascript"></script>
+    <script src="../js/footer.js" type="text/javascript"></script>
+    </head>
+
+<body>
+    <div class="page-contents">
+        <!-- Accordion Menu -->
+        <script type="text/javascript">loadMenu('../');</script>
+        <!-- MAIN CONTENTS -->
+        <div class="main-contents">
+            <!-- HEADER IMAGE -->
+            <div id="gromacs" class="big-bg">
+                <div class="title-contents wrapper">
+                    <h2 class="page-title">GROMACS</h2>
+                </div>
+            </div>
+
+            <!-- CONTENTS -->
+            <div class="main-text wrapper">
+                <div class="hierarchie">
+                    <a href="../index.html"><img class="home-icon" src="../images/logo_original.png" alt="home"></a>
+                    <p> ＞ <a href="gromacs_tutorial1_top.html">GROMACSチュートリアル①</a> ＞ シミュレーション結果の解析</p>
+                </div>
+                <div>
+                    <h2 class="content-title">【GROMACSチュートリアル①】 シミュレーション結果の解析</h2>
+                    <p>
+                        前回までで、水とイオンが入ったボックス内のタンパク質のMDシミュレーションを行った。
+                        今回は得られた最終構造とトラジェクトリを用いて、いくつかの分析をしてみる。
+                    </p>
+                    <div id="list-bottom" class="table-of-contents">
+                        <ol>
+                            <li>トラジェクトリの修正</li>
+                            <li>RMSD</li>
+                            <li>回転半径</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>トラジェクトリの修正</h3>
+                    <p>
+                        まずシミュレーションが正しく終了し、トラジェクトリファイル（md_0_1.xtc）が生成していることを確認する。
+                        トラジェクトリファイルはシミュレーション中の全原子の軌跡を記録したファイルであり、GROMACSにはtrrファイルとxtcファイルの形式がある。
+                    </p>
+                    <div id="list" class="table-of-contents">
+                        <ol>
+                            <li>trrファイル : 原子の位置と速度の情報を含むバイナリファイル</li>
+                            <li>xtcファイル : 原子の位置のみの情報を含むバイナリファイル</li>
+                        </ol>
+                    </div>
+                    <p>
+                        しかしながらVMDでトラジェクトリを確認すると、周期的境界条件により原子がボックスの反対側へジャンプするため、結合が正しく描画されない。
+                        そこで<code>gmx trjconv</code>を使用して、トラジェクトリの座標や周期性を修正する。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>gmx trjconvオプション</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>-s</td>
+                            <td>入力tprファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-f</td>
+                            <td>入力（修正前）トラジェクトリファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-o</td>
+                            <td>出力（修正後）トラジェクトリファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-pbc</td>
+                            <td>周期的境界条件の処理タイプの指定（molは分子の重心をボックス内に入れる）</td>
+                        </tr>
+                        <tr>
+                            <td>-center</td>
+                            <td>指定したグループをボックス中心に配置</td>
+                        </tr>
+                    </table>
+
+<pre><code>gmx trjconv -s md_0_1.tpr -f md_0_1.xtc -o md_0_1_noPBC.xtc -pbc mol -center</code></pre>
+
+                    <p>
+                        コマンドを実行すると中心に配置するグループを聞かれるので<code>1</code>（Protein）を選択し、さらにトラジェクトリを出力するグループとして<code>0</code>（System）を選択する。
+                        修正後の「md_0_1_noPBC.xtc」をVMDで確認すると、先ほどまで見えていた結合の線が消え、見やすいトラジェクトリとなっていることがわかる。
+                    </p>
+                    <div class="image-display caption">
+                        <div>
+                            <img id="lysozyme-trjconv-before" src="images/1aki_trjconv_before.png" alt="1aki_trjconv_before">
+                            <p>Before : md_0_1.xtc</p>
+                        </div>
+                        <div>
+                            <img id="lysozyme-trjconv-after" src="images/1aki_trjconv_after.png" alt="1aki_trjconv_after">
+                            <p>After : md_0_1_noPBC.xtc</p>
+                        </div>
+                    </div>
+                    <p>
+                        これでトラジェクトリファイルの修正は完了である。
+                        今回は1 nsのシミュレーションを行っており、10 psごとに座標を出力している。VMDで動きを確認してみよう。
+                    </p>
+                    <div class="image-center">
+                        <img id="lysozyme-movie" src="images/lysozyme.gif" alt="lysozyme-movie">
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>RMSD</h3>
+                    <p>
+                        RMSDは平均二乗偏差（Root Mean Square Deviation）のことで、タンパク質の構造の非類似性を定量化したものである。
+                        ここではタンパク質のダイナミクスにおいて、対応する各原子のずれの平均二乗偏差を考え、タンパク質の構造安定性を議論する。
+                        修正したトラジェクトリファイルを用いて、<code>gmx rms</code>によりRMSDを計算する。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>gmx rmsオプション</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>-s</td>
+                            <td>入力tprファイルの指定（ここでの構造が参照される）</td>
+                        </tr>
+                        <tr>
+                            <td>-f</td>
+                            <td>入力トラジェクトリファイルの指定（ここでの構造と比較する）</td>
+                        </tr>
+                        <tr>
+                            <td>-o</td>
+                            <td>出力ファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-tu</td>
+                            <td>時間単位の指定（デフォルトはps、今回はns）</td>
+                        </tr>
+                    </table>
+
+<pre><code>gmx rms -s md_0_1.tpr -f md_0_1_noPBC.xtc -o rmsd.xvg -tu ns</code></pre>
+
+                    <p>
+                        最小二乗法とRMSD計算の対象グループに<code>4</code>（Backbone）を選択すると、平衡化されたタンパク質の構造を参照して水溶液中でのタンパク質のRMSDが計算され、rmsd.xvgが出力される。
+                        同様にして、結晶状態（ダイナミクスを行う前）のタンパク質の構造を参照して、RMSDを計算してみる。
+                    </p>
+                    
+<pre><code>gmx rms -s em.tpr -f md_0_1_noPBC.xtc -o rmsd_xtal.xvg -tu ns</code></pre>
+
+                    <p>
+                        rmsd_xtal.xvgが得られたら、両者を重ねてグラフにプロットしてみる。
+                    </p>
+                    <div class="image-center">
+                        <img id="lysozyme-rmsd-plot" src="images/1aki_rmsd_plot.png" alt="1aki_rmsd_plot">
+                    </div>
+                    <p>
+                        どちらのRMSDも約0.1 nm（1 &Aring;）まで低下しており、タンパク質の構造が十分に安定化していることを示している。
+                        また、プロット間の微妙な違いは平衡化されたタンパク質の構造が結晶状態の構造とわずかに異なることに起因している。
+                        これは平衡化の過程での位置拘束が完全なものではないことや、エネルギー最小化された構造が必ずしも安定構造ではないことから予想される。
+                    </p>
+                </div>
+
+                <div class="content-block">
+                    <h3>回転半径</h3>
+                    <p>
+                        タンパク質の回転半径R<sub>g</sub>は、そのタンパク質がどのくらいコンパクトであるか（折り畳まれているか）を表す指標である。
+                        タンパク質が安定に折り畳まれてる場合、R<sub>g</sub>は比較的一定の値を維持する。
+                        一方でタンパク質が展開した場合、R<sub>g</sub>は時間とともに変化する値となる。
+                        ここでは<code>gmx gyrate</code>を用いて回転半径を計算する。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>gmx gyrateオプション</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>-s</td>
+                            <td>入力tprファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-f</td>
+                            <td>入力トラジェクトリファイルの指定</td>
+                        </tr>
+                        <tr>
+                            <td>-o</td>
+                            <td>出力ファイルの指定</td>
+                        </tr>
+                    </table>
+
+<pre><code>gmx gyrate -s md_0_1.tpr -f md_0_1_noPBC.xtc -o gyrate.xvg</code></pre>
+
+                    <p>
+                        回転半径の計算の対象グループとして<code>1</code>（Protein）を選択し、出力されたgyrate.xvgをグラフにプロットする。
+                    </p>
+                    <div class="image-center">
+                        <img id="lysozyme-rg-plot" src="images/1aki_rg_plot.png" alt="1aki_rg_plot">
+                    </div>
+                    <p>
+                        タンパク質の回転半径は300 Kで1 nsにわたってほぼ一定であり、タンパク質は折り畳まれた状態で安定していることがわかる。
+                    </p>  
+                </div>
+
+                <div class="content-block">
+                    <h3>まとめ</h3>
+                    <p>
+                        今回はタンパク質のMD計算の結果を用いて、いくつかの分析をしてきた。
+                    </p>
+                    <div id="summary" class="table-of-contents">
+                        <ol>
+                            <li><code>gmx trjconv</code>でトラジェクトリの修正を行った。</li>
+                            <li><code>gmx rms</code>でタンパク質のRMSDを計算した。</li>
+                            <li><code>gmx gyrate</code>でタンパク質の回転半径を計算した。</li>
+                        </ol>
+                    </div>
+                    <p>
+                        シミュレーション結果を分析する時、目的の物理量を得るためにプログラムを自作することも多い。
+                        しかしながら、一般的に調べられている物理量であれば、GROMACSなどのソフトウェアが提供するプログラムを利用するのも強力である。
+                        GROMACSが提供するその他のコマンドについては<a href="https://manual.gromacs.org/archive/5.0.2/programs/bytopic.html">こちら</a>を参照してほしい。
+                    </p>
+                </div>
+                
+                <div class="hierarchie-bottom">
+                    <a href="gromacs_tutorial1_2.html">PREVIOUS</a>
+                    <a href="gromacs_tutorial1_top.html">TOP</a>
+                    <a href="gromacs_tutorial1_4.html">NEXT</a>
+                </div>
+            </div>
+            <script type="text/javascript">loadFooter();</script>
+        </div>
+    </div>
+</body>
+</html>

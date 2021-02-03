@@ -37,9 +37,6 @@ function loadMenu(rootDir){
                             '<li><a href="' + rootDir + 'gromacs/gromacs_install.html">GROMACSのインストール</a></li>' +
                             '<li><a href="' + rootDir + 'gromacs/gromacs_tutorial1_top.html">GROMACSチュートリアル①</a></li>' +
                             '<li><a href="' + rootDir + 'gromacs/gromacs_tutorial2_top.html">GROMACSチュートリアル②</a></li>' +
-                            '<li>CLICKメニュー3</li>' +
-                            '<li>CLICKメニュー4</li>' + 
-                            '<li>CLICKメニュー5</li>' +
                         '</ul>' +
                     '</li>' +
                 '</ul>' +
@@ -59,7 +56,7 @@ function loadMenu(rootDir){
                     '<li>' +
                         '<div class="menu">Linux</div>' +
                         '<ul>' +
-                            '<li>メニュー1</li>' +
+                            '<li><a href="' + rootDir + 'linux/command1.html">Linuxコマンド【初級編】</a></li>' +
                             '<li>メニュー2</li>' +
                             '<li>メニュー3</li>' +
                             '<li>メニュー4</li>' + 

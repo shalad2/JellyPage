@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>LAMMPSインプットコマンド</title>
+        <meta name="description" content="LAMMPSインプットファイルで使用するコマンドのまとめ">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <!-- CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/ress@3.0.0/dist/ress.min.css">
+        <link rel="stylesheet" href="../css/style.css">
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+    <script src="../js/menu.js" type="text/javascript"></script>
+    <script src="../js/footer.js" type="text/javascript"></script>
+    </head>
+
+<body>
+    <div class="page-contents">
+        <!-- Accordion Menu -->
+        <script type="text/javascript">loadMenu('../');</script>
+        <!-- MAIN CONTENTS -->
+        <div class="main-contents">
+            <!-- HEADER IMAGE -->
+            <div id="lammps-input-bg" class="big-bg">
+                <div class="title-contents wrapper">
+                    <h2 class="page-title">LAMMPS</h2>
+                </div>
+            </div>
+
+            <!-- CONTENTS -->
+            <div class="main-text wrapper">
+                <div class="hierarchie">
+                    <a href="../index.html"><img class="home-icon" src="../images/logo_original.png" alt="home"></a>
+                    <p> ＞ <a href="gromacs_tutorial1_top.html"></a> ＞ LAMMPSインプットコマンド</p>
+                </div>
+                <div>
+                    <h2 class="content-title">【LAMMPS】インプットコマンド</h2>
+                    <p>
+                        LAMMPSでMDシミュレーションを実行する際、インプットファイルで使用するコマンドをまとめた。
+                    </p>
+                    <div id="list" class="table-of-contents">
+                        <ol>
+                            <li>単位とボックス情報</li>
+                            <li>入力ファイルの読み込み</li>
+                            <li>パラメータ情報</li>
+                            <li>タイムステップとアンサンブル情報</li>
+                            <li>出力情報</li>
+                        </ol>
+                    </div>
+                    <p>
+                        より詳しいコマンドの使い方は<a href="https://lammps.sandia.gov/doc/commands_list.html">LAMMPS公式ドキュメント</a>を参照してほしい。
+                    </p>
+                    
+                </div>
+
+                <div class="content-block">
+                    <h3>単位とボックス情報</h3>
+                    <h4>units</h4>
+                    <p>
+                        シミュレーションに使用する単位系を指定するコマンド。
+                        入力ファイル、出力ファイル及び画面出力などの全ての単位に反映される。
+                        基本的にインプットファイルの一番最初に記述する。
+                    </p>
+
+<pre id="bottom-padding"><code><span id="lammps-input">units</span> real</code></pre>
+
+                    <table>
+                        <tr>
+                            <th>units</th>
+                            <th>説明（一部のみ抜粋）</th>
+                        </tr>
+                        <tr>
+                            <td>lj</td>
+                            <td>単位がなく、全て基準値の倍数として扱う（詳細は公式ドキュメントへ）</td>
+                        </tr>
+                        <tr>
+                            <td>real</td>
+                            <td>
+                                質量 : g/mol<br>
+                                距離 : &Aring;<br>
+                                時間 : fs<br>
+                                エネルギー : kcal/mol<br>
+                                圧力 : atm
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>metal</td>
+                            <td>
+                                質量 : g/mol<br>
+                                距離 : &Aring;<br>
+                                時間 : ps<br>
+                                エネルギー : eV<br>
+                                圧力 : bar
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>si</td>
+                            <td>
+                                質量 : kg<br>
+                                距離 : m<br>
+                                時間 : s<br>
+                                エネルギー : J<br>
+                                圧力 : Pa
+                            </td>
+                        </tr>
+                    </table>
+                    <p>
+                        この他にもcgs、electron、microが選択できる。realを使うことが多い印象。
+                    </p>
+
+                    <h4>atom_style</h4>
+                    <p>
+                        シミュレーションで使用する原子のスタイルを指定するコマンド。
+                        インプットファイルでは<code>read_data</code>などのシミュレーションのセットアップコマンドより前に記述する。
+                        以下にその一部を示すが、基本的にはfullを指定すればよいと思う。
+                    </p>
+
+<pre id="bottom-padding"><code><span id="lammps-input">atom_style</span> full</code></pre>
+
+                    <table>
+                        <tr>
+                            <th>atom_style</th>
+                            <th>説明</th>
+                            <th>使用例</th>
+                        </tr>
+                        <tr>
+                            <td>atomic</td>
+                            <td>デフォルト値のみ</td>
+                            <td>粗視化流体・固体・金属</td>
+                        </tr>
+                        <tr>
+                            <td>bond</td>
+                            <td>結合</td>
+                            <td>スプリングポリマー</td>
+                        </tr>
+                        <tr>
+                            <td>charge</td>
+                            <td>電荷</td>
+                            <td>電荷を持つ原子系</td>
+                        </tr>
+                        <tr>
+                            <td>molecular</td>
+                            <td>結合、結合角、二面角、improper</td>
+                            <td>電荷を持たない分子</td>
+                        </tr>
+                        <tr>
+                            <td>full</td>
+                            <td>molecular + charge</td>
+                            <td>生体分子</td>
+                        </tr>
+                    </table>
+
+                    <h4>dimension</h4>
+                    <p>
+                        シミュレーションの次元を設定するコマンド。
+                        デフォルトでは3Dのシミュレーションを行う。
+                        2Dのシミュレーションを行う場合は、ボックスの定義やセットアップの前に記述する必要がある。
+                    </p>
+
+<pre id="bottom-padding"><code><span id="lammps-input">dimension</span> 3</code></pre>
+
+                    <h4>boundary</h4>
+                    <p>
+                        シミュレーションボックスの各次元の境界条件を設定するコマンド。
+                        1文字で指定するとその次元の上下面に設定が適用されるが、2文字で指定すると1文字目が下面、2文字目が上面に適用される。
+                        シミュレーションボックスの初期サイズは<code>read_data</code>や<code>read_restart</code>で設定する。
+                    </p>
+
+<pre id="bottom-padding"><code><span id="lammps-input">boundary</span> p p p
+<span id="lammps-input">boundary</span> p fs p
+<span id="lammps-input">boundary</span> s f fm
+</code></pre>
+
+                    <table>
+                        <tr>
+                            <th>boundary</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>p</td>
+                            <td>周期的境界条件</td>
+                        </tr>
+                        <tr>
+                            <td>f</td>
+                            <td>非周期的境界、面の位置は固定</td>
+                        </tr>
+                        <tr>
+                            <td>s</td>
+                            <td>非周期的境界、面の位置は原子の動きに合わせて移動（シュリンクラッピング）</td>
+                        </tr>
+                        <tr>
+                            <td>m</td>
+                            <td>非周期的境界、シュリンクラッピングが発生するが、規定値よりは小さくならない</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="content-block">
+                    <h3>入力ファイルの読み込み</h3>
+                    <h4>read_data</h4>
+                    <p>
+                        シミュレーションを実行するために必要なDATAファイルを読み込むコマンド。
+                        DATAファイルに記述されている原子の座標情報、ボックスサイズなどを読み込む。
+                        LAMMPSのインプットファイルには別途パラメータファイル（PARMファイル）も用意しておき、<code>include</code>で読み込むのが一般的。
+                    </p>                 
+
+<pre id="bottom-padding"><code><span id="lammps-input">read_data</span> DATA.FILE</code></pre>
+
+                    <h4>read_restart</h4>
+                    <p>
+                        シミュレーションを継続する時に必要なrestartファイルを読み込むコマンド。
+                        以前行ったシミュレーションで出力されたrestartファイルを指定することで、前回の続きからシミュレーションを実行できる。
+                        <code>read_restart</code>を使用する時は<code>read_data</code>はコメントアウトしておく。
+                    </p>
+
+<pre id="bottom-padding"><code><span id="comment"># read_data DATA.FILE</span>
+<span id="lammps-input">read_restart</span> restartA
+</code></pre>                    
+                    <p>なお<code>read_restart</code>を使用する時、タイムステップを0に戻すために<code>reset_timestep</code>を用いることが多い</p>
+                
+                    <h4>include</h4>
+                    <p>
+                        新しいLAMMPSインプットファイルを読み込むコマンド。
+                        <code>include</code>するファイルにインプットコマンドを記述しておくことで、追加でコマンドの実行が可能になる。
+                        使い方としては、パラメータとそれに関連するコマンドをまとめたパラメータファイルを別に用意しておき、これを読み込むことでシミュレーションを実行するなどがある。
+                    </p>
+
+<pre id="bottom-padding"><code><span id="lammps-input">include</span> PARM.FILE</code></pre>
+
+                </div>
+
+                <div class="content-block">
+                    <h3>パラメータ情報</h3>
+                    
+                </div>
+                
+                <div class="hierarchie-bottom">
+                    <p>PREVIOUS</p>
+                    <a href="gromacs_tutorial1_top.html">TOP</a>
+                    <a href="gromacs_tutorial1_2.html">NEXT</a>
+                </div>
+
+            </div>
+            <script type="text/javascript">loadFooter();</script>
+        </div>
+    </div>
+</body>
+</html>

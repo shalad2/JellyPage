@@ -72,6 +72,12 @@ code span {
 #comment {
     color: rgb(163, 163, 163);
 }
+#lammps-input {
+    color: rgb(96, 255, 96);
+}
+#bottom-padding {
+    margin-bottom: 3.5%;
+}
 .filename {
     color: rgb(235, 235, 235);
     font-size: 90%;
@@ -157,10 +163,15 @@ ul, li {
 }
 .page-title {
     font-size: 4rem;
+    color: #432;
+    text-shadow: 0 0 2px #fff, 0 0 2px #fff, 0 0 2px #fff, 0 0 2px #fff, 0 0 2px #fff, 0 0 2px #fff;
     font-family: 'Times New Roman', Times, serif;
     text-transform: uppercase;
     font-weight: normal;
     padding-top: 10px;
+}
+#top {
+    text-shadow: none;
 }
 .big-bg {
     background-size: cover;
@@ -385,8 +396,8 @@ ul, li {
         padding: 0.3em 0.5em 0.2em 0.5em;
     }
     .content-block h4 {
-        margin: 2% 0%;
-        padding: 0.3em 0.6em 0.2em 0.6em;
+        margin: 3.5% 0% 1.5% 0%;
+        padding: 0.4em 0.6em 0.2em 0.6em;
         border-left: solid 6px powderblue;
         font-size: 100%;
     }
@@ -433,8 +444,14 @@ ul, li {
 #gromacs {
     background-image: url(../gromacs/images/main-bg.png);
     background-position: center;
-    background-color: rgba(255,255,255,0.5);
-    background-blend-mode:lighten;
+}
+#linux-command-bg {
+    background-image: url(../linux/images/linux_sl.png);
+    background-position: 50% 65%;
+}
+#lammps-input-bg {
+    background-image: url(../lammps/images/lammps_input_bg.png);
+    background-position: center;
 }
 
 #lysozyme-structure-top,

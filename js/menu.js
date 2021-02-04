@@ -44,7 +44,7 @@ function loadMenu(rootDir){
                     '<li>' +
                         '<div class="menu">LAMMPS</div>' +
                         '<ul>' +
-                            '<li>メニュー1</li>' +
+                            '<li><a href="' + rootDir + 'lammps/lammps_input.html">LAMMPSインプットコマンド</a></li>' +
                             '<li>メニュー2</li>' +
                             '<li>メニュー3</li>' +
                             '<li>メニュー4</li>' + 
@@ -56,8 +56,8 @@ function loadMenu(rootDir){
                     '<li>' +
                         '<div class="menu">Linux</div>' +
                         '<ul>' +
-                            '<li><a href="' + rootDir + 'linux/command1.html">Linuxコマンド【初級編】</a></li>' +
-                            '<li>メニュー2</li>' +
+                            '<li><a href="' + rootDir + 'linux/linux_command1.html">Linuxコマンド【初級編】</a></li>' +
+                            '<li><a href="' + rootDir + 'linux/linux_command2.html">Linuxコマンド【中級編】</a></li>' +
                             '<li>メニュー3</li>' +
                             '<li>メニュー4</li>' + 
                             '<li>メニュー5</li>' +

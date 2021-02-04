@@ -2,8 +2,8 @@
 <html lang="ja">
     <head>
         <meta charset="UTF-8">
-        <title>Linuxコマンドの使い方</title>
-        <meta name="description" content="Linuxコマンドの使い方【初級編】">
+        <title>Linuxコマンドの使い方【中級編】</title>
+        <meta name="description" content="Linuxコマンドの使い方【中級編】">
         <meta name="viewport" content="width=device-width,initial-scale=1">
 
     <!-- CSS -->
@@ -22,7 +22,7 @@
         <!-- MAIN CONTENTS -->
         <div class="main-contents">
             <!-- HEADER IMAGE -->
-            <div id="linux" class="big-bg">
+            <div id="linux-command-bg" class="big-bg">
                 <div class="title-contents wrapper">
                     <h2 class="page-title">Linux</h2>
                 </div>
@@ -32,12 +32,13 @@
             <div class="main-text wrapper">
                 <div class="hierarchie">
                     <a href="../index.html"><img class="home-icon" src="../images/logo_original.png" alt="home"></a>
-                    <p> ＞ <a href="gromacs_tutorial1_top.html">Linixコマンド</a> ＞ Linuxコマンド【初級編】</p>
+                    <p> ＞ <a href="linux_command_top.html">Linixコマンド</a> ＞ Linuxコマンド【中級編】</p>
                 </div>
                 <div>
-                    <h2 class="content-title">Linuxコマンド【初級編】</h2>
+                    <h2 class="content-title">Linuxコマンド【中級編】</h2>
                     <p>
-                        ここでは、Linuxを使用するにあたって必須になるであろうコマンドを紹介する。
+                        ここでは、<a href="./linux_command1.html">Linuxコマンド【初級編】</a>で紹介しきれなかったLinuxコマンドを取り上げる。
+                        実際の作業で便利なコマンドがたくさんあるのでマスターしてほしい。
                     </p>
                     <table>
                         <tr>
@@ -45,43 +46,48 @@
                             <th>説明</th>
                         </tr>
                         <tr>
-                            <td>pwd</td>
-                            <td>カレントディレクトリのパスを表示</td>
+                            <td>cat</td>
+                            <td>ファイルの中身を表示</td>
                         </tr>
                         <tr>
-                            <td>cd</td>
-                            <td>ディレクトリを移動</td>
+                            <td>tail</td>
+                            <td>ファイルの末尾を表示</td>
                         </tr>
                         <tr>
-                            <td>ls</td>
-                            <td>ディレクトリの中身を表示</td>
+                            <td>grep</td>
+                            <td>指定した文字列がファイル内に存在する場合、その行を抽出</td>
                         </tr>
                         <tr>
-                            <td>mkdir</td>
-                            <td>ディレクトリを新規作成</td>
+                            <td>sed</td>
+                            <td>文字や文字列を変換</td>
                         </tr>
                         <tr>
-                            <td>cp</td>
-                            <td>ファイルまたはディレクトリをコピー</td>
+                            <td>ln</td>
+                            <td>ファイルやディレクトリにリンクを設定</td>
                         </tr>
                         <tr>
-                            <td>mv</td>
-                            <td>ファイルまたはディレクトリを移動、名前の変更</td>
+                            <td>find</td>
+                            <td>ファイルを検索</td>
                         </tr>
                         <tr>
-                            <td>rm</td>
-                            <td>ファイルまたはディレクトリを削除</td>
+                            <td>tar</td>
+                            <td>アーカイブを作成または復元</td>
+                        </tr>
+                        <tr>
+                            <td>bash</td>
+                            <td>シェルスクリプトの実行</td>
                         </tr>
                     </table>
                     <p>
-                        その他のコマンドについては<a href="">Linuxコマンド【中級編】</a>及び<a href="">Linuxコマンド【上級編】</a>で紹介している。
+                        ここまでのコマンドが使えるのであれば、Linuxでほとんどの作業ができるであろう。
+                        <a href="">Linuxコマンド【上級編】</a>では筆者の備忘録も兼ねて、さらにいくつかのコマンドを紹介している。
                     </p>
                 </div>
 
                 <div class="content-block">
-                    <h3>pwd</h3>
+                    <h3>cat</h3>
                     <p>
-                        <code>pwd</code>は現在のディレクトリ（カレントディレクトリ）のパスを表示するコマンドである。
+                        <code>cat</code>は現在のディレクトリ（カレントディレクトリ）のパスを表示するコマンドである。
                     </p>
 
 <pre><code>[user@local ~]$ pwd

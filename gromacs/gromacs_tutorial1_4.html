@@ -133,14 +133,18 @@ Protein_chain_A     3
 </code></pre>
 
                 <p>
-                    なお[ pair ]では分子内のペア相互作用を定義し、1-4非結合相互作用などを扱うことができる。
-                    また[ dihedral ]ではimproper dihedralも定義されているため、セクションが2つに分けられている。
+                    なお[ pairs ]では分子内のペア相互作用を定義し、1-4非結合相互作用などを扱うことができる。
+                    また[ dihedrals ]ではimproper dihedralも定義されているため、セクションが2つに分けられている。
                 </p>
 
                 <div class="content-block">
                     <h3>位置拘束パラメータ、水・イオンの力場パラメータ</h3>
                     <p>
-                        Now Writing ...
+                        このセクションでは位置拘束パラメータの定義と、水とイオンの力場パラメータの導入をしている。
+                        タンパク質の位置拘束パラメータは<code>gmx pdb2gmx</code>を実行した時に生成したposre.itpの中に記述されており、位置拘束を有効にする設定をした場合に呼び出される。
+                        同様に、水の位置拘束も設定を有効にするとPOSRES_WATERから呼び出される。
+                        <br><br>
+                        また、水とイオンのパラメータもOPLS-AAで導入するので、SPC/E水モデルのパラメータファイルspce.itpとイオンのパラメータファイルions.itpを読み込んでいる。
                     </p>
                     
 
@@ -164,13 +168,18 @@ Protein_chain_A     3
 #include "oplsaa.ff/ions.itp"
 </code></pre>
 
-                     
+                    <p>
+                        今回は水モデルにSPC/Eモデルを使用したが、他にもSPCやTIP3P、TIP4Pなどが選択できる。
+                        水モデルにはそれぞれの特徴があるので、シミュレーションの目的に合ったモデルを選択するようにしよう。
+                    </p>                    
                 </div>
 
                 <div class="content-block">
                     <h3>系全体の情報</h3>
                     <p>
-                        かいてるよ
+                        最後に、系の名前と含まれる分子の一覧が記述されているセクションがある。
+                        この系での系の名前は「LYSOZYME」となっているが、この部分は任意の名前に変更することができる。
+                        一方で、[ molecules ]には系に含まれる分子の名前と個数が記されているので、作成した系が正しいかどうか確認しておく。
                     </p>
 
 <pre><code><p class="filename">topol.top</p>
@@ -186,14 +195,15 @@ CL                8
 </code></pre>                    
 
                     <p>
-                        
+                        以上がトポロジーファイルの内容である。
+                        基本的には<code>gmx pdb2gmx</code>で生成されるものを用いればよいが、シミュレーションによっては一部修正をすることもあるだろう。
                     </p>
                 </div>
                 
                 <div class="hierarchie-bottom">
-                    <a href="gromacs_tutorial1_2.html">PREVIOUS</a>
+                    <a href="gromacs_tutorial1_3.html">PREVIOUS</a>
                     <a href="gromacs_tutorial1_top.html">TOP</a>
-                    <a href="gromacs_tutorial1_4.html">NEXT</a>
+                    <a href="gromacs_tutorial1_5.html">NEXT</a>
                 </div>
             </div>
             <script type="text/javascript">loadFooter();</script>

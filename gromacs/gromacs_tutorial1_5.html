@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>GROMACSチュートリアル①【補足】mdpファイルの詳細</title>
+        <meta name="description" content="【GROMACSのチュートリアル①】Lysozyme in Water mdpファイルの詳細ページ">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <!-- CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/ress@3.0.0/dist/ress.min.css">
+        <link rel="stylesheet" href="../css/style.css">
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+    <script src="../js/menu.js" type="text/javascript"></script>
+    <script src="../js/footer.js" type="text/javascript"></script>
+    </head>
+
+<body>
+    <div class="page-contents">
+        <!-- Accordion Menu -->
+        <script type="text/javascript">loadMenu('../');</script>
+        <!-- MAIN CONTENTS -->
+        <div class="main-contents">
+            <!-- HEADER IMAGE -->
+            <div id="gromacs" class="big-bg">
+                <div class="title-contents wrapper">
+                    <h2 class="page-title">GROMACS</h2>
+                </div>
+            </div>
+
+            <!-- CONTENTS -->
+            <div class="main-text wrapper">
+                <div class="hierarchie">
+                    <a href="../index.html"><img class="home-icon" src="../images/logo_original.png" alt="home"></a>
+                    <p> ＞ <a href="gromacs_tutorial1_top.html">GROMACSチュートリアル①</a> ＞ 【補足】mdpファイルの詳細</p>
+                </div>
+                <div>
+                    <h2 class="content-title">【GROMACSチュートリアル①　補足】 mdpファイルの詳細</h2>
+                    <p>
+                        ここでは、タンパク質のシミュレーションで使用したmdpファイルの詳細に触れる。
+                        MDシミュレーションの一般的な流れと使用したmdpファイルは（ions.mdpを除いて）次のようなものであった。
+                    </p>
+                    <div id="list" class="table-of-contents">
+                        <ol>
+                            <li>エネルギー最小化 : minim.mdp</li>
+                            <li>NVT平衡化 : nvt.mdp</li>
+                            <li>NPT平衡化 : npt.mdp</li>
+                            <li>本計算 : md.mdp</li>
+                        </ol>
+                    </div>
+                    <p>
+                        それぞれのファイルでどのような設定を行っているのか、重要なポイントに絞って解説する。
+                        ここで紹介しなかったコマンドやより詳しい解説は<a href="gromacs_mdp.html">GROMACS.mdpオプション</a>または<a href="https://manual.gromacs.org/documentation/2018/user-guide/mdp-options.html" target="_blank" rel="noopener noreferrer">公式ドキュメント</a>を参照してほしい。
+                        なお、全ての設定に対してコメントが付いているので、それを読んで理解してもらってもよいだろう。
+                    </p>
+                </div>
+
+                <div class="content-block">
+                    <h3>minim.mdp</h3>
+                    <p>
+                        エネルギー最小化のために使用したminim.mdpの内容は次のようなものであった。
+                    </p>
+
+<pre><code><p class="filename">minim.mdp</p>
+<span id="comment">; minim.mdp - used as input into grompp to generate em.tpr
+; Parameters describing what to do, when to stop and what to save</span>
+integrator  = steep         <span id="comment">; Algorithm (steep = steepest descent minimization)</span>
+emtol       = 1000.0        <span id="comment">; Stop minimization when the maximum force < 1000.0 kJ/mol/nm</span>
+emstep      = 0.01          <span id="comment">; Minimization step size</span>
+nsteps      = 50000         <span id="comment">; Maximum number of (minimization) steps to perform</span>
+    
+<span id="comment">; Parameters describing how to find the neighbors of each atom and how to calculate the interactions</span>
+nstlist         = 1         <span id="comment">; Frequency to update the neighbor list and long range forces</span>
+cutoff-scheme   = Verlet    <span id="comment">; Buffered neighbor searching</span>
+ns_type         = grid      <span id="comment">; Method to determine neighbor list (simple, grid)</span>
+coulombtype     = PME       <span id="comment">; Treatment of long range electrostatic interactions</span>
+rcoulomb        = 1.0       <span id="comment">; Short-range electrostatic cut-off</span>
+rvdw            = 1.0       <span id="comment">; Short-range Van der Waals cut-off</span>
+pbc             = xyz       <span id="comment">; Periodic Boundary Conditions in all 3 dimensions</span>
+</code></pre>
+                    <p>
+                        1つ目のセクションでは、エネルギー最小化のために<code>integrator = steep</code>で最急降下アルゴリズムを採用している。
+                        <code>emtol = 1000.0</code>は最大力F<sub>max</sub>が1000 kJ mol<sup>-1</sup> nm<sup>-1</sup>以下の値となるまでエネルギー最小化を行う設定をしている。
+                        エネルギー最小化の最大ステップ数は<code>nsteps = 50000</code>としていて、これより前にエネルギーが最小化された場合はそこで停止する。
+                        <br><br>
+                        また、2つ目のセクションでは非結合相互作用（LJ相互作用、静電相互作用）に関する設定をしている。
+                        <code>pbc = xyz</code>は3次元の周期的境界条件を指定している。
+                        
+                    </p>
+                </div>
+
+                <div class="content-block">
+                    <h3>nvt.mdp</h3>
+                    <p>
+                        300 Kにおける100 psのNVT平衡化のために使用したnvt.mdpの内容は次のようなものであった。
+                    </p>
+
+<pre><code><p class="filename">nvt.mdp</p>
+title                   = OPLS Lysozyme NVT equilibration 
+define                  = -DPOSRES  <span id="comment">; position restrain the protein</span>
+<span id="comment">; Run parameters</span>
+integrator              = md        <span id="comment">; leap-frog integrator</span>
+nsteps                  = 50000     <span id="comment">; 2 * 50000 = 100 ps</span>
+dt                      = 0.002     <span id="comment">; 2 fs</span>
+<span id="comment">; Output control</span>
+nstxout                 = 500       <span id="comment">; save coordinates every 1.0 ps</span>
+nstvout                 = 500       <span id="comment">; save velocities every 1.0 ps</span>
+nstenergy               = 500       <span id="comment">; save energies every 1.0 ps</span>
+nstlog                  = 500       <span id="comment">; update log file every 1.0 ps</span>
+<span id="comment">; Bond parameters</span>
+continuation            = no        <span id="comment">; first dynamics run</span>
+constraint_algorithm    = lincs     <span id="comment">; holonomic constraints</span>
+constraints             = h-bonds   <span id="comment">; bonds involving H are constrained</span>
+lincs_iter              = 1         <span id="comment">; accuracy of LINCS</span>
+lincs_order             = 4         <span id="comment">; also related to accuracy</span>
+<span id="comment">; Nonbonded settings</span>
+cutoff-scheme           = Verlet    <span id="comment">; Buffered neighbor searching</span>
+ns_type                 = grid      <span id="comment">; search neighboring grid cells</span>
+nstlist                 = 10        <span id="comment">; 20 fs, largely irrelevant with Verlet</span>
+rcoulomb                = 1.0       <span id="comment">; short-range electrostatic cutoff (in nm)</span>
+rvdw                    = 1.0       <span id="comment">; short-range van der Waals cutoff (in nm)</span>
+DispCorr                = EnerPres  <span id="comment">; account for cut-off vdW scheme</span>
+<span id="comment">; Electrostatics</span>
+coulombtype             = PME       <span id="comment">; Particle Mesh Ewald for long-range electrostatics</span>
+pme_order               = 4         <span id="comment">; cubic interpolation</span>
+fourierspacing          = 0.16      <span id="comment">; grid spacing for FFT</span>
+<span id="comment">; Temperature coupling is on</span>
+tcoupl                  = V-rescale             <span id="comment">; modified Berendsen thermostat</span>
+tc-grps                 = Protein Non-Protein   <span id="comment">; two coupling groups - more accurate</span>
+tau_t                   = 0.1     0.1           <span id="comment">; time constant, in ps</span>
+ref_t                   = 300     300           <span id="comment">; reference temperature, one for each group, in K</span>
+<span id="comment">; Pressure coupling is off</span>
+pcoupl                  = no        <span id="comment">; no pressure coupling in NVT</span>
+<span id="comment">; Periodic boundary conditions</span>
+pbc                     = xyz       <span id="comment">; 3-D PBC</span>
+<span id="comment">; Velocity generation</span>
+gen_vel                 = yes       <span id="comment">; assign velocities from Maxwell distribution</span>
+gen_temp                = 300       <span id="comment">; temperature for Maxwell distribution</span>
+gen_seed                = -1        <span id="comment">; generate a random seed</span>
+</code></pre>
+
+                    <p>
+                        NVT平衡化のMD計算を行うために<code>integrator = md</code>としている。
+                        タイムステップは2 fsに設定するので、psの単位で<code>dt = 0.002</code>としており、100 psのシミュレーションのためには<code>nsteps = 50000</code>が必要になる。
+                        <br><br>
+                        シミュレーションを始める際には原子に初速度が必要であるので、シミュレーション開始時に<code>gen_vel = yes</code>でマクスウェル分布に従ってランダムな速度を与える。
+                        温度制御は<code>tcoupl = V-rescale</code>という方法で行い、温度は<code>ref_t = 300</code>を参照する。
+                        NVTアンサンブルなので圧力は制御せず、<code>pcoupl = no</code>としている。
+                        <br><br>
+                        結果の出力は「Output control」の部分で行い、原子の座標や速度、系のエネルギー、シミュレーションのログファイルを何ステップおきに出力するかを設定する。
+                        タイムステップは2 fsなので、<code>nstxout = 500</code>とすると座標の出力は1 psおきに設定される。
+                    </p>
+                </div>           
+
+                <div class="content-block">
+                    <h3>npt.mdp</h3>
+                    <p>
+                        300 K、1barにおける100 psのNPT平衡化のために使用したnpt.mdpの内容は次のようなものであった。
+                    </p>
+                    
+<pre><code><p class="filename">npt.mdp</p>
+title                   = OPLS Lysozyme NPT equilibration 
+define                  = -DPOSRES  <span id="comment">; position restrain the protein</span>
+<span id="comment">; Run parameters</span>
+integrator              = md        <span id="comment">; leap-frog integrator</span>
+nsteps                  = 50000     <span id="comment">; 2 * 50000 = 100 ps</span>
+dt                      = 0.002     <span id="comment">; 2 fs</span>
+<span id="comment">; Output control</span>
+nstxout                 = 500       <span id="comment">; save coordinates every 1.0 ps</span>
+nstvout                 = 500       <span id="comment">; save velocities every 1.0 ps</span>
+nstenergy               = 500       <span id="comment">; save energies every 1.0 ps</span>
+nstlog                  = 500       <span id="comment">; update log file every 1.0 ps</span>
+<span id="comment">; Bond parameters</span>
+continuation            = yes       <span id="comment">; Restarting after NVT</span>
+constraint_algorithm    = lincs     <span id="comment">; holonomic constraints</span>
+constraints             = h-bonds   <span id="comment">; bonds involving H are constrained</span>
+lincs_iter              = 1         <span id="comment">; accuracy of LINCS</span>
+lincs_order             = 4         <span id="comment">; also related to accuracy</span>
+<span id="comment">; Nonbonded settings</span>
+cutoff-scheme           = Verlet    <span id="comment">; Buffered neighbor searching</span>
+ns_type                 = grid      <span id="comment">; search neighboring grid cells</span>
+nstlist                 = 10        <span id="comment">; 20 fs, largely irrelevant with Verlet scheme</span>
+rcoulomb                = 1.0       <span id="comment">; short-range electrostatic cutoff (in nm)</span>
+rvdw                    = 1.0       <span id="comment">; short-range van der Waals cutoff (in nm)</span>
+DispCorr                = EnerPres  <span id="comment">; account for cut-off vdW scheme</span>
+<span id="comment">; Electrostatics</span>
+coulombtype             = PME       <span id="comment">; Particle Mesh Ewald for long-range electrostatics</span>
+pme_order               = 4         <span id="comment">; cubic interpolation</span>
+fourierspacing          = 0.16      <span id="comment">; grid spacing for FFT</span>
+<span id="comment">; Temperature coupling is on</span>
+tcoupl                  = V-rescale             <span id="comment">; modified Berendsen thermostat</span>
+tc-grps                 = Protein Non-Protein   <span id="comment">; two coupling groups - more accurate</span>
+tau_t                   = 0.1     0.1           <span id="comment">; time constant, in ps</span>
+ref_t                   = 300     300           <span id="comment">; reference temperature, one for each group, in K</span>
+<span id="comment">; Pressure coupling is on</span>
+pcoupl                  = Parrinello-Rahman     <span id="comment">; Pressure coupling on in NPT</span>
+pcoupltype              = isotropic             <span id="comment">; uniform scaling of box vectors</span>
+tau_p                   = 2.0                   <span id="comment">; time constant, in ps</span>
+ref_p                   = 1.0                   <span id="comment">; reference pressure, in bar</span>
+compressibility         = 4.5e-5                <span id="comment">; isothermal compressibility of water, bar^-1</span>
+refcoord_scaling        = com
+<span id="comment">; Periodic boundary conditions</span>
+pbc                     = xyz       <span id="comment">; 3-D PBC</span>
+<span id="comment">; Velocity generation</span>
+gen_vel                 = no        <span id="comment">; Velocity generation is off</span>
+</code></pre>
+
+                    <p>
+                        NPT平衡化のMDの設定はNVTとほとんど同じであるが、NPTアンサンブルでは圧力制御を行うため<code>pcoupl = Parrinello-Rahman</code>としている。
+                        この時の圧力の値は<code>ref_p = 1.0</code>を参照している。
+                        温度制御はNVT平衡化の設定のままで継続して行っている。
+                        <br><br>
+                        またNPT平衡化では、系の原子に初速度を与える代わりにNVT平衡化の最終状態を引き継ぐため、<code>gen_vel = no</code>及び<code>continuation = yes</code>へ変更をしている。
+                        こうすることで、指定したチェックポイントファイルを読み込み、シミュレーションを継続することが可能になる。
+                    </p>                    
+                </div>
+
+                <div class="content-block">
+                    <h3>md.mdp</h3>
+                    <p>
+                        最後に、本計算で用いたmd.mdpの内容を確認する。
+                        本計算はNPTアンサンブルで行っているので、シミュレーション条件はNPT平衡化とほとんど同じである。
+                    </p>
+
+<pre><code><p class="filename">md.mdp</p>
+title                   = OPLS Lysozyme NPT equilibration 
+<span id="comment">; Run parameters</span>
+integrator              = md        <span id="comment">; leap-frog integrator</span>
+nsteps                  = 500000    <span id="comment">; 2 * 500000 = 1000 ps (1 ns)</span>
+dt                      = 0.002     <span id="comment">; 2 fs</span>
+<span id="comment">; Output control</span>
+nstxout                 = 0         <span id="comment">; suppress bulky .trr file by specifying</span>
+nstvout                 = 0         <span id="comment">; 0 for output frequency of nstxout,</span>
+nstfout                 = 0         <span id="comment">; nstvout, and nstfout</span>
+nstenergy               = 5000      <span id="comment">; save energies every 10.0 ps</span>
+nstlog                  = 5000      <span id="comment">; update log file every 10.0 ps</span>
+nstxout-compressed      = 5000      <span id="comment">; save compressed coordinates every 10.0 ps</span>
+compressed-x-grps       = System    <span id="comment">; save the whole system</span>
+<span id="comment">; Bond parameters</span>
+continuation            = yes       <span id="comment">; Restarting after NPT</span>
+constraint_algorithm    = lincs     <span id="comment">; holonomic constraints</span>
+constraints             = h-bonds   <span id="comment">; bonds involving H are constrained</span>
+lincs_iter              = 1         <span id="comment">; accuracy of LINCS</span>
+lincs_order             = 4         <span id="comment">; also related to accuracy</span>
+<span id="comment">; Neighborsearching</span>
+cutoff-scheme           = Verlet    <span id="comment">; Buffered neighbor searching</span>
+ns_type                 = grid      <span id="comment">; search neighboring grid cells</span>
+nstlist                 = 10        <span id="comment">; 20 fs, largely irrelevant with Verlet scheme</span>
+rcoulomb                = 1.0       <span id="comment">; short-range electrostatic cutoff (in nm)</span>
+rvdw                    = 1.0       <span id="comment">; short-range van der Waals cutoff (in nm)</span>
+<span id="comment">; Electrostatics</span>
+coulombtype             = PME       <span id="comment">; Particle Mesh Ewald for long-range electrostatics</span>
+pme_order               = 4         <span id="comment">; cubic interpolation</span>
+fourierspacing          = 0.16      <span id="comment">; grid spacing for FFT</span>
+<span id="comment">; Temperature coupling is on</span>
+tcoupl                  = V-rescale             <span id="comment">; modified Berendsen thermostat</span>
+tc-grps                 = Protein Non-Protein   <span id="comment">; two coupling groups - more accurate</span>
+tau_t                   = 0.1     0.1           <span id="comment">; time constant, in ps</span>
+ref_t                   = 300     300           <span id="comment">; reference temperature, one for each group, in K</span>
+<span id="comment">; Pressure coupling is on</span>
+pcoupl                  = Parrinello-Rahman     <span id="comment">; Pressure coupling on in NPT</span>
+pcoupltype              = isotropic             <span id="comment">; uniform scaling of box vectors</span>
+tau_p                   = 2.0                   <span id="comment">; time constant, in ps</span>
+ref_p                   = 1.0                   <span id="comment">; reference pressure, in bar</span>
+compressibility         = 4.5e-5                <span id="comment">; isothermal compressibility of water, bar^-1</span>
+<span id="comment">; Periodic boundary conditions</span>
+pbc                     = xyz       <span id="comment">; 3-D PBC</span>
+<span id="comment">; Dispersion correction</span>
+DispCorr                = EnerPres  <span id="comment">; account for cut-off vdW scheme</span>
+<span id="comment">; Velocity generation</span>
+gen_vel                 = no        <span id="comment">; Velocity generation is off</span>
+</code></pre>                    
+
+                    <p>
+                        1 nsのシミュレーションを行っているので<code>nsteps = 500000</code>が必要である。
+                        <br><br>
+                        本計算での設定で特徴的なのは、今まで指定していた<code>define = -DPOSRES</code>を指定していないことである。
+                        これはタンパク質の位置拘束を有効にする設定で、平衡化の段階ではタンパク質が大きく動かないようにするために指定していた。
+                        しかし、本計算ではタンパク質のダイナミクスを観測するために指定を外している。
+                        <br><br>
+                        また出力形式であるが、今回は座標のみを書き出したいので、ファイルサイズの小さいxtc形式のトラジェクトリを指定している。
+                        そのためtrr形式は<code>nstxout = 0</code>として出力せず、<code>nstxout-compressed = 5000</code>として5000ステップおきにxtc形式のトラジェクトリを出力している。
+                        これで10 psおきに座標が記録されることになるので、1 nsのシミュレーションでは約100ステップ分のトラジェクトリを得ることになる。
+                        VMDでトラジェクトリを眺める時に、読み込まれたステップ数を確認してほしい。
+                    </p>
+                </div>
+
+                <div class="content-block">
+                    <h3>まとめ</h3>
+                    <p>
+                        mdpファイルの形式と、その大まかな内容を見てきた。
+                        詳細な説明はしていないので、次のリンクを参考にしてさらに理解を深めてほしい。
+                    </p>
+                    <div id="list-bottom" class="table-of-contents">
+                        <ol>
+                            <li><a href="gromacs_mdp.html">GROMACS.mdpオプション</a></li>
+                            <li><a href="https://manual.gromacs.org/documentation/2018/user-guide/mdp-options.html" target="_blank" rel="noopener noreferrer">公式ドキュメント（外部ページ）</a></li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="hierarchie-bottom">
+                    <a href="gromacs_tutorial1_4.html">PREVIOUS</a>
+                    <a href="gromacs_tutorial1_top.html">TOP</a>
+                    <p>NEXT</p>
+                </div>
+            </div>
+            <script type="text/javascript">loadFooter();</script>
+        </div>
+    </div>
+</body>
+</html>

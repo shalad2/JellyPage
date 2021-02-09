@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>GROMACS.mdpオプション</title>
+        <meta name="description" content="GROMACSのmdpファイルに記述するコマンド一覧ページ">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <!-- CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/ress@3.0.0/dist/ress.min.css">
+        <link rel="stylesheet" href="../css/style.css">
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+    <script src="../js/menu.js" type="text/javascript"></script>
+    <script src="../js/footer.js" type="text/javascript"></script>
+    </head>
+
+<body>
+    <div class="page-contents">
+        <!-- Accordion Menu -->
+        <script type="text/javascript">loadMenu('../');</script>
+        <!-- MAIN CONTENTS -->
+        <div class="main-contents">
+            <!-- HEADER IMAGE -->
+            <div id="gromacs" class="big-bg">
+                <div class="title-contents wrapper">
+                    <h2 class="page-title">GROMACS</h2>
+                </div>
+            </div>
+
+            <!-- CONTENTS -->
+            <div class="main-text wrapper">
+                <div class="hierarchie">
+                    <a href="../index.html"><img class="home-icon" src="../images/logo_original.png" alt="home"></a>
+                    <p> ＞ GROMACS.mdpオプション</p>
+                </div>
+                <div>
+                    <h2 class="content-title">GROMACS.mdpオプション</h2>
+                    <p>
+                        ここではGROMACSでMDシミュレーションを実行する時に必要となるmdpファイルの設定について、その内容を日本語で解説する。
+                        より詳しく知りたい場合は<a href="https://manual.gromacs.org/documentation/2018/user-guide/mdp-options.html" target="_blank" rel="noopener noreferrer">公式ドキュメント</a>を参照してほしい。
+                        <br><br>
+                        以下、簡単に目次を載せておく。
+                    </p>
+                    <div id="list-bottom" class="table-of-contents">
+                        <ol>
+                            <li><a href="gromacs_mdp.html#mdp-preprocessing">一般情報・前処理</a></li>
+                            <li><a href="gromacs_mdp.html#mdp-run-control">実行制御</a></li>
+                            <li><a href="gromacs_mdp.html#mdp-energy-minimization">エネルギー最小化</a></li>
+                            <li><a href="gromacs_mdp.html#mdp-output-control">出力制御</a></li>
+                            <li><a href="gromacs_mdp.html#mdp-bonded-params">結合情報</a></li>
+                            <li><a href="gromacs_mdp.html#mdp-nonbonded-params">非結合情報</a></li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3 id="mdp-preprocessing">一般情報・前処理</h3>
+                    <h4>title</h4>
+                    <p>
+                        シミュレーションの名前を定義する。任意の名前を指定できる。
+                    </p>
+
+<pre><code>title = OPLS NVT SIMULATION</code></pre>
+
+                    <h4>define</h4>
+                    <p>
+                        プリプロセッサに渡す定義を指定する。基本的には次の2つが指定できる。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>define</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>-DFLEXIBLE</td>
+                            <td>水モデルに剛体モデルではなくフレキシブルモデルを使用する</td>
+                        </tr>
+                        <tr>
+                            <td>-DPOSRES</td>
+                            <td>posre.itpなどに設定された位置拘束を適用する</td>
+                        </tr>
+                    </table>
+
+<pre><code>define = -DFLEXIBLE
+<span id="comment">;define = -DPOSRES    コメントアウトして必要な時のみ有効にする</span>
+</code></pre>
+
+                </div>
+
+                <div class="content-block">
+                    <h3 id="mdp-run-control">実行制御</h3>
+                    <h4>integrator</h4>
+                    <p>
+                        演算アルゴリズムを指定する。MDシミュレーションを実行する時は基本的に<code>md</code>を使用する。
+                        また、エネルギー最小化には<code>steep</code>を使用することが多い。
+                    </p>
+
+<pre><code>integrator = md
+integrator = steep    <span id="comment"># 最急降下法アルゴリズム</span>
+</code></pre>
+
+                    <h4>nsteps</h4>
+                    <p>
+                        シミュレーションのステップ数を指定する。
+                    </p>
+
+<pre><code>nsteps = 50000</code></pre>
+
+                    <h4>dt</h4>
+                    <p>
+                        シミュレーションのタイムステップを指定する。<strong>単位は[ps]</strong>であることに注意。
+                    </p>
+
+<pre><code>dt = 0.002    <span id="comment"># 2fs</span></code></pre>
+
+                </div>
+
+                <div class="content-block">
+                    <h3 id="mdp-energy-minimization">エネルギー最小化</h3>
+                    <h4>emtol</h4>
+                    <p>
+                        エネルギー最小化において、系の最大力がこの値よりも小さくなった場合に収束したと判定する。
+                        デフォルトは10.0 [kJ mol<sup>-1</sup> nm<sup>-1</sup>]である。
+                    </p>
+
+<pre><code>emtol = 1000.0</code></pre>
+
+                    <h4>emstep</h4>
+                    <p>
+                        エネルギーの初期ステップサイズを指定する。デフォルトは0.01 [nm]である。
+                    </p>
+
+<pre><code>emstep = 0.01</code></pre>
+
+                </div>
+
+                <div class="content-block">
+                    <h3 id="mdp-output-control">出力制御</h3>
+                    <h4>nstxout</h4>
+                    <p>
+                        座標をトラジェクトリファイルに書き込むステップ間隔を指定する。出力ファイルはtrr形式となる。
+                        デフォルトでは0（出力しない）設定なので注意すること。しかし、最終構造の座標は常に出力される。
+                    </p>
+
+<pre><code>nstxout = 500</code></pre>
+
+                    <h4>nstvout</h4>
+                    <p>
+                        速度をトラジェクトリファイルに書き込むステップ間隔を指定する。
+                        <code>nstxout</code>と同様にtrr形式であり、デフォルトでは出力しない。
+                        最終速度は常に出力される。
+                    </p>
+
+<pre><code>nstvout = 500</code></pre>
+
+                    <h4>nstfout</h4>
+                    <p>
+                        力をトラジェクトリファイルに書き込むステップ間隔を指定する。デフォルトでは出力しない。
+                    </p>
+
+<pre><code>nstfout = 0</code></pre>
+
+                    <h4>nstlog</h4>
+                    <p>
+                        エネルギーをログファイルに書き込むステップ間隔を指定する。
+                        デフォルトは1000 [steps]であり、最終エネルギーは常に出力される。
+                    </p>
+
+<pre><code>nstlog = 1000</code></pre>
+
+                    <h4>nstcalcenergy</h4>
+                    <p>
+                        エネルギーを計算するステップ間隔を指定する。次の<code>nstenergy</code>でファイルに出力することができる。
+                        デフォルトは100 [steps]であり、0 [steps]を指定することはできない。
+                    </p>
+
+<pre><code>nstcalcenergy = 100</code></pre>
+
+                    <h4>nstenergy</h4>
+                    <p>
+                        エネルギーをバイナリのエネルギーファイルに書き込むステップ間隔を指定する。
+                        デフォルトは1000 [steps]であり、<code>nstcalcenergy</code>の整数倍の値のみが指定できる。
+                        最終エネルギーは常に出力される。
+                    </p>
+
+<pre><code>nstenergy = 1000</code></pre>
+
+                    <h4>nstxout-compressed</h4>
+                    <p>
+                        非可逆圧縮をした座標をトラジェクトリファイルに書き込むステップ間隔を指定する。
+                        出力ファイルはxtc形式となる。
+                        デフォルトでは0（出力しない）となっているが、trr形式よりもファイルサイズが小さいため、座標のみの解析を行う場合は同時に出力しておくことが多い。
+                    </p>
+
+<pre><code>nstxout-compressed = 500</code></pre>
+
+                </div>
+
+                <div class="content-block">
+                    <h3>結合情報</h3>
+                    <h4></h4>
+                </div>
+
+                <div class="content-block">
+                    <h3>静電相互作用</h3>
+                    <h4>coulombtype</h4>
+                    <h4></h4>
+                </div>
+                
+                <div class="hierarchie-bottom">
+                    <a href="gromacs_tutorial2_top.html">PREVIOUS</a>
+                    <a href="../index.html">HOME</a>
+                    <p>NEXT</p>
+                </div>
+
+            </div>
+            <script type="text/javascript">loadFooter();</script>
+        </div>
+    </div>
+</body>
+</html>

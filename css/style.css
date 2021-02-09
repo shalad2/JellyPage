@@ -42,6 +42,9 @@ table th{
     border-bottom: solid 1px #1e366a;
     text-align: center;
 }
+#text-center {
+    text-align: center;
+}
 
 /* CODE
 ---------------------------------------- */
@@ -440,7 +443,7 @@ ul, li {
 /* GROMACS
 ---------------------------------------- */
 #gromacs {
-    background-image: url(../gromacs/images/main-bg.png);
+    background-image: url(../gromacs/images/gromacs_bg.png);
     background-position: center;
     background-color: rgba(255, 255, 255, 0.5);
     background-blend-mode: lighten;
@@ -462,7 +465,8 @@ ul, li {
 #lysozyme-newbox, 
 #lysozyme-solv,
 #lysozyme-solv-ion,
-#lysozyme-movie {
+#lysozyme-movie,
+#C16OH-pdb {
     width: 500px;
 }
 #lysozyme-em-plot,
@@ -472,6 +476,9 @@ ul, li {
 #lysozyme-rmsd-plot,
 #lysozyme-rg-plot {
     width: 550px;
+}
+#C16OH-system {
+    width: 700px;
 }
 #lysozyme-water {
     width: 350px;
@@ -492,6 +499,16 @@ ul, li {
     height: 300px;
     object-fit: cover;
     margin-bottom: 0%;
+}
+#charmm-gui-top,
+#ligand_reader_modeler,
+#C16OH-modeling,
+#C16OH-rename,
+#C16OH-download,
+#mengen-top, 
+#mengen-pdb {
+    margin: 2% 0%;
+    width: 98%;
 }
 .main-text {
     background-image: url("../images/main-text-bg.png");

@@ -46,7 +46,7 @@
                     <h3>インストール手順</h3>
                     <p>
                         まず、GROMACSをダウンロードする必要がある。
-                        <a href="https://manual.gromacs.org/documentation/">GROMACS documentation</a>にアクセスし、適切なバージョンのDownloadから「gromacs-XXX.tar.gz」をダウンロードする。
+                        <a href="https://manual.gromacs.org/documentation/" target="_blank" rel="noopener noreferrer">GROMACS documentation</a>にアクセスし、適切なバージョンのDownloadから「gromacs-XXX.tar.gz」をダウンロードする。
                         または<code>wget</code>を用いてターミナルで直接ダウンロードしてもよい。
                     </p>
 
@@ -62,7 +62,7 @@ cd gromacs-XXX
                     <p>
                         gromacs-XXXのディレクトリへ移動したら<code>ls</code>で中身を確認しておく。
                         <br><br>
-                        次に、ビルド用のディレクトリとGROMACSをインストールするディレクトリを作成する。
+                        次に、ビルド用のディレクトリとGROMACSをcmakeするディレクトリを作成する。
                     </p>
 
 <pre><code>mkdir build
@@ -80,40 +80,108 @@ mkdir gmx_install
                             <th>説明</th>
                         </tr>
                         <tr>
-                            <td>-DGMX_BUILD_OWN_FFTW</td>
-                            <td></td>
+                            <td>-DGMX_BUILD_OWN_FFTW=ON</td>
+                            <td>GROMACSがFFTWを自動的にダウンロード、ビルドすることを許可</td>
                         </tr>
                         <tr>
                             <td>-DREGRESSIONTEST_DOWNLOAD</td>
-                            <td></td>
+                            <td>GROMACSのテストをダウンロードする（make checkで実行）</td>
                         </tr>
                         <tr>
-                            <td>-DCMAKE_INSTALL_PREFIX</td>
-                            <td>GROMACSインストール先の指定</td>
+                            <td>-DCMAKE_INSTALL_PREFIX=xxx</td>
+                            <td>GROMACSをcmakeするパスの指定</td>
                         </tr>
                         <tr>
-                            <td>-DGMX_MPI</td>
-                            <td>並列計算を利用するための設定</td>
+                            <td>-DGMX_MPI=ON</td>
+                            <td>並列計算を利用してビルドする</td>
                         </tr>
                         <tr>
-                            <td>-DGMX_GPU</td>
-                            <td>GPU版のインストール設定</td>
+                            <td>-DGMX_GPU=ON</td>
+                            <td>GPU版のGROMACSをインストールする</td>
+                        </tr>
+                        <tr>
+                            <td>-DCMAKE_C_COMPILER=xxx</td>
+                            <td>使用するCコンパイラのパスの指定（環境変数CCでも設定可）</td>
+                        </tr>
+                        <tr>
+                            <td>-DCMAKE_CXX_COMPILER=xxx</td>
+                            <td>使用するC++コンパイラのパスの指定（環境変数CXXでも設定可）</td>
+                        </tr>
+                        <tr>
+                            <td>-DGMX_DOUBLE=ON</td>
+                            <td>GROMACSを倍精度で構築する</td>
+                        </tr>
+                        <tr>
+                            <td>-DGMX_SIMD=xxx</td>
+                            <td>GROMACSを実行するノードのSIMDレベルの指定</td>
                         </tr>
                     </table>
+                    <p>
+                        ローカルのPCにインストールする場合は系の構築や解析に使用する程度であり、大きな計算には使用しないので、次のオプションを指定すればよいと思う。
+                    </p>
 
-<pre><code>cd build
+<pre><code><span id="comment"># ローカルでのcmakeの例</span>
+cd build
 cmake ../ \
 -DGMX_BUILD_OWN_FFTW=ON \
 -DREGRESSIONTEST_DOWNLOAD=ON \
 -DCMAKE_INSTALL_PREFIX=${HOME}/App/gromacs-XXX/gmx_install \
 -DGMX_MPI=OFF \
+-DGMX_DOUBLE=OFF \
 -DGMX_GPU=OFF
-make -j 4
-make install
 </code></pre>
                     <p>
-                        Under Constructing ...
+                        一方、スパコンなどにインストールする場合は並列計算を使用するため<code>-DGMX_MPI=ON</code>とする。GPUが利用できる場合は<code>-DGMX_GPU=ON</code>も指定しておく。
                     </p>
+
+<pre><code><span id="comment"># スパコンでのcmakeの例</span>
+cd build
+cmake ../ \
+-DGMX_BUILD_OWN_FFTW=ON \
+-DREGRESSIONTEST_DOWNLOAD=ON \
+-DCMAKE_INSTALL_PREFIX=${HOME}/App/gromacs-XXX/gmx_install \
+-DGMX_MPI=ON \
+-DCMAKE_C_COMPILER=mpicc \
+-DCMAKE_CXX_COMPILER=mpicxx \
+-DGMX_GPU=ON \
+-DGMX_SIMD=AVX_256
+</code></pre>
+
+                    <p>
+                        cmakeが終了したら続けて<code>make</code>を行う。
+                        マルチプロセッサ環境であれば、<code>-j</code>を付けて並列コンパイルをすることで高速化ができる。
+                        GROMACSのテストをダウンロードしている場合は同時に<code>make check</code>を行う。
+                    </p>
+
+<pre><code>make -j 4
+<span id="comment"># GROMACSのテストをダウンロードした場合はチェックを実行</span>
+make check
+</code></pre>
+
+                    <p>最後に<code>make install</code>をする。</p>
+
+<pre><code>make install</code></pre>
+
+                    <p>
+                        終了するとgmx_installにGROMACSの実行ファイルが生成しているはずである。
+                        .bashrcにパスを通してインストールは完了である。
+                    </p>
+
+<pre><code><p class="filename">.bashrc</p>
+<span id="comment"># ホームディレクトリの.bashrcを編集</span>
+export PATH=${HOME}/App/gromacs-XXX/gmx_install/bin:${PATH}
+</code></pre>       
+
+                    <p>
+                        正しくインストールされていれば、次のコマンドでGROMACSのバージョンが表示されるだろう。
+                    </p>
+
+<pre><code><span id="comment"># .bashrcの編集後にパスを更新</span>
+source ~/.bashrc
+<span id="comment"># GROMACSが正しく動作するか確認（バージョン確認）</span>
+gmx --version
+</code></pre>
+
                 </div>
                 
                 <div class="hierarchie-bottom">

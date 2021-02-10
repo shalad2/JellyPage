@@ -37,37 +37,34 @@
                 <div>
                     <h2 class="content-title">【GROMACSチュートリアル②】 力場パラメータとトポロジーの準備</h2>
                     <p>
-                        任意のMDシミュレーションを開始するためには、まず大前提として系が用意されている必要がある。
-                        ここでは直鎖アルコールの構造を作成し、それをボックス内に配置することで、アルコール分子の二重膜が含まれる系の作成をしてみたいと思う。
-                        <br><br>
-                        なお、今回は系の作成を簡単にするために、自動で構造を生成してくれる外部サイトを利用する。
-                        インターネット環境が必要となるので、通信環境の良いところで取り組んでほしい。
+                        前回はアルコール分子の構造を作成し、それを使ってアルコール二重膜系を作成した。
+                        しかし、この構造を用いてシミュレーションを行うにあたって、GROMACSでこの分子を認識させ、力場を与えてやる必要がある。
+                        今回はGROMACSでの力場の扱い方を学ぶためにCHARMM力場を導入し、アルコール分子のトポロジーをGROMACSに認識させて、実際にシミュレーションが開始できるまでの準備をする。
                     </p>
                     <div id="list" class="table-of-contents">
                         <ol>
-                            <li>アルコール分子の作成（CHARMM-GUI）</li>
-                            <li>アルコール二重膜系の作成</li>
+                            <li>CHARMM力場のダウンロード</li>
+                            <li>CHARMMトポロジーの追加</li>
+                            <li>構造ファイル（groファイル）の作成</li>
                         </ol>
                     </div>
                     <p>
-                        今回作成する系は図のようになる。
-                        アルコール分子が整列して二重膜を形成し、その両側にはバルクの水が存在するような系を作成する。
+                        また、このページでもCHARMM力場のダウンロードのためにインターネット環境が必要である。
+                        通信環境を確認しておこう。
                     </p>
-                    <div class="image-center">
-                        <img id="C16OH-system" src="images/C16OH_system.png" alt="Alcohol Membrane System">
-                    </div>
-                    
                 </div>
 
                 <div class="content-block">
-                    <h3>アルコール分子の作成（CHARMM-GUI）</h3>
+                    <h3>CHARMM力場のダウンロード</h3>
                     <p>
-                        まず、シミュレーションする系に含まれる分子であるアルコール分子の構造を作成する。
-                        簡単な分子構造を作成し、構造ファイルを書き出すには<strong>CHARMM-GUI</strong>が便利である。
-                        CHARMM-GUIはWeb上で動くプログラムであり、PDBファイルの作成からシミュレーションのインプットファイルの作成まで、多くの便利な機能が備わっている。
+                        まず、シミュレーションに使用する力場を決定する。
+                        チュートリアル①ではGROMACSにデフォルトでインストールされているOPLS-AA力場を使用したが、今回は新たな力場をインストールして使えるように設定する。
+                        <br><br>
+                        使用する力場はCHARMM36力場である。
+                        <a href="http://mackerell.umaryland.edu/charmm_ff.shtml" target="_blank" rel="noopener noreferrer">CHARMM Force Field Files</a>にアクセスし、<strong>CHARMM36 Files for GROMACS</strong>のセクションから最新版のCHARMM36力場ファイル（charmm36-xxx.ff.tgz）をダウンロードする。
                     </p>
                     <div class="image-center">
-                        <img id="charmm-gui-top" src="images/charmm_gui_top.png" alt="charmm-gui-top">
+                        <img id="charmm-ff" src="images/charmm_ff.png" alt="charmm_ff">
                     </div>
                     <p>
                         今回は<a href="http://www.charmm-gui.org/" target="_blank" rel="noopener noreferrer">CHARMM-GUIのトップページ</a>から「Input Generator」を選択し、その中の「Ligand Reader and Modeler」を利用する。

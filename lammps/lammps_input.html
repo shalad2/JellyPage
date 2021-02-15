@@ -41,11 +41,11 @@
                     </p>
                     <div id="list" class="table-of-contents">
                         <ol>
-                            <li>単位とボックス情報</li>
-                            <li>入力ファイルの読み込み</li>
-                            <li>パラメータ情報</li>
-                            <li>タイムステップとアンサンブル情報</li>
-                            <li>出力情報</li>
+                            <li><a href="./lammps_input.html#lammps-units-box">単位とボックス情報</a></li>
+                            <li><a href="./lammps_input.html#lammps-read-files">入力ファイルの読み込み</a></li>
+                            <li><a href="./lammps_input.html#lammps-parm-info">パラメータ情報</a></li>
+                            <li><a href="./lammps_input.html#lammps-timestep-ensemble">タイムステップとアンサンブル情報</a></li>
+                            <li><a href="./lammps_input.html#lammps-output">出力情報</a></li>
                         </ol>
                     </div>
                     <p>
@@ -55,7 +55,7 @@
                 </div>
 
                 <div class="content-block">
-                    <h3>単位とボックス情報</h3>
+                    <h3 id="lammps-units-box">単位とボックス情報</h3>
                     <h4>units</h4>
                     <p>
                         シミュレーションに使用する単位系を指定するコマンド。
@@ -109,48 +109,6 @@
                         この他にもcgs、electron、microが選択できる。realを使うことが多い印象。
                     </p>
 
-                    <h4>atom_style</h4>
-                    <p>
-                        シミュレーションで使用する原子のスタイルを指定するコマンド。
-                        インプットファイルでは<code>read_data</code>などのシミュレーションのセットアップコマンドより前に記述する。
-                        以下にその一部を示すが、基本的にはfullを指定すればよいと思う。
-                    </p>
-
-<pre id="bottom-padding"><code><span id="lammps-input">atom_style</span> full</code></pre>
-
-                    <table>
-                        <tr>
-                            <th>atom_style</th>
-                            <th>説明</th>
-                            <th>使用例</th>
-                        </tr>
-                        <tr>
-                            <td>atomic</td>
-                            <td>デフォルト値のみ</td>
-                            <td>粗視化流体・固体・金属</td>
-                        </tr>
-                        <tr>
-                            <td>bond</td>
-                            <td>結合</td>
-                            <td>スプリングポリマー</td>
-                        </tr>
-                        <tr>
-                            <td>charge</td>
-                            <td>電荷</td>
-                            <td>電荷を持つ原子系</td>
-                        </tr>
-                        <tr>
-                            <td>molecular</td>
-                            <td>結合、結合角、二面角、improper</td>
-                            <td>電荷を持たない分子</td>
-                        </tr>
-                        <tr>
-                            <td>full</td>
-                            <td>molecular + charge</td>
-                            <td>生体分子</td>
-                        </tr>
-                    </table>
-
                     <h4>dimension</h4>
                     <p>
                         シミュレーションの次元を設定するコマンド。
@@ -197,7 +155,7 @@
                 </div>
 
                 <div class="content-block">
-                    <h3>入力ファイルの読み込み</h3>
+                    <h3 id="lammps-read-files">入力ファイルの読み込み</h3>
                     <h4>read_data</h4>
                     <p>
                         シミュレーションを実行するために必要なDATAファイルを読み込むコマンド。
@@ -231,7 +189,57 @@
                 </div>
 
                 <div class="content-block">
-                    <h3>パラメータ情報</h3>
+                    <h3 id="lammps-parm-info">パラメータ情報</h3>
+                    <h4>atom_style</h4>
+                    <p>
+                        シミュレーションで使用する原子のスタイルを指定するコマンド。
+                        インプットファイルでは<code>read_data</code>などのシミュレーションのセットアップコマンドより前に記述する。
+                        以下にその一部を示すが、基本的にはfullを指定すればよいと思う。
+                    </p>
+
+<pre id="bottom-padding"><code><span id="lammps-input">atom_style</span> full</code></pre>
+
+                    <table>
+                        <tr>
+                            <th>atom_style</th>
+                            <th>説明</th>
+                            <th>使用例</th>
+                        </tr>
+                        <tr>
+                            <td>atomic</td>
+                            <td>デフォルト値のみ</td>
+                            <td>粗視化流体・固体・金属</td>
+                        </tr>
+                        <tr>
+                            <td>bond</td>
+                            <td>結合</td>
+                            <td>スプリングポリマー</td>
+                        </tr>
+                        <tr>
+                            <td>charge</td>
+                            <td>電荷</td>
+                            <td>電荷を持つ原子系</td>
+                        </tr>
+                        <tr>
+                            <td>molecular</td>
+                            <td>結合、結合角、二面角、improper</td>
+                            <td>電荷を持たない分子</td>
+                        </tr>
+                        <tr>
+                            <td>full</td>
+                            <td>molecular + charge</td>
+                            <td>生体分子</td>
+                        </tr>
+                    </table>
+
+                    <h4>bond_style</h4>
+                    <p>
+                        原子間の結合のスタイルを指定するコマンド。
+                        <code>pair_style</code>とは異なるので注意。
+                        <code>read_data</code>などで読み込んだ結合のリストに対して、結合相互作用の計算式を定義する。
+                    </p>
+
+<pre id="bottom-padding"><code><span id="lammps-input">bond_style</span> harmonic</code></pre>
                     
                 </div>
                 

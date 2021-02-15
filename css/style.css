@@ -250,30 +250,48 @@ ul, li {
         gap: 26px;
         grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
         margin-top: 3%;
-        margin-bottom: 50px;
+        margin-bottom: 60px;
     }
     .button {
-        font-size: 1.375rem;
+        font-size: 1.125rem;
         text-align: center;
         color: #432;
         background-size: cover;
         background-repeat: none;
-        border: solid #fff;
-        border-radius: 5px;
-        padding: 64px;
+        padding: 64px 32px 64px;
+        border: solid #432 2px;
+        background-position: center;
+        background-color: rgba(255, 255, 255, 0.8);
+        background-blend-mode: lighten;
     }
     .button:hover {
-        border: solid aqua;
+        color: rgb(255, 255, 255);
+        border: solid #432 2px;
+        background-color: rgba(68, 51, 34, 0.4);
+        background-blend-mode: darken;
+
     }
+    #home-gromacs {
+        background-image: url(../gromacs/images/gromacs_bg.png);
+    }
+    #home-lammps {
+        background-image: url(../lammps/images/lammps_input_bg.png);
+    }
+    #home-linux {
+        background-image: url(../linux/images/linux_sl.png);
+    }
+
 
     /* ABOUT LAB
     ---------------------------------------- */
-    .lab-content {
-        margin-top: 3%;
+    .thispage-content {
+        margin-top: 1%;
+        margin-bottom: 8%;
         display: flex;
     }
     .home-content-image {
-        max-width: 40vw;
+        max-width: 25vw;
+        margin-right: 3%;
     }
 
 

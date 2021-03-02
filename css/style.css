@@ -285,13 +285,12 @@ ul, li {
     /* ABOUT LAB
     ---------------------------------------- */
     .thispage-content {
-        margin-top: 1%;
         margin-bottom: 8%;
         display: flex;
     }
     .home-content-image {
-        max-width: 25vw;
-        margin-right: 3%;
+        max-width: 15vw;
+        margin-right: 5%;
     }
 
 

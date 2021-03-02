@@ -2,8 +2,8 @@
 <html lang="ja">
     <head>
         <meta charset="UTF-8">
-        <title>LAMMPSインプットコマンド</title>
-        <meta name="description" content="LAMMPSインプットファイルで使用するコマンドのまとめ">
+        <title>matplotlibの使い方</title>
+        <meta name="description" content="Pythonでmatplotlibを用いてグラフを描画する方法">
         <meta name="viewport" content="width=device-width,initial-scale=1">
 
     <!-- CSS -->
@@ -24,7 +24,7 @@
             <!-- HEADER IMAGE -->
             <div id="lammps-input-bg" class="big-bg">
                 <div class="title-contents wrapper">
-                    <h2 class="page-title">LAMMPS</h2>
+                    <h2 class="page-title">Python</h2>
                 </div>
             </div>
 
@@ -32,74 +32,40 @@
             <div class="main-text wrapper">
                 <div class="hierarchie">
                     <a href="../index.html"><img class="home-icon" src="../images/logo_original.png" alt="home"></a>
-                    <p> ＞ LAMMPSインプットコマンド</p>
+                    <p> ＞ matplotlibの使い方</p>
                 </div>
                 <div>
-                    <h2 class="content-title">【LAMMPS】インプットコマンド</h2>
+                    <h2 class="content-title">【Python】matplotlibの使い方</h2>
                     <p>
-                        LAMMPSでMDシミュレーションを実行する際、インプットファイルで使用するコマンドをまとめた。
-                    </p>
-                    
-                    <p>
-                        より詳しいコマンドの使い方は<a href="https://lammps.sandia.gov/doc/commands_list.html" target="_blank" rel="noopener noreferrer">LAMMPS公式ドキュメント</a>を参照してほしい。
+                        Pythonのmatplotlibでグラフを描画する方法を解説する。
+                        <div id="list" class="table-of-contents">
+                            <ol>
+                                <li><a href="./matplotlib1.html#matplotlib1-import">モジュールをインポートする</a></li>
+                                <li><a href="./matplotlib1.html#matplotlib1-plot">グラフを描画する</a></li>
+                                <li><a href="./matplotlib1.html#matplotlib1-layout">図の体裁を整える</a></li>
+                            </ol>
+                        </div>
                     </p>
                     
                 </div>
 
                 <div class="content-block">
-                    <h3 id="lammps-units-box">単位とボックス情報</h3>
-                    <h4>units</h4>
+                    <h3 id="matplotlib1-import">モジュールをインポートする</h3>
                     <p>
-                        シミュレーションに使用する単位系を指定するコマンド。
-                        入力ファイル、出力ファイル及び画面出力などの全ての単位に反映される。
-                        基本的にインプットファイルの一番最初に記述する。
+                        matplotlibでグラフを描画するためには、matplotlibのpyplotというモジュールをインポートする必要がある。
                     </p>
 
-<pre id="bottom-padding"><code><span id="lammps-input">units</span> real</code></pre>
+<pre><code>import matplotlib.pyplot as plt</code></pre>
 
-                    <table>
-                        <tr>
-                            <th>units</th>
-                            <th>説明（一部のみ抜粋）</th>
-                        </tr>
-                        <tr>
-                            <td>lj</td>
-                            <td>単位がなく、全て基準値の倍数として扱う（詳細は公式ドキュメントへ）</td>
-                        </tr>
-                        <tr>
-                            <td>real</td>
-                            <td>
-                                質量 : g/mol<br>
-                                距離 : &Aring;<br>
-                                時間 : fs<br>
-                                エネルギー : kcal/mol<br>
-                                圧力 : atm
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>metal</td>
-                            <td>
-                                質量 : g/mol<br>
-                                距離 : &Aring;<br>
-                                時間 : ps<br>
-                                エネルギー : eV<br>
-                                圧力 : bar
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>si</td>
-                            <td>
-                                質量 : kg<br>
-                                距離 : m<br>
-                                時間 : s<br>
-                                エネルギー : J<br>
-                                圧力 : Pa
-                            </td>
-                        </tr>
-                    </table>
                     <p>
-                        この他にもcgs、electron、microが選択できる。realを使うことが多い印象。
+                        また、データの生成やファイルの読み込みでnumpyを使用することが多いので、併せてインポートする。
                     </p>
+
+<pre><code>import numpy as np
+# データの生成
+x = np.linspace(1, 100, 100)
+y = x ** 2
+</code></pre>
 
                     <h4>dimension</h4>
                     <p>

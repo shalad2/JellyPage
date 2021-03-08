@@ -424,7 +424,7 @@ ul, li {
 
 /* MOBILE
 ---------------------------------------- */
-@media (max-width: 700px) {
+/*@media (max-width: 700px) {
     .home-content p {
         font-size: 1rem;
     }
@@ -455,7 +455,7 @@ ul, li {
     .home-content-image {
         max-width: 90vw;
     }
-}
+}*/
 
 /* GROMACS
 ---------------------------------------- */

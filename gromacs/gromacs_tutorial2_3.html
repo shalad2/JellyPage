@@ -37,308 +37,245 @@
                 <div>
                     <h2 class="content-title">【GROMACSチュートリアル②】 mdpファイルの作成とシミュレーションの実行</h2>
                     <p>
-                        前回はアルコール分子の構造を作成し、それを使ってアルコール二重膜系を作成した。
-                        しかし、この構造を用いてシミュレーションを行うにあたって、GROMACSでこの分子を認識させ、力場を与えてやる必要がある。
-                        今回はGROMACSでの力場の扱い方を学ぶためにCHARMM力場を導入し、アルコール分子のトポロジーをGROMACSに認識させて、実際にシミュレーションが開始できるまでの準備をする。
+                        前回まででアルコール二重膜系を作成し、CHARMM36力場を使用したGROMACSでのシミュレーションを開始できるまでに至った。
+                        今回は実際にMDシミュレーションを行うが、シミュレーションの設定をメインに解説し、好きな条件でシミュレーションを実行できるようになることを目標とする。
+                        シミュレーションの手順はチュートリアル①と同様、下記のように進めていく。
                     </p>
                     <div id="list" class="table-of-contents">
                         <ol>
-                            <li>CHARMM力場のダウンロード</li>
-                            <li>CHARMMトポロジーの追加</li>
-                            <li>構造ファイル（groファイル）の作成</li>
+                            <li>エネルギー最小化（00_em）</li>
+                            <li>NVT平衡化（01_nvt）</li>
+                            <li>NPT平衡化（02_npt）</li>
+                            <li>本計算（03_npt）</li>
                         </ol>
                     </div>
                     <p>
-                        また、このページでもCHARMM力場のダウンロードのためにインターネット環境が必要である。
-                        通信環境を確認しておこう。
+                        また、このページで解説したmdpファイルの設定について、より詳しい解説は<a href="./gromacs_mdp.html">GROMACS.mdpオプション</a>のページで紹介している。
+                        GROMACSの操作に慣れてきたら参考にしてほしい。
                     </p>
                 </div>
 
                 <div class="content-block">
-                    <h3>CHARMM力場のダウンロード</h3>
+                    <h3>エネルギー最小化（00_em）</h3>
                     <p>
-                        まず、シミュレーションに使用する力場を決定する。
-                        チュートリアル①ではGROMACSにデフォルトでインストールされているOPLS-AA力場を使用したが、今回は新たな力場をインストールして使えるように設定する。
-                        <br><br>
-                        使用する力場はCHARMM36力場である。
-                        <a href="http://mackerell.umaryland.edu/charmm_ff.shtml" target="_blank" rel="noopener noreferrer">CHARMM Force Field Files</a>にアクセスし、<strong>CHARMM36 Files for GROMACS</strong>のセクションから最新版のCHARMM36力場ファイル（charmm36-xxx.ff.tgz）をダウンロードする。
-                    </p>
-                    <div class="image-center">
-                        <img id="charmm-ff" src="images/charmm_ff.png" alt="charmm_ff">
-                    </div>
-                    <p>
-                        ダウンロードできたら、このファイルをGROMACSが認識できる場所で展開する。
-                        GROMACSをインストールした場所によって名前は異なるかもしれないが、<br>
-                        <code>~/App/gromacs-XXX/gmx_install/share/gromacs/top</code><br>
-                        にcharmm36-xxx.ff.tgzを移動し、ここで中身を展開するだけでCHARMM36力場が使用可能となる。
+                        まずは、作成した構造のエネルギー最小化を行う。
+                        設定条件を記述したmdpファイルは次のようになる。
                     </p>
                     
-<pre><code><span id="comment"># ダウンロードしたファイルを移動</span>
-mv charmm36-xxx.ff.tgz ~/App/gromacs-XXX/gmx_install/share/gromacs/top/
-cd ~/App/gromacs-XXX/gmx_install/share/gromacs/top/
-<span id="comment"># ファイルを展開</span>
-tar xvf charmm36-xxx.ff.tgz
+<pre><code><p class="filename">00_em.mdp</p>
+integrator  = steep
+emtol       = 1000.0
+emstep      = 0.01
+nsteps      = 50000
+
+nstlist         = 10
+cutoff-scheme   = Verlet
+ns_type         = grid
+coulombtype     = PME
+rcoulomb        = 1.2
+rvdw            = 1.2
+pbc             = xyz
 </code></pre>
 
                     <p>
-                        <code>App</code>や<code>gmx_install</code>などは<a href="gromacs_install.html">GROMACSのインストール</a>で紹介している場所なので、もし環境が異なるようであれば参考にしてほしい。
+                        エネルギー最小化には最急降下法を用いるので<code>integrator = steep</code>とし、系の最大力F<sub>max</sub>が1000 kJ mol<sup>-1</sup> nm<sup>-1</sup>以下となるまで緩和を行う。
+                        この時、同時にステップ間隔と最大ステップ数を指定している。
+                        <br><br>
+                        また、次に非結合相互作用（LJ相互作用、クーロン相互作用）に関する設定している。
+                        近接原子の定義、探し方、更新頻度などを設定した後、それらが遠距離の場合と近距離の場合で異なる相互作用の取り扱いをしている。
+                        <code>coulombtype = PME</code>は遠距離クーロン相互作用にパーティクルメッシュエワルド法を使用する設定である。
+                        また、<code>rcoulomb</code>と<code>rvdw</code>は近距離クーロン相互作用及び近距離LJ相互作用のカットオフ距離である。
+                        <br><br>
+                        最後、<code>pbc = xyz</code>は周期的境界条件を3次元に適用している。
+                        <br><br>
+                        このmdpファイルと作成した二重膜系の構造を用いて<code>gmx grompp</code>と<code>gmx mdrun</code>を実行する。
+                    </p>
+
+<pre><code>gmx grompp -f 00_em.mdp -c system.gro -p topol.top -o 00_em.tpr
+gmx mdrun -deffnm 00_em
+</code></pre>
+
+                    <p>
+                        計算が終了すると、エネルギー最小化された系の構造が得られる。
+                        エネルギー最小化過程のポテンシャルエネルギー変化を出力してみた。
                     </p>
                 </div>
 
                 <div class="content-block">
-                    <h3>CHARMMトポロジーの追加</h3>
+                    <h3>NVT平衡化（01_nvt）</h3>
                     <p>
-                        CHARMM-GUIで作成したアルコール分子はオリジナルの分子であるため、GROMACSはデフォルトでこの分子を認識することができない。
-                        そこで、GROMACSが認識できる分子一覧のファイルに今回作成したアルコール分子のトポロジーを与えてやることによって、この問題を解決できる。
-                        <br><br>
-                        アルコール分子のトポロジーファイルには原子情報と結合情報が含まれており、これは前回CHARMM-GUIで分子を作成した際に同時に生成している。
-                        アルコール分子にLALという名前をつけたので、トポロジーファイルはCHARMM-GUIファイルの<code>lal</code>内の<code>lal.rtf</code>という名前になっているはずである。
-                        テキストエディタで内容を確認すると、次のようになっている。
+                        エネルギー最小化ができたら、NVT平衡化を行う。
+                        mdpファイルには温度制御の設定を記述する必要があり、またシミュレーションの長さに合わせてステップ数を決定する。
+                        今回はNose-Hooverの方法で温度制御を行い、310.15 Kで125.0 psのNVT計算を行う設定をした。
                     </p>
 
-<pre><code><p class="filename">lal.rtf</p>
-<span id="comment"># 原子情報</span>
-RESI lal            0.000 ! param penalty=   0.000 ; charge penalty=   0.000
-GROUP            ! CHARGE   CH_PENALTY
-ATOM C1     CG331  -0.270 !    0.000
-ATOM C2     CG321  -0.177 !    0.000
-ATOM C3     CG321  -0.183 !    0.000
-ATOM C4     CG321  -0.180 !    0.000
-ATOM C5     CG321  -0.180 !    0.000
+<pre><code><p class="filename">01_nvt.mdp</p>
+integrator              = md
+dt                      = 0.001
+nsteps                  = 125000
+nstxtcout               = 5000
+nstxout                 = 5000
+nstvout                 = 5000
+nstfout                 = 5000
+nstcalcenergy           = 100
+nstenergy               = 1000
+nstlog                  = 1000
 
-<span id="comment"># 結合情報</span>
-BOND C1   C2  
-BOND C2   C3  
-BOND C3   C4  
-BOND C4   C5  
-BOND C5   C6
+cutoff-scheme           = Verlet
+nstlist                 = 20
+rlist                   = 1.2
+coulombtype             = PME
+rcoulomb                = 1.2
+vdwtype                 = Cut-off
+vdw-modifier            = Force-switch
+rvdw_switch             = 1.0
+rvdw                    = 1.2
+
+tcoupl                  = Nose-Hoover
+tc_grps                 = SYSTEM
+tau_t                   = 1.0
+ref_t                   = 310.15
+
+constraints             = h-bonds
+constraint_algorithm    = LINCS
+
+nstcomm                 = 100
+comm_mode               = linear
+comm_grps               = SYSTEM
+
+gen-vel                 = yes
+gen-temp                = 310.15
+gen-seed                = -1
+
+refcoord_scaling        = com
 </code></pre>
 
                     <p>
-                        しかし、このトポロジーファイルはGROMACSの形式ではないため（ここが一番面倒だが）形式を変換してやる必要がある。
-                        少し長いがサンプルを以下に示すので、コピーして使ってほしい。
+                        上から順番に見ていく。まず、MD計算を行うので<code>integrator = md</code>とし、タイムステップは<code>dt = 0.001</code>としている。
+                        このタイムステップの単位はpsなので、設定したタイムステップは1 fsとなる。
+                        <code>nsteps = 125000</code>とすれば、0.001 ps × 125000 = 125.0 psのシミュレーションが実行できる。
+                        <br><br>
+                        次に出力情報の設定をしている。
+                        主にトラジェクトリファイルを何ステップごとに記述するかを設定しており、<code>nstxout</code>、<code>nstvout</code>、<code>nstfout</code>はそれぞれ系の原子の座標、速度及び働く力に対応する。
+                        これらの情報はtrrファイルにトラジェクトリとして出力されるが、<code>nstxtcout</code>を指定するとxtcファイルにも座標情報を出力することができる。
+                        また、エネルギーや計算ログの出力も<code>nstenergy</code>と<code>nstlog</code>で制御できる。
+                        <br><br>
+                        温度制御では<code>tcoupl = Nose-Hoover</code>とする。<code>ref_t</code>が参照温度なので、ここに310.15 Kを指定する。
                     </p>
 
-<pre><code>[ LAL ] ; original molecule made by charmm-gui
- [ atoms ]
-        C1     CG331  -0.270   1
-        C2     CG321  -0.177   2
-        C3     CG321  -0.183   3
-        C4     CG321  -0.180   4
-        C5     CG321  -0.180   5
-        C6     CG321  -0.180   6
-        C7     CG321  -0.180   7
-        C8     CG321  -0.180   8
-        C9     CG321  -0.180   9
-        C10    CG321  -0.180  10
-        C11    CG321  -0.180  11
-        C12    CG321  -0.180  12
-        C13    CG321  -0.180  13
-        C14    CG321  -0.180  14
-        C15    CG321  -0.182  15
-        C16    CG321   0.054  16
-        O      OG311  -0.651  17
-        H1     HGA3    0.090  18
-        H2     HGA3    0.090  19
-        H3     HGA3    0.090  20
-        H4     HGA2    0.090  21
-        H5     HGA2    0.090  22
-        H6     HGA2    0.090  23
-        H7     HGA2    0.090  24
-        H8     HGA2    0.090  25
-        H9     HGA2    0.090  26
-        H10    HGA2    0.090  27
-        H11    HGA2    0.090  28
-        H12    HGA2    0.090  29
-        H13    HGA2    0.090  30
-        H14    HGA2    0.090  31
-        H15    HGA2    0.090  32
-        H16    HGA2    0.090  33
-        H17    HGA2    0.090  34
-        H18    HGA2    0.090  35
-        H19    HGA2    0.090  36
-        H20    HGA2    0.090  37
-        H21    HGA2    0.090  38
-        H22    HGA2    0.090  39
-        H23    HGA2    0.090  40
-        H24    HGA2    0.090  41
-        H25    HGA2    0.090  42
-        H26    HGA2    0.090  43
-        H27    HGA2    0.090  44
-        H28    HGA2    0.090  45
-        H29    HGA2    0.090  46
-        H30    HGA2    0.090  47
-        H31    HGA2    0.090  48
-        H32    HGA2    0.090  49
-        H33    HGA2    0.090  50
-        H34    HGP1    0.419  51
- [ bonds ]
-        C1   C2
-        C2   C3
-        C3   C4
-        C4   C5
-        C5   C6
-        C6   C7
-        C7   C8
-        C8   C9
-        C9   C10
-        C10  C11
-        C11  C12
-        C12  C13
-        C13  C14
-        C14  C15
-        C15  C16
-        C16  O
-        C1   H1
-        C1   H2
-        C1   H3
-        C2   H4
-        C2   H5
-        C3   H6
-        C3   H7
-        C4   H8
-        C4   H9
-        C5   H10
-        C5   H11
-        C6   H12
-        C6   H13
-        C7   H14
-        C7   H15
-        C8   H16
-        C8   H17
-        C9   H18
-        C9   H19
-        C10  H20
-        C10  H21
-        C11  H22
-        C11  H23
-        C12  H24
-        C12  H25
-        C13  H26
-        C13  H27
-        C14  H28
-        C14  H29
-        C15  H30
-        C15  H31
-        C16  H32
-        C16  H33
-        O    H34
-</code></pre>
+
 
                     <p>
-                        このトポロジーを先程ダウンロード、展開したcharmm36-xxx.ffの中の<strong>merged.rtp</strong>というファイルの末尾に追加する。
-                        merged.rtpにはGROMACSが認識できる分子の一覧が書かれているので、ここにトポロジーを追加することで新しい分子を扱うことが可能となる。
-                        <br><br>
-                        なお、既存のファイルを変更する時は必ずバックアップを取っておくようにしよう。
+                        
                     </p>
 
                 <div class="content-block">
-                    <h3>構造ファイル（groファイル）の作成</h3>
+                    <h3>NPT平衡化（02_npt）</h3>
                     <p>
-                        最後に、GROMACSが新しい力場と分子を正しく認識し、構造ファイルを作成できることを確認しておく。
-                        以前のチュートリアルでも扱った通り、groファイルの作成には<code>gmx pdb2gmx</code>を使用する。
+                        
                     </p>
 
-<pre><code>gmx pdb2gmx -f system.pdb -o system.gro</code></pre>
+<pre><code>
+integrator              = md
+dt                      = 0.002
+nsteps                  = 250000
+nstxtcout               = 5000
+nstvout                 = 5000
+nstfout                 = 5000
+nstcalcenergy           = 100
+nstenergy               = 1000
+nstlog                  = 1000
 
-                    <p>
-                        コマンドを実行すると、力場の選択画面になる。
-                        これまでの設定が正しくできているとCHARMM36が選択できるはずである。
-                    </p>
+cutoff-scheme           = Verlet
+nstlist                 = 20
+rlist                   = 1.2
+coulombtype             = pme
+rcoulomb                = 1.2
+vdwtype                 = Cut-off
+vdw-modifier            = Force-switch
+rvdw_switch             = 1.0
+rvdw                    = 1.2
 
-<pre id="force-field"><code>Select the Force Field:
-From '/home/user/App/gromacs-XXX/gmx_install/share/gromacs/top':
-1: AMBER03 protein, nucleic AMBER94 (Duan et al., J. Comp. Chem. 24, 1999-2012, 2003)
-2: AMBER94 force field (Cornell et al., JACS 117, 5179-5197, 1995)
-3: AMBER96 protein, nucleic AMBER94 (Kollman et al., Acc. Chem. Res. 29, 461-469, 1996)
-4: AMBER99 protein, nucleic AMBER94 (Wang et al., J. Comp. Chem. 21, 1049-1074, 2000)
-5: AMBER99SB protein, nucleic AMBER94 (Hornak et al., Proteins 65, 712-725, 2006)
-6: AMBER99SB-ILDN protein, nucleic AMBER94 (Lindorff-Larsen et al., Proteins 78, 1950-58, 2010)
-7: AMBERGS force field (Garcia & Sanbonmatsu, PNAS 99, 2782-2787, 2002)
-8: CHARMM27 all-atom force field (CHARM22 plus CMAP for proteins)
-9: CHARMM36 all-atom force field (July 2020)
-10: GROMOS96 43a1 force field
-11: GROMOS96 43a2 force field (improved alkane dihedrals)
-12: GROMOS96 45a3 force field (Schuler JCC 2001 22 1205)
-13: GROMOS96 53a5 force field (JCC 2004 vol 25 pag 1656)
-14: GROMOS96 53a6 force field (JCC 2004 vol 25 pag 1656)
-15: GROMOS96 54a7 force field (Eur. Biophys. J. (2011), 40,, 843-856, DOI: 10.1007/s00249-011-0700-9)
-16: OPLS-AA/L all-atom force field (2001 aminoacid dihedrals)
+tcoupl                  = Nose-Hoover
+tc_grps                 = SYSTEM
+tau_t                   = 1.0
+ref_t                   = 310.15
+
+pcoupl                  = Parrinello-Rahman
+pcoupltype              = semiisotropic
+tau_p                   = 5.0
+compressibility         = 4.5e-5  4.5e-5
+ref_p                   = 1.0     1.0
+
+constraints             = h-bonds
+constraint_algorithm    = LINCS
+continuation            = yes
+
+nstcomm                 = 100
+comm_mode               = linear
+comm_grps               = SYSTEM
+
+refcoord_scaling        = com
 </code></pre>
 
                     <p>
-                        <code>9</code>を選択して次へ進むと、使用する水モデルの種類を聞かれる。
-                        前回はSPE/Cモデルを使用したが、今回はTIP3Pモデルを使用する。
+                        
                     </p>
 
-<pre id="force-field"><code>Select the Water Model:
-1: TIP3P	TIP 3-point, recommended, by default uses CHARMM TIP3 with LJ on H
-2: TIP4P	TIP 4-point
-3: TIP5P	TIP 5-point
-4: SPC		simple point charge
-5: SPC/E	extended simple point charge
-6: None
+                </div>
+
+                <div class="content-block">
+                    <h3>本計算（03_npt）</h3>
+                    <p>
+                        
+                    </p>
+
+<pre><code>
+integrator              = md
+dt                      = 0.002
+nsteps                  = 25000000
+nstxtcout               = 50000
+nstvout                 = 50000
+nstfout                 = 50000
+nstcalcenergy           = 100
+nstenergy               = 1000
+nstlog                  = 1000
+
+cutoff-scheme           = Verlet
+nstlist                 = 20
+rlist                   = 1.2
+coulombtype             = pme
+rcoulomb                = 1.2
+vdwtype                 = Cut-off
+vdw-modifier            = Force-switch
+rvdw_switch             = 1.0
+rvdw                    = 1.2
+
+tcoupl                  = Nose-Hoover
+tc_grps                 = SYSTEM
+tau_t                   = 1.0
+ref_t                   = 310.15
+
+pcoupl                  = Parrinello-Rahman
+pcoupltype              = semiisotropic
+tau_p                   = 5.0
+compressibility         = 4.5e-5  4.5e-5
+ref_p                   = 1.0     1.0
+
+constraints             = h-bonds
+constraint_algorithm    = LINCS
+continuation            = yes
+
+nstcomm                 = 100
+comm_mode               = linear
+comm_grps               = SYSTEM
+
+refcoord_scaling        = com
 </code></pre>
 
                     <p>
-                        <code>1</code>を選択し、何もエラーが出なければgroファイルが生成されているであろう。
-                        また同時に、大量のトポロジーファイルと位置拘束ファイルが生成されているであろう。
-                        これでは扱うファイルが増えてしまい、見た目もあまりよくないので、ここからはファイルを1つにまとめてみたいと思う。
+                        
                     </p>
-                    <br>
-                    <p>
-                        現在<code>gmx pdb2gmx</code>をしたことでトポロジーファイルが自動生成されたが、PDBファイルに含まれているアルコール分子256個が別々のファイルに分けられてしまっている。
-                        しかしながら、256個のアルコール分子は全て同じものであるので、わざわざファイルを分ける必要はなく、むしろ全て同じトポロジーファイルを利用することが望ましい。
-                        従って、topol_Other.itp及びposre_Other.itpのみを残して、topol_OtherXXX.itpやposre_OtherXXX.itpなどは全て削除してしまおう。
-                        （ただし、topol.topは残しておくこと）
-                    </p>
-
-<pre><code><span id="comment"># 生成したファイル（一部のみ抜粋）</span>
-posre_Other.itp       topol_Other.itp
-posre_Other2.itp      topol_Other2.itp
-posre_Other3.itp      topol_Other3.itp
-
-posre_Other256.itp    topol_Other256.itp
-topol.top
-<span id="comment"># posre_Other.itp, topol_Other.itp, topol.topのみを残して、他のitpファイルを全て削除</span>
-</code></pre>
-
-                    <p>
-                        さらに、系全体のトポロジーファイルであるtopol.topを編集する。
-                        「Include chain topologies」の項目に削除したファイル一覧があるので、topol_Other.itpのみを残して他を削除する。
-                    </p>
-
-<pre><code><p class="filename">topol.top (modified)</p>
-; Include chain topologies
-#include "topol_Other.itp"
-</code></pre>
-
-                    <p>
-                        また、ファイル末尾の[ molecules ]のセクションでも同様の修正をして、Otherの分子数を256に変更する。
-                    </p>
-
-<pre><code><p class="filename">topol.top (modified)</p>
-[ moleules ]
-; Compound      #mols
-Other             256
-SOL              7680
-</code></pre>
-
-                    <p>
-                        変更を保存して、次の5つのファイルが手元にあれば、ここまでの操作は完了となる。
-                        なお、ここからsystem.pdbとposre_Other.itpは使用しないが、削除せずに残しておこう。
-                    </p>
-                    <div id="list" class="table-of-contents">
-                        <ol>
-                            <li>system.pdb</li>
-                            <li>system.gro</li>
-                            <li>topol.top</li>
-                            <li>topol_Other.itp</li>
-                            <li>posre_Other.itp</li>
-                        </ol>
-                    </div>
-
-
 
                 </div>
 

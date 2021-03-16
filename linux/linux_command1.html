@@ -73,16 +73,16 @@
                             <td>ファイルまたはディレクトリを削除</td>
                         </tr>
                         <tr>
-                            <td>vi</td>
-                            <td>テキストファイルを編集</td>
-                        </tr>
-                        <tr>
                             <td>echo</td>
                             <td>ターミナル上に文字列を表示</td>
                         </tr>
                         <tr>
                             <td>></td>
                             <td>リダイレクト</td>
+                        </tr>
+                        <tr>
+                            <td>vi</td>
+                            <td>テキストファイルを編集</td>
                         </tr>
                     </table>
                     <p>
@@ -320,13 +320,98 @@ analysis_data.dat
                     <h3>rm</h3>
                     <p>
                         <code>rm</code>はファイルまたはディレクトリを削除するコマンドである。
+                        <code>rm ファイル名</code>として使用する。
+                        ディレクトリを削除する場合は<code>rm -r ディレクトリ名</code>とする。
                     </p>
+
+<pre><code>[user@local gmx_tutorial]$ ls
+1aki.pdb    <span>analysis</span>    <span>analysis_data</span>    ions.mdp    md.mdp    minim.mdp    npt.mdp    nvt.mdp    <span>test</span>    test1.dat
+[user@local gmx_tutorial]$ rm 1aki.pdb
+[user@local gmx_tutorial]$ ls
+<span>analysis</span>    <span>analysis_data</span>    ions.mdp    md.mdp    minim.mdp    npt.mdp    nvt.mdp    <span>test</span>    test1.dat
+[user@local gmx_tutorial]$ rm -r analysis_data
+[user@local gmx_tutorial]$ ls
+<span>analysis</span>    ions.mdp    md.mdp    minim.mdp    npt.mdp    nvt.mdp    <span>test</span>    test1.dat
+</code></pre>
+
+                    <p>
+                        コマンドを実行すると<strong>警告なしで完全に削除される</strong>ので注意すること。
+                        また、ワイルドカード（*）を用いてファイル名を指定すると、*を任意の文字列とみなして一致するもの全てが削除される。
+                    </p>
+
+<pre><code>[user@local gmx_tutorial]$ rm *.mdp
+[user@local gmx_tutorial]$ ls
+<span>analysis</span>    <span>test</span>    test1.dat
+</code></pre>
+
+                </div>
+
+                <div class="content-block">
+                    <h3>echo</h3>
+                    <p>
+                        <code>echo</code>は文字列をターミナル上に表示するコマンドである。
+                        使い方は簡単で、<code>echo 文字列</code>として使用する。
+                    </p>
+
+<pre><code>[user@local ~]$ echo Hello World
+Hello World
+</code></pre>
+
+                    <p>
+                        なお、文字列をダブルクォーテーションで囲んだ場合<code>echo "Hello World"</code>も同じ結果となり、中の文字列のみが出力される。
+                    </p>
+
+                </div>
+
+                <div class="content-block">
+                    <h3>>（リダイレクト）</h3>
+                    <p>
+                        リダイレクト<code>></code>は主に、ターミナルへの出力をファイルに書き込む時に使用する。
+                        ここでは<code>echo</code>と組み合わせた例を紹介する。
+                    </p>
+
+<pre><code>[user@local ~]$ echo Hello World > test.txt</code></pre>
+
+                    <p>
+                        コマンドを実行するとターミナル上に文字列は出力されず、代わりにtest.txtという名前のファイルが作成され、その中に文字列が書き込まれる。
+                        リダイレクトを使用すると出力結果をファイルに保存することができるので、ログファイルの用途によく利用される。
+                        <br><br>
+                        余談であるが、<code>>></code>のリダイレクトを使用すると、ファイルが存在する場合にその続きに追記をすることができる。
+                        test.txtに追記をし、次の<code>vi</code>で確認してみよう。
+                    </p>
+
+<pre><code>[user@local ~]$ echo Computer Chemistry >> test.txt</code></pre>
+
+                </div>
+
+                <div class="content-block">
+                    <h3>vi（vim）</h3>
+                    <p>
+                        Linuxにはテキストファイルを編集するためのテキストエディタとして、Vimが標準でインストールされている。
+                        Vimを使用するためには<code>vi ファイル名</code>として、ファイルの編集画面へ遷移する。
+                    </p>
+
+<pre><code>[user@local ~]$ vi test.txt</code></pre>
+
+<pre><code><p class="filename">test.txt</p>
+Hello World
+Computer Chemistry
+</code></pre>
+
+                    <p>
+                        test.txtには<code>echo</code>とリダイレクトで書き込んだ内容が正しく反映されている。
+                        確認ができたらファイルを閉じることにする。
+                        <code>:q</code>と入力するとVim画面から元のコンソール画面に戻るだろう。
+                        <br><br>
+                        Vimの使い方はまた別に習得する必要があるが、Linuxコマンド【初級編】はここまでとしておく。
+                    </p>
+
                 </div>
                 
                 <div class="hierarchie-bottom">
                     <p>PREVIOUS</p>
-                    <a href="">TOP</a>
-                    <a href="">NEXT</a>
+                    <a href="./linux_command_top.html">TOP</a>
+                    <a href="./linux_command2.html">NEXT</a>
                 </div>
 
             </div>

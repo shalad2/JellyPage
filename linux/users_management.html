@@ -43,6 +43,7 @@
                                 <li><a href="./users_management.html#user-addition">ユーザーの追加</a></li>
                                 <li><a href="./users_management.html#user-modification">ユーザー情報の変更</a></li>
                                 <li><a href="./users_management.html#user-deletion">ユーザーの削除</a></li>
+                                <li><a href="./users_management.html#permission">パーミッションの変更</a></li>
                             </ol>
                         </div>
                         以降、全てのコマンドは管理者（ルート）権限で実行する必要がある。
@@ -148,10 +149,15 @@ useradd -g guest user1
 
                     <p>
                         グループ情報が反映されていることを確認する。
+                        <code>id</code>コマンドを利用してもよい。
                     </p>
 
 <pre><code><p class="filename">/etc/passwd</p>
 user1:x:500:1000::/home/user1:/bin/bash
+</code></pre>
+
+<pre><code><span id="comment"># ユーザーのUIDとGIDを確認する</span>
+id user1
 </code></pre>
                     <p>
                         なお、グループ名を指定してユーザーを追加した場合、/etc/groupを参照して対応したグループ番号が自動的に割り振られる。
@@ -163,24 +169,148 @@ root:x:0:
 guest:x:1000:
 </code></pre>
 
+                    <h4>passwd</h4>
+                    <p>
+                        新しくユーザーを追加した後は、初期パスワードの設定を行う。
+                        マルチノードのスパコンの場合は、すべてのノードでパスワードの変更を適用するために、追加のコマンドを実行する必要がある。
+                    </p>
+
+<pre><code><span id="comment"># 初期パスワードを設定</span>
+passwd user1
+<span id="comment"># 新しいパスワードを入力できるので設定する</span>
+<span id="comment"># マルチノードの場合は以下を実行</span>
+make -C /var/yp
+</code></pre>
+
                 </div>
 
                 <div class="content-block">
                     <h3 id="user-modification">ユーザー情報の変更</h3>
+                    <h4>usermod</h4>
                     <p>
-                        
+                        ユーザー情報の変更は<code>usermod</code>を使用して行う。
+                        <code>usermod</code>のオプションでよく使用するグループ関係を以下にまとめた。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>usermodオプション</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>-g</td>
+                            <td>主グループまたはグループ番号（GID）を変更する</td>
+                        </tr>
+                        <tr>
+                            <td>-G</td>
+                            <td>副グループを変更する</td>
+                        </tr>
+                        <tr>
+                            <td>-a</td>
+                            <td>副グループを追加する</td>
+                        </tr>
+                        <tr>
+                            <td>-u</td>
+                            <td>ユーザーID（UID）を変更する</td>
+                        </tr>
+                        <tr>
+                            <td>-l</td>
+                            <td>ログイン名を変更する</td>
+                        </tr>
+                    </table>
+                    <p>
+                        例えば、user1の主グループはguestであり、副グループにmdを追加する場合は、以下のように設定する。
                     </p>
 
+<pre><code><span id="comment"># 副グループを追加</span>
+usermod -aG md user1
+</code></pre>
+
+                    <p>
+                        副グループは複数に所属することも可能である。さらにtestにも所属する場合は以下のようになる。
+                    </p>
+
+<pre><code><span id="comment"># 2つ目の副グループに所属</span>
+usermod -aG test user1
+<span id="comment"># 以下のコマンドでも同様</span>
+usermod -G md,test user1
+</code></pre>
+
+                    <h4>特定ユーザーにsudo権限を付与する</h4>
+                    <p>
+                        特定のユーザーにsudo実行権限を与える場合、そのユーザーをwheelグループに所属させる方法が一般的である。
+                        ここからはその手順を見ていくが、まず初めにwheelグループのユーザーがsudoを使用できるような環境を作成する。
+                        ルートユーザーで<code>visudo</code>を実行し、wheelグループにsudoの実行権限を付与する。
+                    </p>
+
+<pre><code>visudo</code></pre>
+
+<pre><code><span id="comment"># 下記wheel部分のコメントアウトを外す</span>
+## Allows people in group wheel to run all commands
+%wheel  ALL=(ALL)       ALL
+</code></pre>
+
+                    <p>
+                        編集できたら保存し、特定のユーザーの副グループにwheelを設定する。
+                    </p>
+
+<pre><code>usermod -aG wheel user1
+<span id="comment"># user1がwheelに所属したことを確認</span>
+<span id="comment"># /etc/groupに名前が追加されていることを確認してもよい</span>
+id user1
+</code></pre>
+
+                    <p>
+                        設定ができたら一般ユーザーからログインし、<code>groups</code>コマンドを使用してwheelに所属していることを確認する。
+                        sudoが実行できるようになっていれば完了である。
+                    </p>
                 </div>
+
+
 
                 <div class="content-block">
                     <h3 id="user-deletion">ユーザーの削除</h3>
+                    <h4>userdel</h4>
+                    <p>
+                        ユーザーを削除するには<code>userdel</code>を使用する。
+                        対象ユーザーのホームディレクトリも同時に削除する場合は<code>-r</code>オプションを指定する。
+                    </p>
+
+<pre><code><span id="comment"># user1というユーザーを削除</span>
+userdel user1
+<span id="comment"># user1のホームディレクトリも同時に削除</span>
+userdel -r user1                   
+</code></pre>
+
+                </div>
+
+
+                <div class="content-block">
+                    <h3 id="permission">パーミッションの変更</h3>
+                    <h4>chmod</h4>
+                    <p>
+                        <code>chmod</code>はパーミッションを変更するコマンドである。
+                        パーミッションとはファイルやディレクトリへのアクセス権のことであり、ユーザーのファイルへのアクセス権や実行権を設定することができる。
+                        使用例を以下に示す。
+                    </p>
+
+<pre><code><span id="comment"># submit.shというファイルのパーミッションを755に変更</span>
+chmod 755 submit.sh
+<span id="comment"># test.txtというファイルへのアクセスを600に制限</span>
+chmod 700 test.txt
+</code></pre>
+
+                    <p>
+                        パーミッションには「読み」「書き」「実行」の3つの権限と、「自分（Owner）」「グループ（Group）」「他人（Other）」の3つの所有者がある。
+                        <code>chmod</code>コマンドの3つの数字はそれぞれの所有者に対応していて、数字の番号が3つのアクセス権限を表す。
+                    </p>
+
+
 
                 </div>
                 
                 <div class="hierarchie-bottom">
-                    <a href="gromacs_tutorial2_top.html">PREVIOUS</a>
-                    <a href="gromacs_tutorial1_top.html">TOP</a>
+                    <a href="">PREVIOUS</a>
+                    <a href="../index.html">TOP</a>
                     <p>NEXT</p>
                 </div>
 

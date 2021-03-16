@@ -99,6 +99,12 @@ gmx mdrun -deffnm 00_em
                         計算が終了すると、エネルギー最小化された系の構造が得られる。
                         エネルギー最小化過程のポテンシャルエネルギー変化を出力してみた。
                     </p>
+
+<pre><code>gmx energy -f 00_em.tpr -o potential.xvg</code></pre>
+
+                    <div class="image-center">
+                        <img id="C16OH-em-plot" src="images/C16OH_em_plot.png" alt="C16OH_em_plot">
+                    </div>
                 </div>
 
                 <div class="content-block">
@@ -160,22 +166,48 @@ refcoord_scaling        = com
                         これらの情報はtrrファイルにトラジェクトリとして出力されるが、<code>nstxtcout</code>を指定するとxtcファイルにも座標情報を出力することができる。
                         また、エネルギーや計算ログの出力も<code>nstenergy</code>と<code>nstlog</code>で制御できる。
                         <br><br>
-                        温度制御では<code>tcoupl = Nose-Hoover</code>とする。<code>ref_t</code>が参照温度なので、ここに310.15 Kを指定する。
+                        温度制御は<code>tcoupl = Nose-Hoover</code>を適用している。
+                        <code>ref_t</code>が参照温度なので、ここにシミュレーションしたい温度である310.15 Kを指定する。
+                        <br><br>
+                        <code>constraints</code>では結合の拘束条件とそのアルゴリズムを指定する。
+                        今回は水素結合に対してLINCSという方法で結合拘束をしている。
+                        <br><br>
+                        <code>comm_mode</code>は系の質量中心が並進運動してしまう場合に、その速度を取り除く設定である。
+                        <code>nstcomm</code>でその操作の頻度を指定する。
+                        <br><br>
+                        最後、<code>gen-vel</code>で系の原子に対して初速度を与える。
+                        初速度はマクスウェル分布に従って生成され、温度は<code>gen-temp</code>で与えることができる。
+                        普通は温度制御時の参照温度と同じ値になるであろう。
+                        <br><br>
+                        設定が確認できたら<code>gmx grompp</code>と<code>gmx mdrun</code>を実行する。
                     </p>
 
-
+<pre><code>gmx grompp -f 01_nvt.mdp -c 00_em.gro -p topol.top -o 01_nvt.tpr
+gmx mdrun -deffnm 01_nvt
+</code></pre>
 
                     <p>
-                        
+                        チュートリアル①と同様に、NVT平衡化で温度が一定となっているかを確認する。
+                        グラフにプロットすると、125.0 psの間温度が安定していることがわかる。
                     </p>
+
+<pre><code>gmx energy -f 01_nvt.tpr -o temperature.xvg</code></pre>
+
+                    <div class="image-center">
+                        <img id="C16OH-temp-plot" src="images/C16OH_temp_plot.png" alt="C16OH_temp_plot">
+                    </div>
+
+
 
                 <div class="content-block">
                     <h3>NPT平衡化（02_npt）</h3>
                     <p>
-                        
+                        系の温度が安定したら、続いてNPT平衡化を行う。
+                        ここでの設定はほとんど本計算と同じものになるが、圧力が安定するまでがこのステップの役割である。
+                        圧力制御にはParrinello-Rahmanの方法を使用し、参照圧力1.0 barとして500.0 psのシミュレーションを行う。
                     </p>
 
-<pre><code>
+<pre><code><p class="filename">02_npt.mdp</p>
 integrator              = md
 dt                      = 0.002
 nsteps                  = 250000
@@ -219,18 +251,44 @@ refcoord_scaling        = com
 </code></pre>
 
                     <p>
-                        
+                        おおよその設定はNVT平衡化のものと同様であるが、圧力制御のセクションが追加されている。
+                        圧力制御は<code>pcoupl = Parrinello-Rahman</code>とし、参照圧力は<code>ref_p</code>に1.0 barを指定する。
+                        ここで注意するのは、圧力の制御タイプが<code>pcoupltype = semiisotropic</code>となっている点である。
+                        今回のシミュレーションはアルコールの二重膜を扱っており、膜はxy方向に広がっているので、xy方向とz方向で同じ圧力制御をすることができない。
+                        従って、制御タイプにはsemiisotropic（半等方性）を設定し、<code>ref_p</code>にはxy方向とz方向でそれぞれの参照圧力を与える。
+                        <br><br>
+                        また、NPT平衡化はNVT平衡化から継続するので<code>continuation = yes</code>とし、ここからタイムステップは<code>dt = 0.002</code>としている。
+                        <br><br>
+                        同様に、<code>gmx grompp</code>と<code>gmx mdrun</code>を実行する。
                     </p>
+
+<pre><code>gmx grompp -f 02_npt.mdp -c 01_nvt.gro -p topol.top -o 02_npt.tpr
+gmx mdrun -deffnm 02_npt
+</code></pre>
+                        
+                    <p>
+                        シミュレーションが完了すると、310.15 K、1.0 barでのアルコール二重膜の構造が得られる。
+                        トラジェクトリを確認すると、膜分子の占有面積が小さくなり、系の大きさが変化したことが見られる。
+                        圧力についてもグラフにプロットしてみた。
+                    </p>
+                        
+<pre><code>gmx energy -f 02_npt.tpr -o pressure.xvg</code></pre>
+                        
+                    <div class="image-center">
+                        <img id="C16OH-press-plot" src="images/C16OH_press_plot.png" alt="C16OH_press_plot">
+                    </div>
 
                 </div>
 
                 <div class="content-block">
                     <h3>本計算（03_npt）</h3>
                     <p>
-                        
+                        最後は本計算を行う。
+                        本計算はNPT平衡化の延長なので、ステップ数を増やして50.0 nsのシミュレーションを行う。
+                        ここまでで温度と圧力が十分に安定していることを確認して、シミュレーションを実行しよう。
                     </p>
 
-<pre><code>
+<pre><code><p class="filename">03_npt.mdp</p>
 integrator              = md
 dt                      = 0.002
 nsteps                  = 25000000
@@ -274,34 +332,47 @@ refcoord_scaling        = com
 </code></pre>
 
                     <p>
-                        
+                        実行コマンドも変わらず、<code>gmx grompp</code>と<code>gmx mdrun</code>で実行する。
                     </p>
+
+<pre><code>gmx grompp -f 03_npt.mdp -c 02_npt.gro -p topol.top -o 03_npt.tpr
+gmx mdrun -deffnm 03_npt
+</code></pre>
+
+                    <p>
+                        シミュレーションには時間がかかると思うが、計算が終了すると次のような構造が見られるであろう。
+                        二重膜を形成するアルコール分子が一定方向に傾き、ラメラ構造を形成している。
+                    </p>
+                    <div class="image-center">
+                        <img id="C16OH-simu-result" src="images/C16OH_simu_result.png" alt="C16OH_simu_result">
+                    </div>
+
 
                 </div>
 
                 <div class="content-block">
                     <h3>まとめ</h3>
                     <p>
-                        ここまで、アルコール二重膜の力場とトポロジーの設定を行い、GROMACSでシミュレーションを実行できるところまで辿り着いた。
-                        今回の設定をまとめると次の通りである。
+                        チュートリアル②は以上となる。学習内容をまとめると以下のようになる。
                     </p>
                     <div id="summary" class="table-of-contents">
                         <ol>
-                            <li><code>CHARMM36力場</code>をダウンロードし、GROMACSで読み込めるようにした。</li>
-                            <li>アルコール分子のトポロジーを<code>merged.rtp</code>に追加し、GROMACSで分子を扱えるようにした。</li>
-                            <li>groファイルを作成し、系全体のトポロジーファイルを修正した。</li>
+                            <li><code>CHARMM-GUI</code>などを使用して、系の構造の作成方法を学習した。</li>
+                            <li>GROMACSへの力場の導入方法、及び分子の取り扱い方を理解した。</li>
+                            <li><code>mdpファイル</code>を編集し、目的のシミュレーション条件に合った設定をした。</li>
                         </ol>
                     </div>
                     <p>
-                        次回は作成したgroファイルとトポロジーファイルを用いてシミュレーションを実行する。
-                        シミュレーションの設定ファイルであるmdpファイルの詳細を学んでいこう。
+                        ここまでできればGROMACSは一通り扱えるようになったのではないだろうか。
+                        これから独自のシミュレーションを行い、さらに深い知識を身に付けていってほしい。
+                        また、GROMACSのチュートリアルページは備忘録としても活用してほしい。
                     </p>
                 </div>
                 
                 <div class="hierarchie-bottom">
-                    <a href="gromacs_tutorial2_1.html">PREVIOUS</a>
+                    <a href="gromacs_tutorial2_2.html">PREVIOUS</a>
                     <a href="gromacs_tutorial2_top.html">TOP</a>
-                    <a href="gromacs_tutorial2_3.html">NEXT</a>
+                    <p>NEXT</p>
                 </div>
 
             </div>

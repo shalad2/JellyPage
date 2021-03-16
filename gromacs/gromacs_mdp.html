@@ -48,8 +48,10 @@
                             <li><a href="gromacs_mdp.html#mdp-run-control">実行制御</a></li>
                             <li><a href="gromacs_mdp.html#mdp-energy-minimization">エネルギー最小化</a></li>
                             <li><a href="gromacs_mdp.html#mdp-output-control">出力制御</a></li>
-                            <li><a href="gromacs_mdp.html#mdp-bonded-params">結合情報</a></li>
-                            <li><a href="gromacs_mdp.html#mdp-nonbonded-params">非結合情報</a></li>
+                            <li><a href="gromacs_mdp.html#mdp-bonded-params">結合情報（拘束条件）</a></li>
+                            <li><a href="gromacs_mdp.html#mdp-neighbor-params">近接原子情報</a></li>
+                            <li><a href="gromacs_mdp.html#mdp-nonbonded-params">非結合情報（LJ相互作用、クーロン相互作用）</a></li>
+                            <li><a href="gromacs_mdp.html#mdp-coupling">温度制御・圧力制御</a></li>
                         </ol>
                     </div>
                 </div>
@@ -93,7 +95,7 @@
                     <h4>integrator</h4>
                     <p>
                         演算アルゴリズムを指定する。MDシミュレーションを実行する時は基本的に<code>md</code>を使用する。
-                        また、エネルギー最小化には<code>steep</code>を使用することが多い。
+                        一方、エネルギー最小化には<code>steep</code>を使用することが多い。
                     </p>
 
 <pre><code>integrator = md
@@ -110,9 +112,21 @@ integrator = steep    <span id="comment"># 最急降下法アルゴリズム</sp
                     <h4>dt</h4>
                     <p>
                         シミュレーションのタイムステップを指定する。<strong>単位は[ps]</strong>であることに注意。
+                        一般的な全原子のシミュレーションでは、タイムステップは1[fs]や2[fs]とすることが多い。
                     </p>
 
-<pre><code>dt = 0.002    <span id="comment"># 2fs</span></code></pre>
+<pre><code>dt = 0.002    <span id="comment"># 2[fs]</span></code></pre>
+
+                    <p>
+                        <br>
+                        シミュレーション時間（どのくらいの時間のMD計算を行うか）は<code>nsteps</code>と<code>dt</code>の組み合わせによって決定する。
+                        次の例は50[ns]のシミュレーションを実行する時の設定である。
+                    </p>
+
+<pre><code><span id="comment"># 50[ns]のシミュレーション設定</span>
+nsteps = 25000000
+dt     = 0.002         <span id="comment"># 2[fs] x 25000000[steps]</span>
+</code></pre>
 
                 </div>
 
@@ -121,18 +135,32 @@ integrator = steep    <span id="comment"># 最急降下法アルゴリズム</sp
                     <h4>emtol</h4>
                     <p>
                         エネルギー最小化において、系の最大力がこの値よりも小さくなった場合に収束したと判定する。
-                        デフォルトは10.0 [kJ mol<sup>-1</sup> nm<sup>-1</sup>]である。
+                        デフォルトは10.0[kJ mol<sup>-1</sup> nm<sup>-1</sup>]である。
                     </p>
 
 <pre><code>emtol = 1000.0</code></pre>
 
                     <h4>emstep</h4>
                     <p>
-                        エネルギーの初期ステップサイズを指定する。デフォルトは0.01 [nm]である。
+                        エネルギーの初期ステップサイズを指定する。デフォルトは0.01[nm]である。
                     </p>
 
 <pre><code>emstep = 0.01</code></pre>
 
+                    <p>
+                        <br>
+                        エネルギー最小化は以下のような設定とともに、非結合相互作用を定義して行うことが一般的である。
+                        具体的なmdpファイルの内容はGROMACSのチュートリアルを確認してほしい。
+                        なお、初期構造に原子のオーバーラップがあった場合、この段階で系のエネルギーが跳ね上がるので、原因となる原子を取り除くか、初期構造を操作する必要が出てくる。
+                    </p>
+
+<pre><code><span id="comment"># 一般的なエネルギー最小化のパラメータ設定</span>
+md     = steep
+emtol  = 1000.0
+emstep = 0.01
+nsteps = 50000
+</code></pre>
+    
                 </div>
 
                 <div class="content-block">
@@ -198,14 +226,202 @@ integrator = steep    <span id="comment"># 最急降下法アルゴリズム</sp
                 </div>
 
                 <div class="content-block">
-                    <h3>結合情報</h3>
-                    <h4></h4>
+                    <h3 id="mdp-bonded-params">結合情報（拘束条件）</h3>
+                    <h4>constraints</h4>
+                    <p>
+                        結合または角度の拘束を指定する。構造制御を行う場合や、結合のダイナミクスが目的のタイムスケールで必要ない場合などに使用する。
+                        指定できるものの一部を次に示す。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>constraints</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>none</td>
+                            <td>拘束を行わない<br>結合や角度は全てポテンシャル関数で記述される</td>
+                        </tr>
+                        <tr>
+                            <td>h-bonds</td>
+                            <td>水素原子との結合に拘束条件を適用する</td>
+                        </tr>
+                        <tr>
+                            <td>all-bonds</td>
+                            <td>全ての結合に拘束条件を適用する</td>
+                        </tr>
+                        <tr>
+                            <td>h-angles</td>
+                            <td>全ての結合に加えて、水素原子を含む角度を結合拘束として適用する</td>
+                        </tr>
+                        <tr>
+                            <td>all-angles</td>
+                            <td>全ての結合と角度に拘束条件を適用する</td>
+                        </tr>
+                    </table>
+                    <p>
+                        基本的なシミュレーションの場合は<code>constraints = h-bonds</code>を指定することが多い印象である。
+                    </p>
+                    <h4>constraint_algorithm</h4>
+                    <p>
+                        結合拘束を行う時に使用するアルゴリズムを指定する。以下の2つがある。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>constraint_algorithm</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>LINCS</td>
+                            <td>LINCSアルゴリズム</td>
+                        </tr>
+                        <tr>
+                            <td>SHAKE</td>
+                            <td>SHAKEアルゴリズム</td>
+                        </tr>
+                    </table>
+                    <p>
+                        LINCSアルゴリズムがデフォルトとなっており、こちらの方が高速であるが、角度の拘束条件を扱う場合はSHAKEアルゴリズムを使用する必要がある。
+                    </p>
+                    <h4>continuation</h4>
+                    <p>
+                        拘束条件を新しく適用するか、適用せずに以前のものを引き継ぐかを指定できる。
+                        新しいシミュレーションの場合には<code>continuation = no</code>、以前からの継続または再計算（rerun）の場合には<code>continuation = yes</code>を指定すればよい。
+                    </p>
+
+                    <p>
+                        <br>
+                        以上3つが必須である。次の例は、NVT平衡化が終わった後にNPT平衡化をしたい場合の設定例である。
+                    </p>
+
+<pre><code><span id="comment"># 結合拘束条件</span>
+constraints           = h-bonds
+constraint_algorithm  = LINCS
+continuation          = yes
+</code></pre>
+
                 </div>
 
                 <div class="content-block">
-                    <h3>静電相互作用</h3>
+                    <h3 id="mdp-neighbor-params">近接原子情報</h3>
+                    <h4>nstlist</h4>
+                    <p>
+                        
+                    </p>
+                    <h4>ns_type</h4>
+                </div>
+
+                <div class="content-block">
+                    <h3 id="mdp-nonbonded-params">非結合情報（LJ相互作用、クーロン相互作用）</h3>
                     <h4>coulombtype</h4>
-                    <h4></h4>
+                    <p>
+                        クーロン相互作用の計算タイプを指定する。
+                    </p>
+                    <h4>vdwtype</h4>
+                </div>
+
+                <div class="content-block">
+                    <h3 id="mdp-coupling">温度制御・圧力制御</h3>
+                    <h4>tcoupl</h4>
+                    <p>
+                        温度制御の方法を指定する。
+                        参照温度は<code>ref_t</code>、カップリング時定数は<code>tau_t</code>で指定する。
+                        <code>tc_grps</code>を指定すると、選択したグループごとに別々に温度制御を適用することができる。
+                        下記は<code>tcoupl</code>に指定できる温度制御法の一部である。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>tcoupl</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>no</td>
+                            <td>温度制御を行わない</td>
+                        </tr>
+                        <tr>
+                            <td>Berendsen</td>
+                            <td>Berendsenサーモスタットによる温度制御</td>
+                        </tr>
+                        <tr>
+                            <td>Nose-Hoover</td>
+                            <td>Nose-Hooverサーモスタットによる温度制御</td>
+                        </tr>
+                        <tr>
+                            <td>V-rescale</td>
+                            <td>速度スケーリングを用いた温度制御</td>
+                        </tr>
+                    </table>
+
+<pre><code><span id="comment"># Nose-Hooverサーモスタットによる温度制御</span>
+tcoupl   = Nose-Hoover
+tc_grps  = Other    Water
+tau_t    = 1.0      1.0
+ref_t    = 310      310
+</code></pre>
+
+                    <h4>pcoupl</h4>
+                    <p>
+                        圧力制御の方法を指定する。
+                        参照圧力は<code>ref_p</code>、カップリング時定数は<code>tau_p</code>で指定する。
+                        また、<code>compressibility</code>も同時に指定する。
+                        一般には、300[K]における水の値である4.5x10<sup>-5</sup>[bar<sup>-1</sup>]が用いられる。
+                        <code>pcoupl</code>で指定できる圧力制御法の一部を以下に示す。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>pcoupl</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>no</td>
+                            <td>圧力制御を行わない（体積一定）</td>
+                        </tr>
+                        <tr>
+                            <td>Berendsen</td>
+                            <td>Berendsenバロスタットによる圧力制御</td>
+                        </tr>
+                        <tr>
+                            <td>Parrinello-Rahman</td>
+                            <td>Parrinello-Rahmanバロスタットによる圧力制御</td>
+                        </tr>
+                    </table>
+                    <p>
+                        ここが重要であるが、圧力制御を行うには<code>pcoupltype</code>で制御タイプを指定する必要がある。
+                        主に使用するのは次の2つである。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>pcoupltype</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>isotropic</td>
+                            <td>等方性の制御タイプ</td>
+                        </tr>
+                        <tr>
+                            <td>semiisotropic</td>
+                            <td>半等方性の制御タイプ<br>xy方向とz方向で独立している</td>
+                        </tr>
+                    </table>
+                    <p>
+                        isotropicを使用する場合は<code>ref_p</code>と<code>compressibility</code>のそれぞれに1つずつの値を設定する。
+                        一方でsemiisotropicを使用する場合は、それぞれに2つずつの値を設定する必要がある。
+                    </p>
+                    
+<pre><code><span id="comment"># 等方性圧力制御</span>
+pcoupl          = Parrinello-Rahman
+pcoupltype      = isotropic
+tau_p           = 5.0
+ref_p           = 1.0
+compressibility = 4.5e-5
+
+<span id="comment"># 半等方性圧力制御</span>
+pcoupl          = Parrinello-Rahman
+pcoupltype      = semiisotropic
+tau_p           = 5.0
+ref_p           = 1.0       1.0
+compressibility = 4.5e-5    4.5e-5
+</code></pre>
+
                 </div>
                 
                 <div class="hierarchie-bottom">

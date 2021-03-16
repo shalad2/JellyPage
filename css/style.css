@@ -419,6 +419,18 @@ ul, li {
         border-left: solid 6px powderblue;
         font-size: 100%;
     }
+    #warning {
+        background: #e7edf3;
+        color: #1e366a;
+        padding: 0.5em 0.5em 0.5em 0.7em;
+        border-radius: 3px;
+        margin: 15px 0px;
+        border: none;
+    }
+    #warning code {
+        color: #1e366a;
+        background: #fff;
+    }
 
 
 
@@ -465,7 +477,7 @@ ul, li {
     background-color: rgba(255, 255, 255, 0.5);
     background-blend-mode: lighten;
 }
-#linux-command-bg {
+#linux-bg {
     background-image: url(../linux/images/linux_sl.png);
     background-position: 50% 65%;
     background-color: rgba(255, 255, 255, 0.35);
@@ -491,11 +503,17 @@ ul, li {
 #lysozyme-press-plot,
 #lysozyme-dens-plot,
 #lysozyme-rmsd-plot,
-#lysozyme-rg-plot {
+#lysozyme-rg-plot,
+#C16OH-em-plot,
+#C16OH-temp-plot,
+#C16OH-press-plot {
     width: 550px;
 }
 #C16OH-system {
     width: 700px;
+}
+#C16OH-simu-result {
+    width: 800px;
 }
 #lysozyme-water {
     width: 350px;

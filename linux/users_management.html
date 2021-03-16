@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>Linuxユーザー管理</title>
+        <meta name="description" content="Linuxにおけるユーザー管理を解説">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <!-- CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/ress@3.0.0/dist/ress.min.css">
+        <link rel="stylesheet" href="../css/style.css">
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+    <script src="../js/menu.js" type="text/javascript"></script>
+    <script src="../js/footer.js" type="text/javascript"></script>
+    </head>
+
+<body>
+    <div class="page-contents">
+        <!-- Accordion Menu -->
+        <script type="text/javascript">loadMenu('../');</script>
+        <!-- MAIN CONTENTS -->
+        <div class="main-contents">
+            <!-- HEADER IMAGE -->
+            <div id="linux-bg" class="big-bg">
+                <div class="title-contents wrapper">
+                    <h2 class="page-title">Linux</h2>
+                </div>
+            </div>
+
+            <!-- CONTENTS -->
+            <div class="main-text wrapper">
+                <div class="hierarchie">
+                    <a href="../index.html"><img class="home-icon" src="../images/logo_original.png" alt="home"></a>
+                    <p> ＞ Linuxユーザー管理</p>
+                </div>
+                <div>
+                    <h2 class="content-title">Linuxユーザー管理</h2>
+                    <p>
+                        Linux（Centos）でのユーザー管理方法をまとめた。
+                        <div id="list" class="table-of-contents">
+                            <ol>
+                                <li><a href="./users_management.html#user-addition">ユーザーの追加</a></li>
+                                <li><a href="./users_management.html#user-modification">ユーザー情報の変更</a></li>
+                                <li><a href="./users_management.html#user-deletion">ユーザーの削除</a></li>
+                            </ol>
+                        </div>
+                        以降、全てのコマンドは管理者（ルート）権限で実行する必要がある。
+                        一般ユーザーからルートログインをして操作するのがよいだろう。
+                    </p>
+
+<pre><code><span id="comment"># スーパーユーザーになる</span>
+[user@computer ~]$ su
+<span id="comment"># スーパーユーザーのパスワードを入力</span>
+<span id="comment">ターミナルの表記が$から#へ変わる</span>
+[root@computer user]#
+</code></pre>
+
+                    <p>
+                        これにて無事、このパソコンの管理者になることができた。
+                        しかし、管理者として間違った操作をすると非常に危険であることを十分に理解してほしい。
+                        <strong>管理者として実行するコンピュータの操作は必要最低限</strong>にし、ルートからアクセス可能なファイルの直接の変更は行わないようにする。
+                        <br>
+                        （もしも変更が必要な場合は必ずバックアップをとること）
+                    </p>  
+                    <p id="warning">
+                        自分のアカウントを持っていない場合、いきなりルートログインをするしかないが、それはよくないとされている。
+                        <code>ssh root@computer</code>のように接続するのは控えよう。
+                    </p>                  
+                </div>
+
+                <div class="content-block">
+                    <h3 id="user-addition">ユーザーの追加</h3>
+                    <h4>useradd</h4>
+                    <p>
+                        ユーザーの追加には<code>useradd</code>を使用する。
+                        新しくuser1という名前のユーザーを追加する場合には次のコマンドを実行する。
+                    </p>
+
+<pre><code><span id="comment"># ユーザーの追加</span>
+useradd user1
+</code></pre>
+
+                    <p>
+                        コマンドを実行した後に何も表示されないが、ユーザーの追加は完了している。
+                        パソコンに存在するユーザーの一覧は/etc/passwdで確認することができる。
+                    </p>
+
+<pre><code><span id="comment"># ユーザー情報の確認</span>
+vi /etc/passwd
+<span id="comment"># /etc/passwdの一部を抜粋</span>
+root:x:0:0:root:/root:/bin/bash
+user1:x:500:500::/home/user1:/bin/bash
+</code></pre>
+
+                    <p>
+                        /etc/passwdはユーザー管理のために重要なファイルであり、これがなくなると誰もLinuxにログインできなくなる。
+                        変更や削除は絶対にしないようにする。
+                        <br><br>
+                        /etc/passwdの一行は一人のユーザーに対応しており、コロンで区切られた7つのフィールドそれぞれは次の情報を表している。
+                        暗号化パスワードは現在使われておらず、"x"などが入れられている。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>/etc/passwd</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>第1フィールド</td>
+                            <td>ユーザー名（ログイン名）</td>
+                        </tr>
+                        <tr>
+                            <td>第2フィールド</td>
+                            <td>（暗号化パスワード）</td>
+                        </tr>
+                        <tr>
+                            <td>第3フィールド</td>
+                            <td>ユーザー番号（UID）</td>
+                        </tr>
+                        <tr>
+                            <td>第4フィールド</td>
+                            <td>グループ番号（GID）</td>
+                        </tr>
+                        <tr>
+                            <td>第5フィールド</td>
+                            <td>コメントフィールド（名前など）</td>
+                        </tr>
+                        <tr>
+                            <td>第6フィールド</td>
+                            <td>ホームディレクトリのパス</td>
+                        </tr>
+                        <tr>
+                            <td>第7フィールド</td>
+                            <td>ログインシェル</td>
+                        </tr>
+                    </table>
+                    <p>
+                        共同で利用するスパコンなどの場合、グループ番号（GID）をチーム内で統一することが多い。
+                        ユーザーを追加する際、グループ番号も同時に指定するには<code>-g</code>をつける。
+                        グループ番号はそのまま番号で指定するだけでなく、グループ名で指定することもできる。
+                    </p>
+
+<pre><code><span id="comment"># グループ番号を指定してユーザーを追加</span>
+useradd -g 1000 user1
+<span id="comment"># グループの名前を指定する場合（guestグループに追加）</span>
+useradd -g guest user1
+</code></pre>
+
+                    <p>
+                        グループ情報が反映されていることを確認する。
+                    </p>
+
+<pre><code><p class="filename">/etc/passwd</p>
+user1:x:500:1000::/home/user1:/bin/bash
+</code></pre>
+                    <p>
+                        なお、グループ名を指定してユーザーを追加した場合、/etc/groupを参照して対応したグループ番号が自動的に割り振られる。
+                        以下の例ではguestをグループ名とすると、GIDには1000が割り当てられる。
+                    </p>
+
+<pre><code><p class="filename">/etc/group</p>
+root:x:0:
+guest:x:1000:
+</code></pre>
+
+                </div>
+
+                <div class="content-block">
+                    <h3 id="user-modification">ユーザー情報の変更</h3>
+                    <p>
+                        
+                    </p>
+
+                </div>
+
+                <div class="content-block">
+                    <h3 id="user-deletion">ユーザーの削除</h3>
+
+                </div>
+                
+                <div class="hierarchie-bottom">
+                    <a href="gromacs_tutorial2_top.html">PREVIOUS</a>
+                    <a href="gromacs_tutorial1_top.html">TOP</a>
+                    <p>NEXT</p>
+                </div>
+
+            </div>
+            <script type="text/javascript">loadFooter();</script>
+        </div>
+    </div>
+</body>
+</html>

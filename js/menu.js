@@ -54,7 +54,7 @@ function loadMenu(rootDir){
                     '<li>' +
                         '<div class="menu">Linux</div>' +
                         '<ul>' +
-                            '<li>開発中</li>' +
+                            '<li><a href="' + rootDir + 'linux/users_management.html">Linuxユーザー管理</a></li>' +
                             //'<li><a href="' + rootDir + 'linux/linux_command1.html">Linuxコマンド【初級編】</a></li>' +
                             //'<li><a href="' + rootDir + 'linux/linux_command2.html">Linuxコマンド【中級編】</a></li>' +
                         '</ul>' +

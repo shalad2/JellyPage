@@ -50,53 +50,40 @@
                     </p>
                     <div class="table-of-contents">
                         <ol>
-                            <li><a href="gromacs_tutorial1_1.html">系の作成</a>
+                            <li><a href="gromacs_tutorial2_1.html">系の作成</a>
                                 <ul>
-                                    <li>CHARMM GUI</li>
-                                    <li>シミュレーションボックスの作成と溶媒の追加</li>
-                                    <li>イオンの追加</li>
+                                    <li>アルコール分子の作成（CHARMM-GUI）</li>
+                                    <li>アルコール二重膜系の作成</li>
                                 </ul>
                             </li>
-                            <li><a href="gromacs_tutorial1_2.html">MDシミュレーションの実行</a>
+                            <li><a href="gromacs_tutorial2_2.html">力場パラメータとトポロジーの準備</a>
                                 <ul>
-                                    <li>エネルギー最小化</li>
-                                    <li>NVT平衡化</li>
-                                    <li>NPT平衡化</li>
-                                    <li>本計算</li>
+                                    <li>CHARMM力場のダウンロード</li>
+                                    <li>CHARMMトポロジーの追加</li>
+                                    <li>構造ファイル（groファイル）の作成</li>
                                 </ul>
                             </li>
-                            <li><a href="gromacs_tutorial1_3.html">シミュレーション結果の解析</a>
+                            <li><a href="gromacs_tutorial2_3.html">mdpファイルの作成とシミュレーションの実行</a>
                                 <ul>
-                                    <li>トラジェクトリの修正</li>
-                                    <li>RMSD</li>
-                                    <li>回転半径</li>
-                                </ul>
-                            </li>
-                            <li><a href="gromacs_tutorial1_4.html">【補足】トポロジーファイルの詳細</a>
-                                <ul>
-                                    <li>topol.top</li>
-                                </ul>
-                            </li>
-                            <li><a href="gromacs_tutorial1_5.html">【補足】mdpファイルの詳細</a>
-                                <ul>
-                                    <li>minim.mdp</li>
-                                    <li>nvt.mdp</li>
-                                    <li>npt.mdp</li>
-                                    <li>md.mdp</li>
+                                    <li>エネルギー最小化（00_em）</li>
+                                    <li>NVT平衡化（01_nvt）</li>
+                                    <li>NPT平衡化（02_npt）</li>
+                                    <li>本計算（03_npt）</li>
                                 </ul>
                             </li>
                         </ol>
                     </div>
                     <p>
-                        なお、本チュートリアルの内容は「GROMACS Tutorial1: Lysozyme in Water」を参考にしている。
-                        初学者向けに全体の流れを重視しているため、詳細は<a href="http://www.mdtutorials.com/gmx/lysozyme/index.html" target="_blank" rel="noopener noreferrer">英語版のページ</a>を参照してほしい。
+                        このチュートリアルではシミュレーション後の解析は行っていないが、本来であれば目的の物性を調べるために計算を行ったり、プログラムを作成したりする。
+                        最後まで到達したら、この系に対してどのような物理量を計算することができるか考えてみよう。
+                        練習として実際にプログラムを作成してもよいだろう。
                     </p>
                 </div>
 
                 <div class="hierarchie-bottom">
                     <a href="gromacs_tutorial1_top.html">PREVIOUS</a>
                     <a href="../index.html">HOME</a>
-                    <p>NEXT</p>
+                    <a href="gromacs_mdp.html">NEXT</a>
                 </div>
             </div>
             <script type="text/javascript">loadFooter();</script>

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>GROMACSチュートリアル②mdpファイルの作成とシミュレーションの実行</title>
+        <meta name="description" content="【GROMACSのチュートリアル②】mdpファイルの作成とシミュレーションの実行ページ">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <!-- CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/ress@3.0.0/dist/ress.min.css">
+        <link rel="stylesheet" href="../css/style.css">
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+    <script src="../js/menu.js" type="text/javascript"></script>
+    <script src="../js/footer.js" type="text/javascript"></script>
+    </head>
+
+<body>
+    <div class="page-contents">
+        <!-- Accordion Menu -->
+        <script type="text/javascript">loadMenu('../');</script>
+        <!-- MAIN CONTENTS -->
+        <div class="main-contents">
+            <!-- HEADER IMAGE -->
+            <div id="gromacs" class="big-bg">
+                <div class="title-contents wrapper">
+                    <h2 class="page-title">GROMACS</h2>
+                </div>
+            </div>
+
+            <!-- CONTENTS -->
+            <div class="main-text wrapper">
+                <div class="hierarchie">
+                    <a href="../index.html"><img class="home-icon" src="../images/logo_original.png" alt="home"></a>
+                    <p> ＞ <a href="gromacs_tutorial2_top.html">GROMACSチュートリアル②</a> ＞ mdpファイルの作成とシミュレーションの実行</p>
+                </div>
+                <div>
+                    <h2 class="content-title">【GROMACSチュートリアル②】 mdpファイルの作成とシミュレーションの実行</h2>
+                    <p>
+                        前回まででアルコール二重膜系を作成し、CHARMM36力場を使用したGROMACSでのシミュレーションを開始できるまでに至った。
+                        今回は実際にMDシミュレーションを行うが、シミュレーションの設定をメインに解説し、好きな条件でシミュレーションを実行できるようになることを目標とする。
+                        シミュレーションの手順はチュートリアル①と同様、下記のように進めていく。
+                    </p>
+                    <div id="list" class="table-of-contents">
+                        <ol>
+                            <li>エネルギー最小化（00_em）</li>
+                            <li>NVT平衡化（01_nvt）</li>
+                            <li>NPT平衡化（02_npt）</li>
+                            <li>本計算（03_npt）</li>
+                        </ol>
+                    </div>
+                    <p>
+                        また、このページで解説したmdpファイルの設定について、より詳しい解説は<a href="./gromacs_mdp.html">GROMACS.mdpオプション</a>のページで紹介している。
+                        GROMACSの操作に慣れてきたら参考にしてほしい。
+                    </p>
+                </div>
+
+                <div class="content-block">
+                    <h3>エネルギー最小化（00_em）</h3>
+                    <p>
+                        まずは、作成した構造のエネルギー最小化を行う。
+                        設定条件を記述したmdpファイルは次のようになる。
+                    </p>
+                    
+<pre><code><p class="filename">00_em.mdp</p>
+integrator  = steep
+emtol       = 1000.0
+emstep      = 0.01
+nsteps      = 50000
+
+nstlist         = 10
+cutoff-scheme   = Verlet
+ns_type         = grid
+coulombtype     = PME
+rcoulomb        = 1.2
+rvdw            = 1.2
+pbc             = xyz
+</code></pre>
+
+                    <p>
+                        エネルギー最小化には最急降下法を用いるので<code>integrator = steep</code>とし、系の最大力F<sub>max</sub>が1000 kJ mol<sup>-1</sup> nm<sup>-1</sup>以下となるまで緩和を行う。
+                        この時、同時にステップ間隔と最大ステップ数を指定している。
+                        <br><br>
+                        また、次に非結合相互作用（LJ相互作用、クーロン相互作用）に関する設定している。
+                        近接原子の定義、探し方、更新頻度などを設定した後、それらが遠距離の場合と近距離の場合で異なる相互作用の取り扱いをしている。
+                        <code>coulombtype = PME</code>は遠距離クーロン相互作用にパーティクルメッシュエワルド法を使用する設定である。
+                        また、<code>rcoulomb</code>と<code>rvdw</code>は近距離クーロン相互作用及び近距離LJ相互作用のカットオフ距離である。
+                        <br><br>
+                        最後、<code>pbc = xyz</code>は周期的境界条件を3次元に適用している。
+                        <br><br>
+                        このmdpファイルと作成した二重膜系の構造を用いて<code>gmx grompp</code>と<code>gmx mdrun</code>を実行する。
+                    </p>
+
+<pre><code>gmx grompp -f 00_em.mdp -c system.gro -p topol.top -o 00_em.tpr
+gmx mdrun -deffnm 00_em
+</code></pre>
+
+                    <p>
+                        計算が終了すると、エネルギー最小化された系の構造が得られる。
+                        エネルギー最小化過程のポテンシャルエネルギー変化を出力してみた。
+                    </p>
+
+<pre><code>gmx energy -f 00_em.tpr -o potential.xvg</code></pre>
+
+                    <div class="image-center">
+                        <img id="C16OH-em-plot" src="images/C16OH_em_plot.png" alt="C16OH_em_plot">
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>NVT平衡化（01_nvt）</h3>
+                    <p>
+                        エネルギー最小化ができたら、NVT平衡化を行う。
+                        mdpファイルには温度制御の設定を記述する必要があり、またシミュレーションの長さに合わせてステップ数を決定する。
+                        今回はNose-Hooverの方法で温度制御を行い、310.15 Kで125.0 psのNVT計算を行う設定をした。
+                    </p>
+
+<pre><code><p class="filename">01_nvt.mdp</p>
+integrator              = md
+dt                      = 0.001
+nsteps                  = 125000
+nstxtcout               = 5000
+nstxout                 = 5000
+nstvout                 = 5000
+nstfout                 = 5000
+nstcalcenergy           = 100
+nstenergy               = 1000
+nstlog                  = 1000
+
+cutoff-scheme           = Verlet
+nstlist                 = 20
+rlist                   = 1.2
+coulombtype             = PME
+rcoulomb                = 1.2
+vdwtype                 = Cut-off
+vdw-modifier            = Force-switch
+rvdw_switch             = 1.0
+rvdw                    = 1.2
+
+tcoupl                  = Nose-Hoover
+tc_grps                 = SYSTEM
+tau_t                   = 1.0
+ref_t                   = 310.15
+
+constraints             = h-bonds
+constraint_algorithm    = LINCS
+
+nstcomm                 = 100
+comm_mode               = linear
+comm_grps               = SYSTEM
+
+gen-vel                 = yes
+gen-temp                = 310.15
+gen-seed                = -1
+
+refcoord_scaling        = com
+</code></pre>
+
+                    <p>
+                        上から順番に見ていく。まず、MD計算を行うので<code>integrator = md</code>とし、タイムステップは<code>dt = 0.001</code>としている。
+                        このタイムステップの単位はpsなので、設定したタイムステップは1 fsとなる。
+                        <code>nsteps = 125000</code>とすれば、0.001 ps × 125000 = 125.0 psのシミュレーションが実行できる。
+                        <br><br>
+                        次に出力情報の設定をしている。
+                        主にトラジェクトリファイルを何ステップごとに記述するかを設定しており、<code>nstxout</code>、<code>nstvout</code>、<code>nstfout</code>はそれぞれ系の原子の座標、速度及び働く力に対応する。
+                        これらの情報はtrrファイルにトラジェクトリとして出力されるが、<code>nstxtcout</code>を指定するとxtcファイルにも座標情報を出力することができる。
+                        また、エネルギーや計算ログの出力も<code>nstenergy</code>と<code>nstlog</code>で制御できる。
+                        <br><br>
+                        温度制御は<code>tcoupl = Nose-Hoover</code>を適用している。
+                        <code>ref_t</code>が参照温度なので、ここにシミュレーションしたい温度である310.15 Kを指定する。
+                        <br><br>
+                        <code>constraints</code>では結合の拘束条件とそのアルゴリズムを指定する。
+                        今回は水素結合に対してLINCSという方法で結合拘束をしている。
+                        <br><br>
+                        <code>comm_mode</code>は系の質量中心が並進運動してしまう場合に、その速度を取り除く設定である。
+                        <code>nstcomm</code>でその操作の頻度を指定する。
+                        <br><br>
+                        最後、<code>gen-vel</code>で系の原子に対して初速度を与える。
+                        初速度はマクスウェル分布に従って生成され、温度は<code>gen-temp</code>で与えることができる。
+                        普通は温度制御時の参照温度と同じ値になるであろう。
+                        <br><br>
+                        設定が確認できたら<code>gmx grompp</code>と<code>gmx mdrun</code>を実行する。
+                    </p>
+
+<pre><code>gmx grompp -f 01_nvt.mdp -c 00_em.gro -p topol.top -o 01_nvt.tpr
+gmx mdrun -deffnm 01_nvt
+</code></pre>
+
+                    <p>
+                        チュートリアル①と同様に、NVT平衡化で温度が一定となっているかを確認する。
+                        グラフにプロットすると、125.0 psの間温度が安定していることがわかる。
+                    </p>
+
+<pre><code>gmx energy -f 01_nvt.tpr -o temperature.xvg</code></pre>
+
+                    <div class="image-center">
+                        <img id="C16OH-temp-plot" src="images/C16OH_temp_plot.png" alt="C16OH_temp_plot">
+                    </div>
+
+
+
+                <div class="content-block">
+                    <h3>NPT平衡化（02_npt）</h3>
+                    <p>
+                        系の温度が安定したら、続いてNPT平衡化を行う。
+                        ここでの設定はほとんど本計算と同じものになるが、圧力が安定するまでがこのステップの役割である。
+                        圧力制御にはParrinello-Rahmanの方法を使用し、参照圧力1.0 barとして500.0 psのシミュレーションを行う。
+                    </p>
+
+<pre><code><p class="filename">02_npt.mdp</p>
+integrator              = md
+dt                      = 0.002
+nsteps                  = 250000
+nstxtcout               = 5000
+nstvout                 = 5000
+nstfout                 = 5000
+nstcalcenergy           = 100
+nstenergy               = 1000
+nstlog                  = 1000
+
+cutoff-scheme           = Verlet
+nstlist                 = 20
+rlist                   = 1.2
+coulombtype             = pme
+rcoulomb                = 1.2
+vdwtype                 = Cut-off
+vdw-modifier            = Force-switch
+rvdw_switch             = 1.0
+rvdw                    = 1.2
+
+tcoupl                  = Nose-Hoover
+tc_grps                 = SYSTEM
+tau_t                   = 1.0
+ref_t                   = 310.15
+
+pcoupl                  = Parrinello-Rahman
+pcoupltype              = semiisotropic
+tau_p                   = 5.0
+compressibility         = 4.5e-5  4.5e-5
+ref_p                   = 1.0     1.0
+
+constraints             = h-bonds
+constraint_algorithm    = LINCS
+continuation            = yes
+
+nstcomm                 = 100
+comm_mode               = linear
+comm_grps               = SYSTEM
+
+refcoord_scaling        = com
+</code></pre>
+
+                    <p>
+                        おおよその設定はNVT平衡化のものと同様であるが、圧力制御のセクションが追加されている。
+                        圧力制御は<code>pcoupl = Parrinello-Rahman</code>とし、参照圧力は<code>ref_p</code>に1.0 barを指定する。
+                        ここで注意するのは、圧力の制御タイプが<code>pcoupltype = semiisotropic</code>となっている点である。
+                        今回のシミュレーションはアルコールの二重膜を扱っており、膜はxy方向に広がっているので、xy方向とz方向で同じ圧力制御をすることができない。
+                        従って、制御タイプにはsemiisotropic（半等方性）を設定し、<code>ref_p</code>にはxy方向とz方向でそれぞれの参照圧力を与える。
+                        <br><br>
+                        また、NPT平衡化はNVT平衡化から継続するので<code>continuation = yes</code>とし、ここからタイムステップは<code>dt = 0.002</code>としている。
+                        <br><br>
+                        同様に、<code>gmx grompp</code>と<code>gmx mdrun</code>を実行する。
+                    </p>
+
+<pre><code>gmx grompp -f 02_npt.mdp -c 01_nvt.gro -p topol.top -o 02_npt.tpr
+gmx mdrun -deffnm 02_npt
+</code></pre>
+                        
+                    <p>
+                        シミュレーションが完了すると、310.15 K、1.0 barでのアルコール二重膜の構造が得られる。
+                        トラジェクトリを確認すると、膜分子の占有面積が小さくなり、系の大きさが変化したことが見られる。
+                        圧力についてもグラフにプロットしてみた。
+                    </p>
+                        
+<pre><code>gmx energy -f 02_npt.tpr -o pressure.xvg</code></pre>
+                        
+                    <div class="image-center">
+                        <img id="C16OH-press-plot" src="images/C16OH_press_plot.png" alt="C16OH_press_plot">
+                    </div>
+
+                </div>
+
+                <div class="content-block">
+                    <h3>本計算（03_npt）</h3>
+                    <p>
+                        最後は本計算を行う。
+                        本計算はNPT平衡化の延長なので、ステップ数を増やして50.0 nsのシミュレーションを行う。
+                        ここまでで温度と圧力が十分に安定していることを確認して、シミュレーションを実行しよう。
+                    </p>
+
+<pre><code><p class="filename">03_npt.mdp</p>
+integrator              = md
+dt                      = 0.002
+nsteps                  = 25000000
+nstxtcout               = 50000
+nstvout                 = 50000
+nstfout                 = 50000
+nstcalcenergy           = 100
+nstenergy               = 1000
+nstlog                  = 1000
+
+cutoff-scheme           = Verlet
+nstlist                 = 20
+rlist                   = 1.2
+coulombtype             = pme
+rcoulomb                = 1.2
+vdwtype                 = Cut-off
+vdw-modifier            = Force-switch
+rvdw_switch             = 1.0
+rvdw                    = 1.2
+
+tcoupl                  = Nose-Hoover
+tc_grps                 = SYSTEM
+tau_t                   = 1.0
+ref_t                   = 310.15
+
+pcoupl                  = Parrinello-Rahman
+pcoupltype              = semiisotropic
+tau_p                   = 5.0
+compressibility         = 4.5e-5  4.5e-5
+ref_p                   = 1.0     1.0
+
+constraints             = h-bonds
+constraint_algorithm    = LINCS
+continuation            = yes
+
+nstcomm                 = 100
+comm_mode               = linear
+comm_grps               = SYSTEM
+
+refcoord_scaling        = com
+</code></pre>
+
+                    <p>
+                        実行コマンドも変わらず、<code>gmx grompp</code>と<code>gmx mdrun</code>で実行する。
+                    </p>
+
+<pre><code>gmx grompp -f 03_npt.mdp -c 02_npt.gro -p topol.top -o 03_npt.tpr
+gmx mdrun -deffnm 03_npt
+</code></pre>
+
+                    <p>
+                        シミュレーションには時間がかかると思うが、計算が終了すると次のような構造が見られるであろう。
+                        二重膜を形成するアルコール分子が一定方向に傾き、ラメラ構造を形成している。
+                    </p>
+                    <div class="image-center">
+                        <img id="C16OH-simu-result" src="images/C16OH_simu_result.png" alt="C16OH_simu_result">
+                    </div>
+
+
+                </div>
+
+                <div class="content-block">
+                    <h3>まとめ</h3>
+                    <p>
+                        チュートリアル②は以上となる。学習内容をまとめると以下のようになる。
+                    </p>
+                    <div id="summary" class="table-of-contents">
+                        <ol>
+                            <li><code>CHARMM-GUI</code>などを使用して、系の構造の作成方法を学習した。</li>
+                            <li>GROMACSへの力場の導入方法、及び分子の取り扱い方を理解した。</li>
+                            <li><code>mdpファイル</code>を編集し、目的のシミュレーション条件に合った設定をした。</li>
+                        </ol>
+                    </div>
+                    <p>
+                        ここまでできればGROMACSは一通り扱えるようになったのではないだろうか。
+                        これから独自のシミュレーションを行い、さらに深い知識を身に付けていってほしい。
+                        また、GROMACSのチュートリアルページは備忘録としても活用してほしい。
+                    </p>
+                </div>
+                
+                <div class="hierarchie-bottom">
+                    <a href="gromacs_tutorial2_2.html">PREVIOUS</a>
+                    <a href="gromacs_tutorial2_top.html">TOP</a>
+                    <p>NEXT</p>
+                </div>
+
+            </div>
+            <script type="text/javascript">loadFooter();</script>
+        </div>
+    </div>
+</body>
+</html>

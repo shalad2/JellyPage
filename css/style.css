@@ -42,6 +42,9 @@ table th{
     border-bottom: solid 1px #1e366a;
     text-align: center;
 }
+#text-center {
+    text-align: center;
+}
 
 /* CODE
 ---------------------------------------- */
@@ -247,30 +250,47 @@ ul, li {
         gap: 26px;
         grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
         margin-top: 3%;
-        margin-bottom: 50px;
+        margin-bottom: 60px;
     }
     .button {
-        font-size: 1.375rem;
+        font-size: 1.125rem;
         text-align: center;
         color: #432;
         background-size: cover;
         background-repeat: none;
-        border: solid #fff;
-        border-radius: 5px;
-        padding: 64px;
+        padding: 64px 32px 64px;
+        border: solid #432 2px;
+        background-position: center;
+        background-color: rgba(255, 255, 255, 0.8);
+        background-blend-mode: lighten;
     }
     .button:hover {
-        border: solid aqua;
+        color: rgb(255, 255, 255);
+        border: solid #432 2px;
+        background-color: rgba(68, 51, 34, 0.4);
+        background-blend-mode: darken;
+
     }
+    #home-gromacs {
+        background-image: url(../gromacs/images/gromacs_bg.png);
+    }
+    #home-lammps {
+        background-image: url(../lammps/images/lammps_input_bg.png);
+    }
+    #home-linux {
+        background-image: url(../linux/images/linux_sl.png);
+    }
+
 
     /* ABOUT LAB
     ---------------------------------------- */
-    .lab-content {
-        margin-top: 3%;
+    .thispage-content {
+        margin-bottom: 8%;
         display: flex;
     }
     .home-content-image {
-        max-width: 40vw;
+        max-width: 15vw;
+        margin-right: 5%;
     }
 
 
@@ -399,12 +419,24 @@ ul, li {
         border-left: solid 6px powderblue;
         font-size: 100%;
     }
+    #warning {
+        background: #e7edf3;
+        color: #1e366a;
+        padding: 0.5em 0.5em 0.5em 0.7em;
+        border-radius: 3px;
+        margin: 15px 0px;
+        border: none;
+    }
+    #warning code {
+        color: #1e366a;
+        background: #fff;
+    }
 
 
 
 /* MOBILE
 ---------------------------------------- */
-@media (max-width: 700px) {
+/*@media (max-width: 700px) {
     .home-content p {
         font-size: 1rem;
     }
@@ -435,17 +467,17 @@ ul, li {
     .home-content-image {
         max-width: 90vw;
     }
-}
+}*/
 
 /* GROMACS
 ---------------------------------------- */
 #gromacs {
-    background-image: url(../gromacs/images/main-bg.png);
+    background-image: url(../gromacs/images/gromacs_bg.png);
     background-position: center;
     background-color: rgba(255, 255, 255, 0.5);
     background-blend-mode: lighten;
 }
-#linux-command-bg {
+#linux-bg {
     background-image: url(../linux/images/linux_sl.png);
     background-position: 50% 65%;
     background-color: rgba(255, 255, 255, 0.35);
@@ -462,7 +494,8 @@ ul, li {
 #lysozyme-newbox, 
 #lysozyme-solv,
 #lysozyme-solv-ion,
-#lysozyme-movie {
+#lysozyme-movie,
+#C16OH-pdb {
     width: 500px;
 }
 #lysozyme-em-plot,
@@ -470,8 +503,17 @@ ul, li {
 #lysozyme-press-plot,
 #lysozyme-dens-plot,
 #lysozyme-rmsd-plot,
-#lysozyme-rg-plot {
+#lysozyme-rg-plot,
+#C16OH-em-plot,
+#C16OH-temp-plot,
+#C16OH-press-plot {
     width: 550px;
+}
+#C16OH-system {
+    width: 700px;
+}
+#C16OH-simu-result {
+    width: 800px;
 }
 #lysozyme-water {
     width: 350px;
@@ -492,6 +534,16 @@ ul, li {
     height: 300px;
     object-fit: cover;
     margin-bottom: 0%;
+}
+#charmm-gui-top,
+#ligand_reader_modeler,
+#C16OH-modeling,
+#C16OH-rename,
+#C16OH-download,
+#mengen-top, 
+#mengen-pdb {
+    margin: 2% 0%;
+    width: 98%;
 }
 .main-text {
     background-image: url("../images/main-text-bg.png");

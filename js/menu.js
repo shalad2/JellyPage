@@ -37,6 +37,7 @@ function loadMenu(rootDir){
                             '<li><a href="' + rootDir + 'gromacs/gromacs_install.html">GROMACSのインストール</a></li>' +
                             '<li><a href="' + rootDir + 'gromacs/gromacs_tutorial1_top.html">GROMACSチュートリアル①</a></li>' +
                             '<li><a href="' + rootDir + 'gromacs/gromacs_tutorial2_top.html">GROMACSチュートリアル②</a></li>' +
+                            '<li><a href="' + rootDir + 'gromacs/gromacs_mdp.html">GROMACS.mdpオプション</a></li>' +
                         '</ul>' +
                     '</li>' +
                 '</ul>' +
@@ -44,11 +45,8 @@ function loadMenu(rootDir){
                     '<li>' +
                         '<div class="menu">LAMMPS</div>' +
                         '<ul>' +
-                            '<li><a href="' + rootDir + 'lammps/lammps_input.html">LAMMPSインプットコマンド</a></li>' +
-                            '<li>メニュー2</li>' +
-                            '<li>メニュー3</li>' +
-                            '<li>メニュー4</li>' + 
-                            '<li>メニュー5</li>' +
+                            '<li>開発中</li>' +
+                            //'<li><a href="' + rootDir + 'lammps/lammps_input.html">LAMMPSインプットコマンド</a></li>' +
                         '</ul>' +
                     '</li>' +
                 '</ul>' +
@@ -57,11 +55,9 @@ function loadMenu(rootDir){
                         '<div class="menu">Linux</div>' +
                         '<ul>' +
                             '<li><a href="' + rootDir + 'linux/linux_command_top.html">Linuxコマンド</a></li>' +
-                            '<li><a href="' + rootDir + 'linux/linux_command1.html">Linuxコマンド【初級編】</a></li>' +
-                            '<li><a href="' + rootDir + 'linux/linux_command2.html">Linuxコマンド【中級編】</a></li>' +
-                            '<li>メニュー3</li>' +
-                            '<li>メニュー4</li>' + 
-                            '<li>メニュー5</li>' +
+                            '<li><a href="' + rootDir + 'linux/users_management.html">Linuxユーザー管理</a></li>' +
+                            //'<li><a href="' + rootDir + 'linux/linux_command1.html">Linuxコマンド【初級編】</a></li>' +
+                            //'<li><a href="' + rootDir + 'linux/linux_command2.html">Linuxコマンド【中級編】</a></li>' +
                         '</ul>' +
                     '</li>' +
                 '</ul>' +
@@ -69,11 +65,7 @@ function loadMenu(rootDir){
                     '<li>' +
                         '<div class="menu">Python</div>' +
                         '<ul>' +
-                            '<li>メニュー1</li>' +
-                            '<li>メニュー2</li>' +
-                            '<li>メニュー3</li>' +
-                            '<li>メニュー4</li>' + 
-                            '<li>メニュー5</li>' +
+                            '<li><a href="' + rootDir + 'python/matplotlib1.html">matplotlibの使い方</a></li>' +
                         '</ul>' +
                     '</li>' +
                 '</ul>' +

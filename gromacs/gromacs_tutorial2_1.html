@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>GROMACSチュートリアル②系の作成</title>
+        <meta name="description" content="【GROMACSのチュートリアル②】アルコール二重膜 系の作成ページ">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <!-- CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/ress@3.0.0/dist/ress.min.css">
+        <link rel="stylesheet" href="../css/style.css">
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+    <script src="../js/menu.js" type="text/javascript"></script>
+    <script src="../js/footer.js" type="text/javascript"></script>
+    </head>
+
+<body>
+    <div class="page-contents">
+        <!-- Accordion Menu -->
+        <script type="text/javascript">loadMenu('../');</script>
+        <!-- MAIN CONTENTS -->
+        <div class="main-contents">
+            <!-- HEADER IMAGE -->
+            <div id="gromacs" class="big-bg">
+                <div class="title-contents wrapper">
+                    <h2 class="page-title">GROMACS</h2>
+                </div>
+            </div>
+
+            <!-- CONTENTS -->
+            <div class="main-text wrapper">
+                <div class="hierarchie">
+                    <a href="../index.html"><img class="home-icon" src="../images/logo_original.png" alt="home"></a>
+                    <p> ＞ <a href="gromacs_tutorial2_top.html">GROMACSチュートリアル②</a> ＞ 系の作成</p>
+                </div>
+                <div>
+                    <h2 class="content-title">【GROMACSチュートリアル②】 系の作成</h2>
+                    <p>
+                        任意のMDシミュレーションを開始するためには、まず大前提として系が用意されている必要がある。
+                        ここでは直鎖アルコールの構造を作成し、それをボックス内に配置することで、アルコール分子の二重膜が含まれる系の作成をしてみたいと思う。
+                        <br><br>
+                        なお、今回は系の作成を簡単にするために、自動で構造を生成してくれる外部サイトを利用する。
+                        インターネット環境が必要となるので、通信環境の良いところで取り組んでほしい。
+                    </p>
+                    <div id="list" class="table-of-contents">
+                        <ol>
+                            <li>アルコール分子の作成（CHARMM-GUI）</li>
+                            <li>アルコール二重膜系の作成</li>
+                        </ol>
+                    </div>
+                    <p>
+                        今回作成する系は図のようになる。
+                        アルコール分子が整列して二重膜を形成し、その両側にはバルクの水が存在するような系を作成する。
+                    </p>
+                    <div class="image-center">
+                        <img id="C16OH-system" src="images/C16OH_system.png" alt="Alcohol Membrane System">
+                    </div>
+                    
+                </div>
+
+                <div class="content-block">
+                    <h3>アルコール分子の作成（CHARMM-GUI）</h3>
+                    <p>
+                        まず、シミュレーションする系に含まれる分子であるアルコール分子の構造を作成する。
+                        簡単な分子構造を作成し、構造ファイルを書き出すには<strong>CHARMM-GUI</strong>が便利である。
+                        CHARMM-GUIはWeb上で動くプログラムであり、PDBファイルの作成からシミュレーションのインプットファイルの作成まで、多くの便利な機能が備わっている。
+                    </p>
+                    <div class="image-center">
+                        <img id="charmm-gui-top" src="images/charmm_gui_top.png" alt="charmm-gui-top">
+                    </div>
+                    <p>
+                        今回は<a href="http://www.charmm-gui.org/" target="_blank" rel="noopener noreferrer">CHARMM-GUIのトップページ</a>から「Input Generator」を選択し、その中の「Ligand Reader and Modeler」を利用する。
+                        一番下までスクロールすると、次のような画面が現れるはずである。
+                    </p>
+                    <div class="image-center">
+                        <img id="ligand_reader_modeler" src="images/ligand_reader_modeler.png" alt="ligand_reader_modeler">
+                    </div>
+                    <p>
+                        この画面の枠内では分子を描画することができる。今回はアルコール分子として、C<sub>16</sub>H<sub>33</sub>OHの構造式を描いてみることにする。
+                        <br><br>
+                        枠の左側のツールを用いて直鎖アルカンを描画し、右側のツールで元素を変更する。
+                        分子の骨格ができたら<strong>必ず枠上のHマークから分子に水素を付加</strong>しておくこと。
+                        これを忘れると後にエラーとなってしまう。
+                        最終的に下図のようになればOKである。
+                    </p>
+                    <div class="image-center">
+                        <img id="C16OH-modeling" src="images/C16OH_modeling.png" alt="C16OH_modeling">
+                    </div>
+                    <p>
+                        一番下の「Next Step: Search ligand」を押すと、次の画面に進む。
+                        作成した分子と一致する構造がCHARMM-GUI上にあった場合や、似たような構造があった場合はここで表示される。
+                        一致するものがなくても、その分子にオリジナルの名前（VMDではresnameで分類される）をつけることができる。
+                        今回は「LAL」（Linear-chain Alcohol Ligand）という名前をつけておくことにする。
+                    </p>
+                    <div class="image-center">
+                        <img id="C16OH-rename" src="images/C16OH_rename.png" alt="C16OH_rename">
+                    </div>
+                    <p>
+                        「Next Step: Generate PDB」を押すと、プログラムの処理が始まる。
+                        しばらくすると次のページへ移動し、PDBファイルやpsfファイル、インプットファイルなどが生成する。
+                        これらは「download.tgz」から一括でダウンロードしておくとよい。
+                    </p>
+                    <div class="image-center">
+                        <img id="C16OH-download" src="images/C16OH_download.png" alt="C16OH_download">
+                    </div>
+                    <p>
+                        ダウンロードしたファイルを展開し、PDBファイルをVMDで確認すると、アルコール分子が正しく作成できていることがわかる。
+                    </p>
+                    <div class="image-center">
+                        <img id="C16OH-pdb" src="images/C16OH_pdb.png" alt="C16OH_pdb">
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>アルコール二重膜系の作成</h3>
+                    <p>
+                        ここまでで、系の構築に必要なアルコール分子の構造を作成することができた。
+                        二重膜系を作成するためにはPACKMOLなどを使用して分子を並べてもよいが、今回は便利な二重膜系作成ツールがあったのでそちらを利用する。
+                    </p>
+                    <div class="image-center">
+                        <img id="mengen-top" src="images/mengen_top.png" alt="mengen_top">
+                    </div>
+                    <p>
+                        <a href="http://memgen.uni-goettingen.de/" target="_blank" rel="noopener noreferrer">MemGen</a>にアクセスし、先ほど作成したアルコールのPDBファイルをアップロードする。
+                        オプションでは膜中の分子密度や水の量などを指定できるので、今回は次のように設定する。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>オプション</th>
+                            <th>値</th>
+                        </tr>
+                        <tr>
+                            <td>Lipids per monolayer</td>
+                            <td id="text-center">128</td>
+                        </tr>
+                        <tr>
+                            <td>Water molecules per lipid</td>
+                            <td id="text-center">30</td>
+                        </tr>
+                        <tr>
+                            <td>Add salt (mMolar)</td>
+                            <td id="text-center">0</td>
+                        </tr>
+                        <tr>
+                            <td>Area per lipid (&Aring;<sup>2</sup>)</td>
+                            <td id="text-center">20</td>
+                        </tr>
+                    </table>
+                    <p>
+                        設定が完了したら「Submit」を押すと、プログラムが動いて二重膜の構造を自動生成してくれる。
+                        二重膜系のPDBファイルを「Download Membrane PDB」からダウンロードしておこう。
+                    </p>
+                    <div class="image-center">
+                        <img id="mengen-pdb" src="images/mengen_pdb.png" alt="mengen_pdb">
+                    </div>
+                    <p>
+                        ダウンロードしたPDBファイルの名前をsystem.pdbに変更し、テキストエディターで内容を確認する。
+                        今回は（多少数値は前後するであろうが）アルコール分子が256個、水分子が7680個含まれる系で、ボックスサイズは(x, y, z)=(53.666, 53.666, 124.570)であることがわかる。
+                        <br><br>
+                        また、その次の行からは原子の種類と座標が記述されている。
+                        詳しくは調べてほしいが、PDBファイルの形式は単なるスペース区切りではなく、何文字目がどの情報を表すかが厳密に決まっている。
+                        GROMACSでPDB形式を扱うことはほぼないが、NAMD等を使用する際には必要となるので覚えておくとよい。
+                    </p>
+
+<pre><code><p class="filename">system.pdb</p>
+REMARK 
+REMARK     MEMBRANE PATCH GENERATED BY WEBSERVER MEMGEN: http://memgen.uni-goettingen.de
+REMARK
+REMARK     PLEASE CITE:
+REMARK
+REMARK     Christopher J. Knight and Jochen S. Hub 
+REMARK     MemGen: A general web server for the setup of lipid membrane simulation systems
+REMARK     Bioinformatics, 31:2897-2899 (2015)
+REMARK
+REMARK     THIS PDB FILE CONTAINS:  LAL             256
+REMARK                              Water          7680
+REMARK                              Na+               0
+REMARK                              Cl-               0
+REMARK
+CRYST1   53.666   53.666  124.570  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1 C1   LAL     1       2.640  54.580  63.460  1.00  0.00           C
+ATOM      2 C2   LAL     1       2.610  53.670  64.700  1.00  0.00           C
+ATOM      3 C3   LAL     1       2.670  54.470  66.010  1.00  0.00           C
+ATOM      4 C4   LAL     1       2.760  53.530  67.220  1.00  0.00           C
+ATOM      5 C5   LAL     1       3.190  54.280  68.480  1.00  0.00           C
+ATOM      6 C6   LAL     1       3.150  53.230  69.610  1.00  0.00           C
+ATOM      7 C7   LAL     1       3.450  53.890  70.960  1.00  0.00           C
+ATOM      8 C8   LAL     1       3.120  53.000  72.170  1.00  0.00           C
+ATOM      9 C9   LAL     1       3.290  53.950  73.360  1.00  0.00           C
+</code></pre>
+
+                    <p>
+                        同時にVMDでも系の構造を確認しておく。
+                    </p>
+                    <div class="image-center">
+                        <img id="C16OH-system" src="images/C16OH_system.png" alt="C16OH_system">
+                    </div>
+
+                </div>
+
+                
+
+                <div class="content-block">
+                    <h3>まとめ</h3>
+                    <p>ここまで、次の手順でアルコール二重膜系の構造を作成した。</p>
+                    <div id="summary" class="table-of-contents">
+                        <ol>
+                            <li><code>CHARMM-GUI</code>によりアルコール分子の構造を作成した。</li>
+                            <li>作成したアルコール分子を用いて<code>MemGen</code>で二重膜系を作成した。</li>
+                        </ol>
+                    </div>
+                    <p>
+                        しかし、このアルコール分子はオリジナルの分子であるため、GROMACSにこの分子を認識させる必要がある。
+                        次回はその点を含め、作成した系をGROMACSで扱う方法を見ていく。
+                    </p>
+                </div>
+                
+                <div class="hierarchie-bottom">
+                    <p>PREVIOUS</p>
+                    <a href="gromacs_tutorial2_top.html">TOP</a>
+                    <a href="gromacs_tutorial2_2.html">NEXT</a>
+                </div>
+
+            </div>
+            <script type="text/javascript">loadFooter();</script>
+        </div>
+    </div>
+</body>
+</html>

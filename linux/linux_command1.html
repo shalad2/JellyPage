@@ -77,6 +77,10 @@
                             <td>テキストファイルを編集</td>
                         </tr>
                         <tr>
+                            <td>echo</td>
+                            <td>ターミナル上に文字列を表示</td>
+                        </tr>
+                        <tr>
                             <td>></td>
                             <td>リダイレクト</td>
                         </tr>
@@ -109,7 +113,8 @@
                     </p>
 
 <pre><code>[user@local ~]$ cd study
-[user@local study]$
+[user@local study]$ pwd
+/home/user/study
 </code></pre>
 
                     <p>
@@ -276,11 +281,45 @@ test1.dat
                     </p>
                     <h4>mv 移動するファイル名 移動先</h4>
                     <p>
+                        <code>test1.dat</code>というファイルを<code>analysis_data</code>というディレクトリの中へ移動するには、次のコマンドを実行する。
+                    </p>
 
+<pre><code>[user@local gmx_tutorial]$ ls
+1aki.pdb    <span>analysis</span>    <span>analysis_data</span>    ions.mdp    md.mdp    minim.mdp    npt.mdp    nvt.mdp    <span>test</span>    test1.dat
+[user@local gmx_tutorial]$ mv test1.dat analysis_data
+[user@local gmx_tutorial]$ ls
+1aki.pdb    <span>analysis</span>    <span>analysis_data</span>    ions.mdp    md.mdp    minim.mdp    npt.mdp    nvt.mdp    <span>test</span>
+[user@local gmx_tutorial]$ ls analysis_data
+test1.dat
+</code></pre>
+                    
+                    <p>
+                        ディレクトリを移動する場合は<code>cp</code>の時と同様、<code>-r</code>を指定する必要がある。
+                        コピーとは違ってファイルが移動するので、本当に移動してもよいファイルなのかを確認してから実行する。
+                        また、移動先に指定したディレクトリが存在しない場合は後述する名前の変更が行われてしまうので注意すること。
                     </p>
                     <h4>mv 変更前の名前 変更後の名前</h4>
                     <p>
+                        <code>test1.dat</code>を<code>analysis_data.dat</code>という名前に変更するには、次のコマンドを実行する。
+                    </p>
 
+<pre><code>[user@local analysis_data]$ ls
+test1.dat
+[user@local analysis_data]$ mv test1.dat analysis_data.dat
+[user@local analysis_data]$ ls
+analysis_data.dat
+</code></pre>                    
+
+                    <p>
+                        名前の変更の場合はディレクトリでも<code>-r</code>を指定する必要はない。
+                        ただし、変更後の名前のファイルまたはディレクトリが既に存在していた場合、上書きされてしまうので注意する。
+                    </p>
+                </div>
+
+                <div class="content-block">
+                    <h3>rm</h3>
+                    <p>
+                        <code>rm</code>はファイルまたはディレクトリを削除するコマンドである。
                     </p>
                 </div>
                 

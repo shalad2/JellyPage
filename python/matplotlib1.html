@@ -55,150 +55,167 @@
                         matplotlibでグラフを描画するためには、matplotlibのpyplotというモジュールをインポートする必要がある。
                     </p>
 
-<pre><code>import matplotlib.pyplot as plt</code></pre>
+<pre><code><span id="python-import">import</span> matplotlib.pyplot <span id="python-import">as</span> plt</code></pre>
 
                     <p>
                         また、データの生成やファイルの読み込みでnumpyを使用することが多いので、併せてインポートする。
                     </p>
 
-<pre><code>import numpy as np
-# データの生成
+<pre><code><span id="python-import">import</span> numpy <span id="python-import">as</span> np
+<span id="comment"># データの生成</span>
 x = np.linspace(1, 100, 100)
 y = x ** 2
 </code></pre>
 
-                    <h4>dimension</h4>
                     <p>
-                        シミュレーションの次元を設定するコマンド。
-                        デフォルトでは3Dのシミュレーションを行う。
-                        2Dのシミュレーションを行う場合は、ボックスの定義やセットアップの前に記述する必要がある。
+                        ここでは2次関数のグラフを描画するためのデータを、xの範囲が[1, 100]となるように作成した。
+                        あとはxとyを用いてプロットをするだけである。
                     </p>
 
-<pre id="bottom-padding"><code><span id="lammps-input">dimension</span> 3</code></pre>
-
-                    <h4>boundary</h4>
+                    <h3 id="matplotlib1-plot">グラフを描画する</h3>
                     <p>
-                        シミュレーションボックスの各次元の境界条件を設定するコマンド。
-                        1文字で指定するとその次元の上下面に設定が適用されるが、2文字で指定すると1文字目が下面、2文字目が上面に適用される。
-                        シミュレーションボックスの初期サイズは<code>read_data</code>や<code>read_restart</code>で設定する。
+                        作成した配列データをグラフにプロットする方法は2つあるので、それぞれを紹介する。
+                    </p>
+                    <h4>Pyplotインターフェース</h4>
+                    <p>
+                        Pyplotインターフェースは全ての描画設定を<code>plt</code>を用いて行う方法である。
+                        直感的な操作ができるので理解しやすいが、後々のことを考えると次項のオブジェクト指向インターフェースを用いる方がよい。
+                        <br><br>
+                        プロットには<code>plt.plot()</code>を用いるだけである。
                     </p>
 
-<pre id="bottom-padding"><code><span id="lammps-input">boundary</span> p p p
-<span id="lammps-input">boundary</span> p fs p
-<span id="lammps-input">boundary</span> s f fm
+<pre><code>plt.plot(x, y)
+plt.show()
 </code></pre>
 
-                    <table>
-                        <tr>
-                            <th>boundary</th>
-                            <th>説明</th>
-                        </tr>
-                        <tr>
-                            <td>p</td>
-                            <td>周期的境界条件</td>
-                        </tr>
-                        <tr>
-                            <td>f</td>
-                            <td>非周期的境界、面の位置は固定</td>
-                        </tr>
-                        <tr>
-                            <td>s</td>
-                            <td>非周期的境界、面の位置は原子の動きに合わせて移動（シュリンクラッピング）</td>
-                        </tr>
-                        <tr>
-                            <td>m</td>
-                            <td>非周期的境界、シュリンクラッピングが発生するが、規定値よりは小さくならない</td>
-                        </tr>
-                    </table>
+                    <p>
+                        <code>plt.show()</code>を実行するとグラフ画面が表示される。
+                        下の画像のようにプロットされていれば成功である。
+                    </p>
+                    <div class="image-center">
+                        <img id="matplotlib1-tutorial-plot" src="images/tutorial_plot.png" alt="tutorial_plot">
+                    </div>
+
+                    <h4>オブジェクト指向インターフェース</h4>
+                    <p>
+                        オブジェクト指向インターフェースは、グラフの階層構造（オブジェクト）を作成して描画を行う方法である。
+                        最初は慣れないかもしれないが何かと便利なので、以降はこちらの方法で説明を進めていく。
+                    </p>
+
+<pre><code><span id="comment"># Figureオブジェクトの生成</span>
+fig = plt.figure()
+<span id="comment"># Axesオブジェクトの生成</span>
+ax = fig.add_subplot(111)
+<span id="comment"># プロットと描画</span>   
+ax.plot(x, y)
+plt.show()
+</code></pre>
+
+                    <p>
+                        描画のためには、グラフのフレームとなるFigureオブジェクト（fig）、描画領域となるAxesオブジェクト（ax）を生成する必要がある。
+                        Axesオブジェクトに対して<code>ax.plot()</code>を用いることでプロットができる。
+                        なお、この実行結果もpyplotインターフェースと同じものとなる。
+                    </p>
                 </div>
 
                 <div class="content-block">
-                    <h3 id="lammps-read-files">入力ファイルの読み込み</h3>
-                    <h4>read_data</h4>
+                    <h3 id="matplotlib1-layout">図の体裁を整える</h3>
                     <p>
-                        シミュレーションを実行するために必要なDATAファイルを読み込むコマンド。
-                        DATAファイルに記述されている原子の座標情報、ボックスサイズなどを読み込む。
-                        LAMMPSのインプットファイルには別途パラメータファイル（PARMファイル）も用意しておき、<code>include</code>で読み込むのが一般的。
-                    </p>                 
-
-<pre id="bottom-padding"><code><span id="lammps-input">read_data</span> DATA.FILE</code></pre>
-
-                    <h4>read_restart</h4>
-                    <p>
-                        シミュレーションを継続する時に必要なrestartファイルを読み込むコマンド。
-                        以前行ったシミュレーションで出力されたrestartファイルを指定することで、前回の続きからシミュレーションを実行できる。
-                        <code>read_restart</code>を使用する時は<code>read_data</code>はコメントアウトしておく。
+                        ここまででグラフのプロットはできるようになったが、軸タイトルや凡例などは表示されていない。
+                        図の体裁の基本的な部分を整えるためのスクリプトを用意したので、はじめはこれを利用してほしい。
+                        より詳しい設定は<a href="./matplotlib2.html">matplotlibにおける詳細設定</a>に委ねるので、そちらを参考にしてほしい。
                     </p>
 
-<pre id="bottom-padding"><code><span id="comment"># read_data DATA.FILE</span>
-<span id="lammps-input">read_restart</span> restartA
-</code></pre>                    
-                    <p>なお<code>read_restart</code>を使用する時、タイムステップを0に戻すために<code>reset_timestep</code>を用いることが多い</p>
-                
-                    <h4>include</h4>
-                    <p>
-                        新しいLAMMPSインプットファイルを読み込むコマンド。
-                        <code>include</code>するファイルにインプットコマンドを記述しておくことで、追加でコマンドの実行が可能になる。
-                        使い方としては、パラメータとそれに関連するコマンドをまとめたパラメータファイルを別に用意しておき、これを読み込むことでシミュレーションを実行するなどがある。
-                    </p>
+<pre><code><span id="python-import">import</span> numpy <span id="python-import">as</span> np
+<span id="python-import">import</span> matplotlib.pyplot <span id="python-import">as</span> plt
+        
+<span id="comment">###########################################################################
+# rcParams setting
+###########################################################################
+</span>
+<span id="comment"># layout</span>
+plt.rcParams["figure.figsize"] = [16.0, 12.0]  <span id="comment"># [width(inch):height(inch)]</span>
+<span id="comment"># plt.rcParams["figure.dpi"] = 300</span>
+plt.rcParams["figure.subplot.left"] = 0.14     <span id="comment"># padding-left</span>
+plt.rcParams["figure.subplot.bottom"] = 0.14   <span id="comment"># padding-bottom</span>
+plt.rcParams["figure.subplot.right"] = 0.90    <span id="comment"># padding-right</span>
+plt.rcParams["figure.subplot.top"] = 0.91      <span id="comment"># padding-top</span>
+plt.rcParams["figure.subplot.wspace"] = 0.30   <span id="comment"># padding-width-space</span>
+plt.rcParams["figure.subplot.hspace"] = 0.30   <span id="comment"># padding-height-space</span>
+    
+<span id="comment"># font</span>
+<span id="comment"># plt.rcParams["font.family"] = "serif"</span>
+<span id="comment"># plt.rcParams["font.serif"] = "Times New Roman"</span>
+plt.rcParams["font.size"] = 18
+    
+<span id="comment"># ticks</span>
+plt.rcParams["xtick.top"] = True
+plt.rcParams["xtick.bottom"] = True
+plt.rcParams["ytick.left"] = True
+plt.rcParams["ytick.right"] = True
+plt.rcParams["xtick.direction"] = "in"
+plt.rcParams["ytick.direction"] = "in"
+plt.rcParams["xtick.minor.visible"] = True
+plt.rcParams["ytick.minor.visible"] = True
+plt.rcParams["xtick.major.width"] = 1.5
+plt.rcParams["ytick.major.width"] = 1.5
+plt.rcParams["xtick.minor.width"] = 1.0
+plt.rcParams["ytick.minor.width"] = 1.0
+plt.rcParams["xtick.major.size"] = 10
+plt.rcParams["ytick.major.size"] = 10
+plt.rcParams["xtick.minor.size"] = 5
+plt.rcParams["ytick.minor.size"] = 5
+    
+<span id="comment"># axes</span>
+plt.rcParams["axes.labelsize"] = 24
+plt.rcParams["axes.labelpad"] = 20
+plt.rcParams["axes.linewidth"] = 1.5
+plt.rcParams["axes.grid"] = False
+<span id="comment"># grid setting
+# plt.rcParams["grid.color"] = "black"
+# plt.rcParams["grid.linestyle"] = "--"
+# plt.rcParams["grid.linewidth"] = 1.0</span>
+    
+<span id="comment"># legend</span>
+plt.rcParams["legend.loc"] = "best"
+plt.rcParams["legend.frameon"] = False
+<span id="comment"># plt.rcParams["legend.framealpha"] = 1.0</span>
+plt.rcParams["legend.fontsize"] = 20
+plt.rcParams["legend.borderaxespad"] = 1.0
+plt.rcParams["legend.facecolor"] = "white"
+plt.rcParams["legend.edgecolor"] = "black"
+plt.rcParams["legend.fancybox"] = False
+<span id="comment"># plt.rcParams["legend.markerscale"] = 2</span>
+    
+    
+<span id="comment">###########################################################################
+# Plot
+###########################################################################
+</span>    
+<span id="comment"># data</span>
+x = np.linspace(1, 100, 100)
+y = x ** 2
 
-<pre id="bottom-padding"><code><span id="lammps-input">include</span> PARM.FILE</code></pre>
+<span id="comment"># layout</span> 
+fig = plt.figure()
+ax = fig.add_subplot(111)
+    
+<span id="comment"># plot</span> 
+ax.plot(x, y, linewidth=3, color="blue", label="Data")
+    
+    # other settings
+    ax.set_xlabel("X-label")
+    ax.set_ylabel('Y-label')
+    # ax.set_xlim(0, 5)
+    # ax.set_ylim(0, 25)
+    
+    # legend
+    ax.legend()
+    
+    # save
+    plt.savefig("plot.png", dpi=300)
+</code></pre>
 
-                </div>
-
-                <div class="content-block">
-                    <h3 id="lammps-parm-info">パラメータ情報</h3>
-                    <h4>atom_style</h4>
-                    <p>
-                        シミュレーションで使用する原子のスタイルを指定するコマンド。
-                        インプットファイルでは<code>read_data</code>などのシミュレーションのセットアップコマンドより前に記述する。
-                        以下にその一部を示すが、基本的にはfullを指定すればよいと思う。
-                    </p>
-
-<pre id="bottom-padding"><code><span id="lammps-input">atom_style</span> full</code></pre>
-
-                    <table>
-                        <tr>
-                            <th>atom_style</th>
-                            <th>説明</th>
-                            <th>使用例</th>
-                        </tr>
-                        <tr>
-                            <td>atomic</td>
-                            <td>デフォルト値のみ</td>
-                            <td>粗視化流体・固体・金属</td>
-                        </tr>
-                        <tr>
-                            <td>bond</td>
-                            <td>結合</td>
-                            <td>スプリングポリマー</td>
-                        </tr>
-                        <tr>
-                            <td>charge</td>
-                            <td>電荷</td>
-                            <td>電荷を持つ原子系</td>
-                        </tr>
-                        <tr>
-                            <td>molecular</td>
-                            <td>結合、結合角、二面角、improper</td>
-                            <td>電荷を持たない分子</td>
-                        </tr>
-                        <tr>
-                            <td>full</td>
-                            <td>molecular + charge</td>
-                            <td>生体分子</td>
-                        </tr>
-                    </table>
-
-                    <h4>bond_style</h4>
-                    <p>
-                        原子間の結合のスタイルを指定するコマンド。
-                        <code>pair_style</code>とは異なるので注意。
-                        <code>read_data</code>などで読み込んだ結合のリストに対して、結合相互作用の計算式を定義する。
-                    </p>
-
-<pre id="bottom-padding"><code><span id="lammps-input">bond_style</span> harmonic</code></pre>
-                    
                 </div>
                 
                 <div class="hierarchie-bottom">

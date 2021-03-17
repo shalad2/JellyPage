@@ -22,7 +22,7 @@
         <!-- MAIN CONTENTS -->
         <div class="main-contents">
             <!-- HEADER IMAGE -->
-            <div id="lammps-input-bg" class="big-bg">
+            <div id="matplotlib-bg" class="big-bg">
                 <div class="title-contents wrapper">
                     <h2 class="page-title">Python</h2>
                 </div>
@@ -123,7 +123,7 @@ plt.show()
                     <p>
                         ここまででグラフのプロットはできるようになったが、軸タイトルや凡例などは表示されていない。
                         図の体裁の基本的な部分を整えるためのスクリプトを用意したので、はじめはこれを利用してほしい。
-                        より詳しい設定は<a href="./matplotlib2.html">matplotlibにおける詳細設定</a>に委ねるので、そちらを参考にしてほしい。
+                        より詳しい設定は<a href="./matplotlib2.html">matplotlib詳細設定</a>に委ねるので、そちらを参考にしてほしい。
                     </p>
 
 <pre><code><span id="python-import">import</span> numpy <span id="python-import">as</span> np
@@ -203,17 +203,17 @@ ax = fig.add_subplot(111)
 <span id="comment"># plot</span> 
 ax.plot(x, y, linewidth=3, color="blue", label="Data")
     
-    # other settings
-    ax.set_xlabel("X-label")
-    ax.set_ylabel('Y-label')
-    # ax.set_xlim(0, 5)
-    # ax.set_ylim(0, 25)
+<span id="comment"># other settings</span> 
+ax.set_xlabel("X-label")
+ax.set_ylabel('Y-label')
+<span id="comment"># ax.set_xlim(0, 5)</span> 
+<span id="comment"># ax.set_ylim(0, 25)</span> 
     
-    # legend
-    ax.legend()
+<span id="comment"># legend</span> 
+ax.legend()
     
-    # save
-    plt.savefig("plot.png", dpi=300)
+<span id="comment"># save</span> 
+plt.savefig("plot.png", dpi=300)
 </code></pre>
 
                 </div>

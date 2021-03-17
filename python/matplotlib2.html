@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>matplotlib詳細設定</title>
+        <meta name="description" content="Pythonのmatplotlibでグラフの詳細設定を行う方法">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <!-- CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/ress@3.0.0/dist/ress.min.css">
+        <link rel="stylesheet" href="../css/style.css">
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+    <script src="../js/menu.js" type="text/javascript"></script>
+    <script src="../js/footer.js" type="text/javascript"></script>
+    </head>
+
+<body>
+    <div class="page-contents">
+        <!-- Accordion Menu -->
+        <script type="text/javascript">loadMenu('../');</script>
+        <!-- MAIN CONTENTS -->
+        <div class="main-contents">
+            <!-- HEADER IMAGE -->
+            <div id="matplotlib-bg" class="big-bg">
+                <div class="title-contents wrapper">
+                    <h2 class="page-title">Python</h2>
+                </div>
+            </div>
+
+            <!-- CONTENTS -->
+            <div class="main-text wrapper">
+                <div class="hierarchie">
+                    <a href="../index.html"><img class="home-icon" src="../images/logo_original.png" alt="home"></a>
+                    <p> ＞ matplotlib詳細設定</p>
+                </div>
+                <div>
+                    <h2 class="content-title">【Python】matplotlib詳細設定</h2>
+                    <p>
+                        Pythonのmatplotlibでグラフを描画する方法を解説する。
+                        <div id="list" class="table-of-contents">
+                            <ol>
+                                <li><a href="./matplotlib2.html#matplotlib2-graphs">グラフの種類</a></li>
+                                <li><a href="./matplotlib2.html#matplotlib2-axes">軸まわりの設定</a></li>
+                                <li><a href="./matplotlib2.html#matplotlib2-ticks">目盛の設定</a></li>
+                                <li><a href="./matplotlib2.html#matplotlib2-legend">凡例の設定</a></li>
+                                <li><a href="./matplotlib2.html#matplotlib2-string">文字の設定</a></li>
+                            </ol>
+                        </div>
+                    </p>
+                    
+                </div>
+
+                <div class="content-block">
+                    <h3 id="matplotlib2-graphs">グラフの種類</h3>
+                    <h4>折れ線グラフ</h4>
+                    <p>
+                        折れ線グラフは<code>Axes.plot()</code>で描画する。
+                        第一引数と第二引数に指定した配列を元にグラフを作成する。
+                        第一引数は省略可能で、省略すると[0, 1, 2, ..., N-1]として扱われる。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>引数</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>label</td>
+                            <td>プロットのラベル。凡例に表示される。</td>
+                        </tr>
+                        <tr>
+                            <td>color</td>
+                            <td>折れ線の色。<code>c</code>でも可。</td>
+                        </tr>
+                        <tr>
+                            <td>dashes</td>
+                            <td>折れ線の実線部分と空白部分の長さをリストで指定。</td>
+                        </tr>
+                        <tr>
+                            <td>linestyle</td>
+                            <td>折れ線の線種。<code>ls</code>でも可。<code>dashes</code>が指定されていると無効。</td>
+                        </tr>
+                        <tr>
+                            <td>linewidth</td>
+                            <td>折れ線の太さ。<code>lw</code>でも可。</td>
+                        </tr>
+                        <tr>
+                            <td>alpha</td>
+                            <td>透明度を0〜1で指定。</td>
+                        </tr>
+                        <tr>
+                            <td>zorder</td>
+                            <td>オブジェクトが重なっていた時、この値が大きい方が前面に描画される。</td>
+                        </tr>
+                        <tr>
+                            <td>marker</td>
+                            <td>マーカーの形状。<code>None</code>でマーカーなし。</td>
+                        </tr>
+                        <tr>
+                            <td>markersize</td>
+                            <td>マーカーのサイズ。<code>ms</code>でも可。</td>
+                        </tr>
+                        <tr>
+                            <td>markerfacecolor</td>
+                            <td>マーカーの色。<code>mfc</code>でも可。</td>
+                        </tr>
+                        <tr>
+                            <td>markeredgecolor</td>
+                            <td>マーカーの縁の色。<code>mec</code>でも可。</td>
+                        </tr>
+                        <tr>
+                            <td>markeredgewidth</td>
+                            <td>マーカーの縁の太さ。<code>mew</code>でも可。</td>
+                        </tr>
+                    </table>
+                    <p>
+                        以下、実行例を載せる。<code>fmt</code>を使用すると[color][marker][linestyle]をまとめて記述できる。
+                    </p>
+
+<pre><code><span id="comment"># axはAxesオブジェクト</span>
+ax.plot(x, y1, label='line_1')
+ax.plot(y2, color='green', marker='o', linewidth=2, markersize='12', label='line_2')
+ax.plot(x, y3, fmt='go-', label='line_3')
+</code></pre>
+
+                    <h4>散布図</h4>
+                    <p>
+                        散布図は<code>Axes.scatter()</code>で描画する。
+                        基本的な設定は折れ線グラフと同様であるが、一部が異なるので表にまとめておく。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>引数</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>s</td>
+                            <td>マーカーのサイズ。</td>
+                        </tr>
+                        <tr>
+                            <td>c</td>
+                            <td>マーカーの色。<code>facecolor</code>や<code>facecolors</code>でも可。</td>
+                        </tr>
+                        <tr>
+                            <td>linewidths</td>
+                            <td>マーカーの縁の色。全て同じ場合は<code>linewidth</code>や<code>lw</code>でも可。</td>
+                        </tr>
+                        <tr>
+                            <td>edgecolors</td>
+                            <td>マーカーの縁の色。デフォルトは<code>c</code>と同じ色。</td>
+                        </tr>
+                    </table>
+
+<pre><code>ax.scatter(x, y, marker='o')</code></pre>
+
+                    <h4>棒グラフ</h4>
+                    <p>
+                        棒グラフは<code>Axes.bar()</code>でプロットする。
+                        エラーバー付きの棒グラフの場合は<code>Axes.errorbar()</code>でプロットする。
+                    </p>
+                </div>
+
+                <div class="content-block">
+                    <h3 id="matplotlib2-axes">軸まわりの設定</h3>
+                    <h4>軸ラベル</h4>
+                    <p>
+                        グラフの軸ラベルは<code>Axes.set_xlabel()</code>と<code>Axes.set_ylabel</code>で設定する。
+                        第一引数にラベルの文字列を指定する。文字のスタイルは<a href="./matplotlib2.html#matplotlib2-string">文字の設定</a>でのパラメータを使用できる。
+                        <br><br>
+                        縦軸と横軸のラベル名を同時に設定する場合は<code>Axes.set(xlabel='横軸ラベル名', ylabel='縦軸ラベル名')</code>または<code>Axes.update(dict(xlabel='横軸ラベル名', ylabel='縦軸ラベル名'))</code>と一行で書ける。
+                        また、Axesオブジェクト生成時にラベルを指定する方法もある。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>引数</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>fontsize</td>
+                            <td>ラベルの文字のフォントサイズ。</td>
+                        </tr>
+                        <tr>
+                            <td>color</td>
+                            <td>ラベルの文字の色。</td>
+                        </tr>
+                        <tr>
+                            <td>labelpad</td>
+                            <td>ラベルの文字と軸の間隔。デフォルトは<code>None</code>。</td>
+                        </tr>
+                        <tr>
+                            <td>loc</td>
+                            <td>ラベルの位置。デフォルトは<code>center</code>。</td>
+                        </tr>
+                    </table>
+
+<pre><code><span id="comment"># xとyそれぞれを設定する</span>
+ax1 = fig.add_subplot(131)
+ax1.set_xlabel('x1', fontsize=15, color='black')
+ax1.set_ylabel('y1', labelpad=25, fontsize=15, color='blue')
+<span id="comment"># xとy同時に設定する</span>
+ax2 = fig.add_subplot(132)
+ax2.set(xlabel='x2', ylabel='y2')
+<span id="comment"># Axesオブジェクト生成時に設定する</span>
+ax3 = fig.add_subplot(133, xlabel='x3', ylabel='y3')
+</code></pre>
+
+                    <p>
+                        複数のグラフにおいて、軸ラベルの位置を揃える時は<code>Figure.align_labels()</code>を用いる。
+                    </p>
+
+<pre><code><span id="comment"># 複数のグラフで軸ラベルの位置を揃える</span> 
+fig = plt.figure()
+fig.align_labels()
+<span id="comment"># 横軸ラベル・縦軸ラベルだけに設定</span>
+fig.align_xlabels()
+fig.align_ylabels()
+<span id="comment"># 特定のグラフにのみ設定</span>   
+fig.align_labels([ax1, ax2])
+</code></pre>
+
+                    <h4>軸の範囲</h4>
+                    <p>
+                        
+                    </p>
+
+                </div>
+                
+                <div class="hierarchie-bottom">
+                    <a href="gromacs_tutorial2_top.html">PREVIOUS</a>
+                    <a href="gromacs_tutorial1_top.html">TOP</a>
+                    <p>NEXT</p>
+                </div>
+
+            </div>
+            <script type="text/javascript">loadFooter();</script>
+        </div>
+    </div>
+</body>
+</html>

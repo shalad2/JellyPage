@@ -66,6 +66,7 @@ function loadMenu(rootDir){
                         '<div class="menu">Python</div>' +
                         '<ul>' +
                             '<li><a href="' + rootDir + 'python/matplotlib1.html">matplotlibの使い方</a></li>' +
+                            '<li><a href="' + rootDir + 'python/matplotlib2.html">matplotlib詳細設定</a></li>' +
                         '</ul>' +
                     '</li>' +
                 '</ul>' +

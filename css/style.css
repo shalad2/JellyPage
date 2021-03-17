@@ -75,7 +75,8 @@ code span {
 #comment {
     color: rgb(163, 163, 163);
 }
-#lammps-input {
+#lammps-input,
+#python-import {
     color: rgb(96, 255, 96);
 }
 #bottom-padding {
@@ -544,6 +545,10 @@ ul, li {
 #mengen-pdb {
     margin: 2% 0%;
     width: 98%;
+}
+#matplotlib1-tutorial-plot {
+    width: 500px;
+    margin: 10px 0px;
 }
 .main-text {
     background-image: url("../images/main-text-bg.png");

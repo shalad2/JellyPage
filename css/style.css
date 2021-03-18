@@ -550,6 +550,10 @@ ul, li {
     width: 500px;
     margin: 10px 0px;
 }
+#matplotlib2-plot {
+    width: 550px;
+    margin: 8px 0px;
+}
 .main-text {
     background-image: url("../images/main-text-bg.png");
     background-size: cover;

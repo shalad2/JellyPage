@@ -40,15 +40,218 @@
                         Pythonのmatplotlibでグラフを描画する方法を解説する。
                         <div id="list" class="table-of-contents">
                             <ol>
+                                <li><a href="./matplotlib2.html#matplotlib2-read-data">データの読み込み</a></li>
+                                <li><a href="./matplotlib2.html#matplotlib2-layout">グラフのレイアウト</a></li>
                                 <li><a href="./matplotlib2.html#matplotlib2-graphs">グラフの種類</a></li>
                                 <li><a href="./matplotlib2.html#matplotlib2-axes">軸まわりの設定</a></li>
                                 <li><a href="./matplotlib2.html#matplotlib2-ticks">目盛の設定</a></li>
                                 <li><a href="./matplotlib2.html#matplotlib2-legend">凡例の設定</a></li>
+                                <li><a href="./matplotlib2.html#matplotlib2-save">グラフの保存</a></li>
                                 <li><a href="./matplotlib2.html#matplotlib2-string">文字の設定</a></li>
                             </ol>
                         </div>
                     </p>
-                    
+                </div>
+
+                <div class="content-block">
+                    <h3 id="matplotlib2-read-data">データの読み込み</h3>
+                    <p>
+                        まず初めに、プロットしたいのデータの読み込みについて解説する。
+                        Python上でデータ配列を作成してもプロットはできるが、大抵の場合はデータファイルからの読み込みをしたいと思う。
+                        今回はサンプルとして下のようなデータファイルを用意した。
+                    </p>
+
+<pre><code><p class="filename">sample.dat</p>
+# x    sin(x)    cos(x)
+1.0 0.8414709848078965 0.5403023058681398
+2.0 0.9092974268256817 -0.4161468365471424
+3.0 0.1411200080598672 -0.9899924966004454
+<span id="comment">省略</span>
+100.0 -0.5063656411097588 0.8623188722876839
+</code></pre>
+
+                    <p>
+                        このテキストファイルを読み込むには<code>numpy.loadtxt()</code>を用いる。
+                        この時、3列のデータそれぞれの配列を確保したいので<code>unpack=True</code>を指定し、先頭のコメント行を読み飛ばすために<code>skiprows=1</code>とする。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>オプション</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>unpack</td>
+                            <td>配列を展開する。戻り値はデータ列に対応する数となる。</td>
+                        </tr>
+                        <tr>
+                            <td>skiprows</td>
+                            <td>データを読み飛ばす行数を指定。文字列等は読み込めないので基本的に読み飛ばす。</td>
+                        </tr>
+                        <tr>
+                            <td>delimiter</td>
+                            <td>区切り文字の指定。カンマ区切りの場合などで使える。</td>
+                        </tr>
+                    </table>
+
+<pre><code><span id="python-import">import</span> numpy <span id="python-import">as</span> np
+x, y1, y2 = np.loadtxt("sample.dat", unpack=True, skiprows=1)
+</code></pre>
+
+                    <p>
+                        また、同様の操作ができるものとして配列の転置を利用する方法がある。
+                        <code>unpack</code>を指定しない通常の方法であると[x, y1, y2]が対応する次のような配列が作成される。
+                    </p>
+
+<pre><code>array([[ 1.00000000e+00,  8.41470985e-01,  5.40302306e-01],
+       [ 2.00000000e+00,  9.09297427e-01, -4.16146837e-01],
+       [ 3.00000000e+00,  1.41120008e-01, -9.89992497e-01],
+       [ 4.00000000e+00, -7.56802495e-01, -6.53643621e-01],
+       [ 5.00000000e+00, -9.58924275e-01,  2.83662185e-01],
+       <span id="comment">省略</span>
+       [ 1.00000000e+02, -5.06365641e-01,  8.62318872e-01]]) 
+</code></pre>
+
+                    <p>
+                        このNumpy配列の転置をとると、データを列ごとにまとめることができる。
+                    </p>
+
+<pre><code><span id="comment"># 転置結果</span>
+array([[ 1.00000000e+00,  2.00000000e+00,  3.00000000e+00,
+         4.00000000e+00,  5.00000000e+00,
+         <span id="comment">省略</span>
+         1.00000000e+02],
+       [ 8.41470985e-01,  9.09297427e-01,  1.41120008e-01,
+        -7.56802495e-01, -9.58924275e-01,
+        <span id="comment">省略</span>
+        -5.06365641e-01],
+       [ 5.40302306e-01, -4.16146837e-01, -9.89992497e-01,
+        -6.53643621e-01,  2.83662185e-01,
+       <span id="comment">省略</span>
+         8.62318872e-01]])
+</code></pre>
+
+                    <p>
+                        この方法では戻り値が1つの値のみでよくなるので、データの拡張性があると言える。
+                        <code>unpack</code>での方法を再現すると以下の通り。
+                    </p>
+
+<pre><code><span id="comment"># 戻り値は1つの値</span>
+data = np.loadtxt("sample.dat", skiprows=1)
+<span id="comment"># 転置</span>
+data_T = data.T
+<span id="comment"># データの取り出し</span>
+x = data_T[0]
+y1 = data_T[1]
+y2 = data_T[2]
+</code></pre>
+
+                    <p>
+                        以上でデータの読み込みは完了である。
+                        ここからはこのデータを使用して解説を行う。
+                        <br>
+                        （追記）データが粗かったので、サンプル数を1000まで増やした。
+                    </p>
+                </div>
+
+                <div class="content-block">
+                    <h3 id="matplotlib2-layout">グラフのレイアウト</h3>
+                    <h4>Figureオブジェクトの生成</h4>
+                    <p>
+                        グラフの描画のために、グラフのフレームとなるFigureオブジェクトを生成する。
+                        Figureオブジェクトは<code>plt.figure()</code>で生成する。
+                    </p>
+
+<pre><code><p class="filename">plot1.1.py</p>
+<span id="comment"># matplotlibのインポート</span>
+<span id="python-import">import</span> matplotlib.pyplot <span id="python-import">as</span> plt
+<span id="comment"># Figureオブジェクトの生成（fig）</span>
+fig = plt.figure()
+</code></pre>
+
+                    <p>
+                        実行しても何も表示されないが、グラフのフレーム（領域）を作成することができた。
+                        ここからAxesオブジェクトを追加し、グラフの軸などを表示する。
+                    </p>
+                    <h4>Axesオブジェクトの生成</h4>
+                    <p>
+                        Axesオブジェクトはグラフの描画領域を決定し、軸や目盛などを表示する。
+                        <code>Figure.add_subplot()</code>として生成する。
+                    </p>
+
+<pre><code><p class="filename">plot1.2.py</p>
+<span id="comment"># Axesオブジェクトの生成（ax）</span>
+ax = fig.add_subplot(111)
+</code></pre>
+
+                    <p>
+                        実行するとグラフの軸と目盛が現れる。これから軸や目盛の設定はこのAxesオブジェクトに対して行う。
+                    </p>
+                    <div class="image-center">
+                        <img id="matplotlib2-plot" src="images/plot1.2.png" alt="plot1.2">
+                    </div>
+                    <h4>複数のグラフの描画</h4>
+                    <p>
+                        先ほどAxesオブジェクトを生成したが、<code>Figure.add_subplot()</code>に数字の引数を与えることで複数のグラフを描画できる。
+                        以下の例は横に3つのグラフを並べる場合である。
+                    </p>
+
+<pre><code><p class="filename">plot1.3.py</p>
+<span id="comment"># 複数のAxesオブジェクトの生成</span>
+ax1 = fig.add_subplot(131)
+ax2 = fig.add_subplot(132)
+ax3 = fig.add_subplot(133)
+</code></pre>
+                        
+                    <p>
+                        3つの数字はそれぞれ、縦に並べるグラフの数、横に並べるグラフの数、何番目のグラフとするかに対応している。
+                        例えばax2であれば、1行3列のグラフの2番目を担当している。
+                        この数字が10を超える場合は(2,5,10)のようにカンマ区切りとする。
+                    </p>
+                    <div class="image-center">
+                        <img id="matplotlib2-plot" src="images/plot1.3.png" alt="plot1.3">
+                    </div>
+
+                    <h4>図全体の大きさと隣り合うグラフの間隔</h4>
+                    <p>
+                        図全体の大きさ（Figureオブジェクトの大きさ）は<code>plt.figure()</code>に引数を与えることで行う。
+                        数値はインチで設定する。
+                    </p>
+
+<pre><code><span id="comment"># 図の大きさを横:縦=16:12（インチ）にする</span>
+fig = plt.figure(figsize=(16, 12))
+</code></pre>
+
+                    <p>
+                        隣り合うグラフの間隔は<code>plt.subplots_adjust()</code>を使用して設定する。
+                        縦・横どちらの間隔も調整することが可能。
+                    </p>
+
+<pre><code><span id="comment"># 縦・横のグラフ間隔を指定</span>
+plt.subplots_adjust(wspace=0.3, hspace=0.3)
+</code></pre>
+
+                    <p>
+                        また、これらの設定は様々なグラフで共通であることが多いので、<code>plt.rcParams</code>でデフォルト指定をしておくこともできる。
+                    </p>
+
+<pre><code>plt.rcParams["figure.figsize"] = [16.0, 12.0]  <span id="comment"># [width(inch):height(inch)]</span>
+plt.rcParams["figure.subplot.wspace"] = 0.30   <span id="comment"># padding-width-space</span>
+plt.rcParams["figure.subplot.hspace"] = 0.30   <span id="comment"># padding-height-space</span>
+</code></pre>
+
+                    <h4>図の余白の設定</h4>
+                    <p>
+                        これも<code>plt.rcParams</code>で指定するのがよい。
+                        図の上下左右の余白を指定でき、その内側でAxesオブジェクトを生成する。
+                    </p>
+
+<pre><code>plt.rcParams["figure.subplot.left"] = 0.14     <span id="comment"># padding-left</span>
+plt.rcParams["figure.subplot.bottom"] = 0.14   <span id="comment"># padding-bottom</span>
+plt.rcParams["figure.subplot.right"] = 0.90    <span id="comment"># padding-right</span>
+plt.rcParams["figure.subplot.top"] = 0.91      <span id="comment"># padding-top</span>
+</code></pre>
+
+
                 </div>
 
                 <div class="content-block">
@@ -61,7 +264,7 @@
                     </p>
                     <table>
                         <tr>
-                            <th>引数</th>
+                            <th>オプション</th>
                             <th>説明</th>
                         </tr>
                         <tr>
@@ -114,14 +317,42 @@
                         </tr>
                     </table>
                     <p>
-                        以下、実行例を載せる。<code>fmt</code>を使用すると[color][marker][linestyle]をまとめて記述できる。
+                        以下、実行例を載せる。fmtの形式では[color][marker][linestyle]をまとめて記述できる。
                     </p>
 
 <pre><code><span id="comment"># axはAxesオブジェクト</span>
 ax.plot(x, y1, label='line_1')
 ax.plot(y2, color='green', marker='o', linewidth=2, markersize='12', label='line_2')
-ax.plot(x, y3, fmt='go-', label='line_3')
+<span id="comment"># fmtで指定</span>
+ax.plot(x, y3, 'go-', label='line_3')
 </code></pre>
+
+                    <p>
+                        sample.datのデータを用いて、今回は次のように指定してみた。
+                    </p>
+
+<pre><code><p class="filename">plot2.1.py</p>
+ax.plot(x, y1, color='green', linewidth=3, label='sin(x)')
+ax.plot(x, y2, 'yo-', label='yellow')
+</code></pre>
+
+                    <div class="image-center">
+                        <img id="matplotlib2-plot" src="images/plot2.1.png" alt="plot2.1">
+                    </div>
+                    <p>
+                        また、2つのデータを別々のグラフとして描画することもできる。
+                    </p>
+
+<pre><code><p class="filename">plot2.2.py</p>
+ax1 = fig.add_subplot(211)
+ax2 = fig.add_subplot(212)
+ax1.plot(x, y1, color='green', linewidth=3, label='sin(x)')
+ax2.plot(x, y2, color='blue', linewidth=3, label='cos(x)')
+</code></pre>      
+                        
+                    <div class="image-center">
+                        <img id="matplotlib2-plot" src="images/plot2.2.png" alt="plot2.2">
+                    </div>
 
                     <h4>散布図</h4>
                     <p>
@@ -130,7 +361,7 @@ ax.plot(x, y3, fmt='go-', label='line_3')
                     </p>
                     <table>
                         <tr>
-                            <th>引数</th>
+                            <th>オプション</th>
                             <th>説明</th>
                         </tr>
                         <tr>
@@ -157,7 +388,59 @@ ax.plot(x, y3, fmt='go-', label='line_3')
                     <p>
                         棒グラフは<code>Axes.bar()</code>でプロットする。
                         エラーバー付きの棒グラフの場合は<code>Axes.errorbar()</code>でプロットする。
+                        この時、エラーの大きさはデータ数と同じ長さの配列として用意する必要がある。
                     </p>
+                    <table>
+                        <tr>
+                            <th>Axes.bar()オプション</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>width</td>
+                            <td>棒の幅（太さ）。横軸の値で指定する。</td>
+                        </tr>
+                        <tr>
+                            <td>color</td>
+                            <td>棒の色。<code>facecolor</code>や<code>fc</code>でも可。</td>
+                        </tr>
+                        <tr>
+                            <td>linewidth</td>
+                            <td>棒の縁の太さ。<code>lw</code>でも可。</td>
+                        </tr>
+                        <tr>
+                            <td>edgecolor</td>
+                            <td>棒の縁の色。<code>ec</code>でも可。</td>
+                        </tr>
+                    </table>
+                    <table>
+                        <tr>
+                            <th>Axes.errorbar()オプション</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>xerr</td>
+                            <td>x軸方向のエラーバーの値または配列</td>
+                        </tr>
+                        <tr>
+                            <td>yerr</td>
+                            <td>y軸方向のエラーバーの値または配列</td>
+                        </tr>
+                        <tr>
+                            <td>capsize</td>
+                            <td>エラーバーの傘のサイズ。</td>
+                        </tr>
+                    </table>
+                    <p>
+                        今回はsample.datを利用して、-1から1までのデータ数に関してヒストグラムを作成してみた。
+                    </p>
+
+<pre><code><p class="filename">plot2.3.py</p>
+ax.bar(x, height, color='green', label='sin(x)', width='0.05')
+</code></pre>
+
+                    <div class="image-center">
+                        <img id="matplotlib2-plot" src="images/plot2.3.png" alt="plot2.3">
+                    </div>
                 </div>
 
                 <div class="content-block">
@@ -194,18 +477,30 @@ ax.plot(x, y3, fmt='go-', label='line_3')
                     </table>
 
 <pre><code><span id="comment"># xとyそれぞれを設定する</span>
-ax1 = fig.add_subplot(131)
-ax1.set_xlabel('x1', fontsize=15, color='black')
-ax1.set_ylabel('y1', labelpad=25, fontsize=15, color='blue')
+ax.set_xlabel('xLabel', fontsize=15, color='black')
+ax.set_ylabel('yLabel', labelpad=25, fontsize=15, color='blue')
 <span id="comment"># xとy同時に設定する</span>
-ax2 = fig.add_subplot(132)
-ax2.set(xlabel='x2', ylabel='y2')
+ax.set(xlabel='xLabel', ylabel='yLabel')
 <span id="comment"># Axesオブジェクト生成時に設定する</span>
-ax3 = fig.add_subplot(133, xlabel='x3', ylabel='y3')
+ax = fig.add_subplot(111, xlabel='xLabel', ylabel='yLabel')
 </code></pre>
 
                     <p>
-                        複数のグラフにおいて、軸ラベルの位置を揃える時は<code>Figure.align_labels()</code>を用いる。
+                        sample.datの例では次のように設定した。
+                    </p>
+
+<pre><code><p class="filename">plot3.1.py</p>
+ax1.set_ylabel('Amplitude')
+ax2.set_xlabel('Time (s)')
+ax2.set_ylabel('Amplitude')
+</code></pre>
+
+                    <div class="image-center">
+                        <img id="matplotlib2-plot" src="images/plot3.1.png" alt="plot3.1">
+                    </div>                    
+
+                    <p>
+                        また、複数のグラフにおいて、軸ラベルの位置を揃える時は<code>Figure.align_labels()</code>を用いる。
                     </p>
 
 <pre><code><span id="comment"># 複数のグラフで軸ラベルの位置を揃える</span> 
@@ -218,16 +513,350 @@ fig.align_ylabels()
 fig.align_labels([ax1, ax2])
 </code></pre>
 
-                    <h4>軸の範囲</h4>
                     <p>
-                        
+                        軸ラベルに関しても<code>plt.rcParams</code>でデフォルトの設定をしておくのがよい。
                     </p>
 
+<pre><code>plt.rcParams["axes.labelsize"] = 24
+plt.rcParams["axes.labelpad"] = 20
+</code></pre>
+
+                    <h4>軸の範囲</h4>
+                    <p>
+                        軸の範囲（最大値・最小値）は<code>Axes.set_xlim()</code>または<code>Axes.set_ylim()</code>で設定する。
+                        それぞれには最大値・最小値の値を与える。
+                        縦軸と横軸の最小値・最大値を同時に設定する場合は<code>Axes.set(xlim=(left, right), ylim=(bottom, top))</code>と一行で書ける。
+                        軸ラベルと同様に、Axesオブジェクト作成時に<code>xlim</code>と<code>ylim</code>で指定することもできる。
+                    </p>
+
+<pre><code>ax1.set_xlim(-20, 20)
+ax.set_ylim(0, 100)
+<span id="comment"># xとy同時に設定する</span>
+ax.set(xlim=(-20, 20), ylim=(0, 100))
+<span id="comment"># Axesオブジェクト生成時に設定する</span>
+ax = fig.add_subplot(111, xlim=(-20, 20), ylim=(0, 100))
+</code></pre>
+
+                    <p>
+                        sample.datの例では次のように設定した。
+                    </p>
+
+<pre><code><p class="filename">plot3.2.py</p>
+ax1.set_ylim(-1.5, 1.5)
+ax2.set_ylim(-1.5, 1.5)
+</code></pre>
+
+                    <div class="image-center">
+                        <img id="matplotlib2-plot" src="images/plot3.2.png" alt="plot3.2">
+                    </div>
+
+                    <h4>軸の範囲の余白</h4>
+                    <p>
+                        軸の範囲を設定していない場合、データの最大値と最小値から外側に一定の余白が自動で設定される。
+                        この余白の大きさはデフォルトで0.5に設定されているが、<code>plt.margins()</code>で変更することができる。
+                        また、Axesオブジェクト生成時に<code>xmargin</code>と<code>ymargin</code>で与えることもできる。
+                    </p>
+
+<pre><code><span id="comment"># デフォルト(margin=0.05)</span>
+<span id="comment"># margin=0として余白をなくす</span>
+ax = fig.add_subplot(111, xmargin=0, ymargin=0)
+<span id="comment"># plt.marginsで指定</span>
+plt.margins(0.08)
+plt.margins(0, 0.05)    <span id="comment"># (xmargin, ymargin)</span>
+</code></pre>
+
+                    <h4>軸線・グリッド線の設定</h4>
+                    <p>
+                        軸線・グリッド線は<code>plt.rcParams</code>で記述しておくのがよい。
+                        線の太さやグリッド線の有無、線種などを設定できる。
+                    </p>
+
+<pre><code>plt.rcParams["axes.linewidth"] = 1.5      <span id="comment"># 軸線の太さ</span>
+plt.rcParams["axes.grid"] = False         <span id="comment"># グリッド線の有無</span>
+<span id="comment"># axes.gridをTrueとした場合に有効</span>
+plt.rcParams["grid.color"] = "black"      <span id="comment"># グリッド線の色</span>
+plt.rcParams["grid.linestyle"] = "--"     <span id="comment"># グリッド線の線種</span>
+plt.rcParams["grid.linewidth"] = 1.0      <span id="comment"># グリッド線の太さ</span>
+</code></pre>
+
+                </div>
+
+                <div class="content-block">
+                    <h3 id="matplotlib2-ticks">目盛の設定</h3>
+                    <p>
+                        軸の目盛には主目盛と補助目盛があり、主目盛には目盛ラベルがついている。
+                    </p>
+                    <h4>目盛ラベルの間隔の設定</h4>
+                    <p>
+                        目盛ラベルの間隔は<code>Axes.set_xticks()</code>または<code>Axes.set_yticks()</code>で設定する。
+                        引数には目盛ラベルに設定したい数値の配列を渡す。
+                        目盛ラベルに対応して主目盛が決定され、補助目盛もそれに合わせて変更される。
+                    </p>
+
+<pre><code>ax.set_xticks([-5.0, -2.5, 0, 2.5, 5.0])
+ax.set_ylabel([0, 20, 40, 60, 80, 100])
+</code></pre>
+
+                    <p>
+                        sample.datの例では次のように設定した。
+                    </p>
+
+<pre><code><p class="filename">plot4.1.py</p>
+<span id="comment"># 目盛ラベルの配列を生成する</span>
+ticks = np.linspace(-1.0, 1.0, 3)
+ax1.set_yticks(ticks)
+ax2.set_yticks(ticks)
+</code></pre>
+
+                    <div class="image-center">
+                        <img id="matplotlib2-plot" src="images/plot4.1.png" alt="plot4.1">
+                    </div>
+
+                    <p>
+                        軸の目盛は<code>Axis.set_major_locator()</code>(主目盛)または<code>Axis.set_minor_locator()</code>(補助目盛)にMultipleLocatorを渡すことでも変更できる。
+                        デフォルトでは主目盛はAutoLocator、補助目盛はNullLocatorになっているので、Locatorを変更する必要がある。
+                        Locatorは<code>matplotlib.ticker.XXXLocater()</code>で作成することができ、これを先の関数に渡す。
+                    </p>
+
+<pre><code><span id="comment"># モジュールをインポート</span>
+<span id="python-import">import</span> matplotlib <span id="python-import">as</span> mpl
+<span id="comment"># 主目盛と補助目盛の間隔を変更</span> 
+ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator(2))      <span id="comment"># x軸主目盛の間隔2</span> 
+ax.xaxis.set_minor_locator(mpl.ticker.MultipleLocator(0.5))    <span id="comment"># x軸補助目盛の間隔0.5</span> 
+ax.yaxis.set_major_locator(mpl.ticker.MultipleLocator(0.5))    <span id="comment"># y軸主目盛の間隔0.5</span> 
+ax.yaxis.set_minor_locator(mpl.ticker.MultipleLocator(0.25))   <span id="comment"># y軸補助目盛の間隔0.25</span> 
+</code></pre>
+
+                    <p>
+                        今回、LocatorはMultipleLocatorを使用しているが、この他にも次のようなものがある。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>Locator</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>NullLocator</td>
+                            <td>目盛なし(ラベルもなし)。使用時は<code>ax.set_xticks([])</code>を使う方が簡単。</td>
+                        </tr>
+                        <tr>
+                            <td>AutoLocator</td>
+                            <td>自動で目盛を設定。主目盛のデフォルトとなっている。</td>
+                        </tr>
+                        <tr>
+                            <td>MultipleLocator</td>
+                            <td>特定の値の整数倍に目盛を設定。</td>
+                        </tr>
+                        <tr>
+                            <td>IndexLocator</td>
+                            <td>等差数列の目盛を設定。<br>
+                                <code>IndexLocator(base, offset)</code>とすると「base * n + offset」の位置に目盛を設定する。</td>
+                        </tr>
+                        <tr>
+                            <td>LinearLocator</td>
+                            <td><code>LinearLocator(numticks)</code><br>とする。
+                                グラフ最小値・最大値の間を「numticks - 1」等分する位置に目盛を設定。</td>
+                        </tr>
+                    </table>
+
+                    <h4>目盛の詳細設定</h4>
+                    <p>
+                        目盛と目盛ラベルの詳細設定は<code>Axes.tick_params()</code>にオプションを指定して行う。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>オプション</th>
+                            <th>指定可能な値</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>axis</td>
+                            <td>x, y, both</td>
+                            <td>目盛を設定する軸。デフォルトは<code>both</code>。</td>
+                        </tr>
+                        <tr>
+                            <td>which</td>
+                            <td>major, minor, both</td>
+                            <td>主目盛と補助目盛の選択。デフォルトは<code>major</code>。</td>
+                        </tr>
+                        <tr>
+                            <td>direction</td>
+                            <td>in, out, inout</td>
+                            <td>目盛の方向。デフォルトは<code>out</code>。</td>
+                        </tr>
+                        <tr>
+                            <td>length</td>
+                            <td>数値</td>
+                            <td>目盛の長さ。</td>
+                        </tr>
+                        <tr>
+                            <td>width</td>
+                            <td>数値</td>
+                            <td>目盛の幅。</td>
+                        </tr>
+                        <tr>
+                            <td>color</td>
+                            <td>色名またはカラーコード</td>
+                            <td>目盛の色。</td>
+                        </tr>
+                        <tr>
+                            <td>pad</td>
+                            <td>数値</td>
+                            <td>目盛と目盛ラベルの距離。</td>
+                        </tr>
+                        <tr>
+                            <td>labelsize</td>
+                            <td>数値</td>
+                            <td>目盛ラベルのサイズ。</td>
+                        </tr>
+                        <tr>
+                            <td>labelcolor</td>
+                            <td>色名またはカラーコード</td>
+                            <td>目盛ラベルの色。</td>
+                        </tr>
+                        <tr>
+                            <td>colors</td>
+                            <td>色名またはカラーコード</td>
+                            <td>目盛と目盛ラベルの色を同時に変更。</td>
+                        </tr>
+                        <tr>
+                            <td>bottom<br>top<br>left<br>right</td>
+                            <td>bool型</td>
+                            <td>目盛の表示の有無。</td>
+                        </tr>
+                        <tr>
+                            <td>labelbottom<br>labeltop<br>labelleft<br>labelright</td>
+                            <td>bool型</td>
+                            <td>目盛ラベルの表示の有無。</td>
+                        </tr>
+                    </table>
+                    <p>
+                        目盛と目盛ラベルの詳細設定については<code>plt.rcParams</code>でデフォルト指定をしておくことが多い。
+                    </p>
+
+<pre><code><span id="comment"># 目盛の有無</span>
+plt.rcParams["xtick.top"] = True
+plt.rcParams["xtick.bottom"] = True
+plt.rcParams["ytick.left"] = True
+plt.rcParams["ytick.right"] = True
+<span id="comment"># 目盛の方向</span>
+plt.rcParams["xtick.direction"] = "in"
+plt.rcParams["ytick.direction"] = "in"
+<span id="comment"># 補助目盛の有無</span>
+plt.rcParams["xtick.minor.visible"] = True
+plt.rcParams["ytick.minor.visible"] = True
+<span id="comment"># 目盛の幅</span>
+plt.rcParams["xtick.major.width"] = 1.5
+plt.rcParams["ytick.major.width"] = 1.5
+plt.rcParams["xtick.minor.width"] = 1.0
+plt.rcParams["ytick.minor.width"] = 1.0
+<span id="comment"># 目盛の長さ</span>
+plt.rcParams["xtick.major.size"] = 10
+plt.rcParams["ytick.major.size"] = 10
+plt.rcParams["xtick.minor.size"] = 5
+plt.rcParams["ytick.minor.size"] = 5
+</code></pre>
+
+                </div>
+
+                <div class="content-block">
+                    <h3 id="matplotlib2-legend">凡例の設定</h3>
+                    <p>
+                        凡例は<code>Axes.legend()</code>で設定することができる。
+                        グラフのプロット時に<code>label</code>オプションでラベルを指定しておく必要があり、その文字列を使用して凡例が作成される。
+                        <code>Axes.legend()</code>のオプションでよく使うものをまとめた。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>オプション</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>loc</td>
+                            <td>凡例の位置。デフォルトは<code>best</code>。</td>
+                        </tr>
+                        <tr>
+                            <td>frameon</td>
+                            <td>凡例の枠の有無。bool型で指定する。</td>
+                        </tr>
+                        <tr>
+                            <td>borderaxespad</td>
+                            <td>凡例と軸との間の余白。指定した数値分の余白を全方向に確保する。</td>
+                        </tr>
+                        <tr>
+                            <td>fontsize</td>
+                            <td>凡例の文字のフォントサイズ。</td>
+                        </tr>
+                        <tr>
+                            <td>markerscale</td>
+                            <td>凡例でのマーカーの大きさ。</td>
+                        </tr>
+                        <tr>
+                            <td>facecolor</td>
+                            <td>凡例ボックスの背景色。</td>
+                        </tr>
+                        <tr>
+                            <td>edgecolor</td>
+                            <td>凡例ボックスの縁の色。</td>
+                        </tr>
+                    </table>
+                    <p>
+                        sample.datで凡例の設定例を示す。
+                    </p>
+
+<pre><code><p class="filename">plot5.1.py</p>
+ax1.legend(loc='upper right', frameon=True, borderaxespad=1)
+ax2.legend(loc='upper right', frameon=True, borderaxespad=1)
+</code></pre>
+
+                    <div class="image-center">
+                        <img id="matplotlib2-plot" src="images/plot5.1.png" alt="plot5.1">
+                    </div>   
+                    <p>
+                        これにてグラフの詳細設定は一通り完了した。
+                        だいぶ見栄えのよいグラフになったのではないだろうか。
+                        <br><br>
+                        凡例の設定についても<code>plt.rcParams</code>で記述しておこう。
+                    </p>
+
+<pre><code>
+plt.rcParams["legend.loc"] = "best"
+plt.rcParams["legend.frameon"] = False
+plt.rcParams["legend.fontsize"] = 20
+plt.rcParams["legend.borderaxespad"] = 1.0
+plt.rcParams["legend.facecolor"] = "white"
+plt.rcParams["legend.edgecolor"] = "black"
+<span id="comment"># 凡例の枠を丸角にする</span>
+plt.rcParams["legend.fancybox"] = False
+<span id="comment"># plt.rcParams["legend.markerscale"] = 2</span>
+</code></pre>
+
+                </div>
+
+                <div class="content-block">
+                    <h3 id="matplotlib2-save">グラフの保存</h3>
+                    <p>
+                        グラフの保存は<code>plt.savefig()</code>で行う。
+                        引数には保存するグラフのファイル名を指定し、<code>dpi</code>オプションで解像度を設定できる。
+                        <code>plt.show()</code>では表示するだけなのでしっかりと保存しておこう。
+                    </p>
+
+<pre><code>plt.savefig('sample.png', dpi=300)</code></pre>                    
+
+                </div>
+
+                <div class="content-block">
+                    <h3 id="matplotlib2-string">文字の設定</h3>
+
+                    <h4>上付き文字・下付き文字</h4>
+                    <p>
+
+                    </p>
                 </div>
                 
                 <div class="hierarchie-bottom">
-                    <a href="gromacs_tutorial2_top.html">PREVIOUS</a>
-                    <a href="gromacs_tutorial1_top.html">TOP</a>
+                    <a href="matplotlib1.html">PREVIOUS</a>
+                    <a href="../index.html">TOP</a>
                     <p>NEXT</p>
                 </div>
 

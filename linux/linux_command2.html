@@ -58,6 +58,10 @@
                             <td>指定した文字列がファイル内に存在する場合、その行を抽出</td>
                         </tr>
                         <tr>
+                            <td>awk</td>
+                            <td>テキストの加工とパターン処理</td>
+                        </tr>
+                        <tr>
                             <td>sed</td>
                             <td>文字や文字列を変換</td>
                         </tr>
@@ -73,14 +77,10 @@
                             <td>tar</td>
                             <td>アーカイブを作成または復元</td>
                         </tr>
-                        <tr>
-                            <td>bash</td>
-                            <td>シェルスクリプトの実行</td>
-                        </tr>
                     </table>
                     <p>
                         ここまでのコマンドが使えるのであれば、Linuxでほとんどの作業ができるであろう。
-                        <a href="">Linuxコマンド【上級編】</a>では筆者の備忘録も兼ねて、さらにいくつかのコマンドを紹介している。
+                        <a href="./linux_command3.html">Linuxコマンド【上級編】</a>では筆者の備忘録も兼ねて、さらにいくつかのコマンド（システム関係）を紹介している。
                     </p>
                 </div>
 
@@ -91,9 +91,13 @@
                         <code>cat ファイル名</code>として使用する。
                     </p>
 
-<pre><code>[user@local ~]$ cat test.txt
-Hello World
-Computer Chemistry
+<pre><code>[user@local ~]$ cat data.dat
+function data
+# id    x    y
+  zero  0    0
+  one   1    1
+  two   2    4
+  three 3    9
 </code></pre>
 
                     <p>
@@ -102,157 +106,187 @@ Computer Chemistry
                 </div>
 
                 <div class="content-block">
-                    <h3>cd</h3>
+                    <h3>tail</h3>
                     <p>
-                        <code>cd</code>はディレクトリを移動するコマンドで<code>cd ディレクトリ名</code>として使用する。
-                        例えば、現在のディレクトリが<code>/home/user</code>であり、この場所にある<code>study</code>というディレクトリに移動する場合、コマンドは次のようになる。
-                    </p>
-
-<pre><code>[user@local ~]$ cd study
-[user@local study]$
-</code></pre>
-
-                    <p>
-                        コマンドを実行すると、<code>$</code>マークの前の表記が変わる。これは現在自分のいるディレクトリが変化したことを表す。
-                        <code>pwd</code>で確認すると確かにディレクトリを移動したことがわかる。
-                        <br><br>
-                        また、1つ上のディレクトリは<code>..</code>で表すことができる。
-                        現在の<code>study</code>ディレクトリから<code>/home/user</code>ディレクトリに戻る場合、<code>..</code>を用いて次のようにする。
-                    </p>
-
-<pre><code>[user@local study]$ pwd
-/home/user/study
-[user@local study]$ cd ..
-[user@local ~]$ pwd
-/home/user
-</code></pre>
-                        
-                    <p>
-                        さらに、2つ以上ディレクトリを移動する場合は、移動先のディレクトリへのパス（相対パス）を用いる。
-                    </p>
-
-<pre><code>[user@local ~]$ cd study/gmx_tutorial
-[user@local gmx_tutorial]$ pwd
-/home/user/study/gmx_tutorial
-[user@local ~]$ cd ../..
-[user@local ~]$ pwd
-/home/user
-</code></pre>
-
-                    <p>
-                        なお、<code>$</code>マークの前にある<code>~</code>はユーザーのホームディレクトリを表している（<code>/home/user</code>と同じ意味）。
-                        また、カレントディレクトリは<code>.</code>で表すことができる。
-                    </p>
-                </div>
-                
-                <div class="content-block">
-                    <h3>ls</h3>
-                    <p>
-                        <code>ls</code>は現在のディレクトリの中身を表示するコマンドである。
-                        lsには様々なオプションがあるが、ここではその一部を紹介する。
+                        <code>tail</code>はファイルの末尾を表示するコマンドである。
+                        <code>tail ファイル名</code>で使用できるが、オプションを指定すると便利である。
                     </p>
                     <table>
                         <tr>
-                            <th>lsオプション</th>
+                            <th>tailオプション</th>
                             <th>説明</th>
                         </tr>
                         <tr>
-                            <td>-l</td>
-                            <td>ファイルやディレクトリの詳細（所有者、最終更新日など）も表示する</td>
+                            <td>-c</td>
+                            <td>最後から出力する文字数を指定する。</td>
                         </tr>
                         <tr>
-                            <td>-t</td>
-                            <td>リストを更新時間順に表示する</td>
+                            <td>-n</td>
+                            <td>最後から出力する行数を指定する。<code>n</code>は省略できる。</td>
                         </tr>
                         <tr>
-                            <td>-r</td>
-                            <td>リストを逆順に表示する（-tと組み合わせることが多い）</td>
+                            <td>-f</td>
+                            <td>ファイルへの追記をリアルタイムで監視する。</td>
+                        </tr>
+                    </table>
+                    <p>
+                        ファイルの最終行から3行を表示する場合には次のコマンドを実行する。
+                    </p>
+
+<pre><code>[user@local ~]$ tail -3 data.dat
+  one   1    1
+  two   2    4
+  three 3    9
+</code></pre>
+
+                    <p>
+                        このコマンドはログファイルのリアルタイム監視時に<code>tail -f　ログファイル名</code>で用いると便利である。
+                        また似たようなコマンドに、ファイルの先頭から出力する<code>head</code>が存在する。
+                    </p>
+                </div>
+                
+                <div class="content-block">
+                    <h3>grep</h3>
+                    <p>
+                        <code>grep</code>は指定した文字列がファイル内に存在する場合、その行を抽出するコマンドである。
+                        基本的には<code>grep 文字列 ファイル名</code>として使用する。
+                        便利なオプションも多いので表にまとめておく。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>grepオプション</th>
+                            <th>説明</th>
                         </tr>
                         <tr>
-                            <td>-h</td>
-                            <td>単位を読みやすい形式で表示する</td>
+                            <td>-v</td>
+                            <td>指定した文字列を含まない行を抽出する。</td>
                         </tr>
                         <tr>
-                            <td>-a</td>
-                            <td>（隠しファイルも含めて）すべてのファイルとディレクトリを表示する</td>
+                            <td>-n</td>
+                            <td>抽出結果に行番号を表示する。</td>
+                        </tr>
+                        <tr>
+                            <td>-c</td>
+                            <td>指定した文字列を含む行の数を表示する。</td>
+                        </tr>
+                        <tr>
+                            <td>-i</td>
+                            <td>大文字・小文字を区別せずに抽出する。</td>
+                        </tr>
+                        <tr>
+                            <td>-e</td>
+                            <td>拡張正規表現で抽出を行う。実際には複数条件（OR）での抽出に使用する。</td>
                         </tr>
                     </table>
 
-<pre><code>[user@local gmx_tutorial]$ ls
-1aki.pdb    ions.mdp    md.mdp    minim.mdp    npt.mdp    nvt.mdp    <span>test</span>
-[user@local gmx_tutorial]$ ls -la test
-drwxr-xr-w. 11 user user  352  1月 29 00:06 .
-drwx------.  9 user user  288  1月 29 00:06 ..
-drwxr-xr-x. 14 user user  448  1月 28 22:34 .git
-drwxr-xr-w.  2 user user 1210  1月 23 20:00 test1.dat
+<pre><code>[user@local ~]$ grep one data.dat
+  one   1    1
+[user@local ~]$ grep -ve zero -ve one data.dat
+function data
+# id    x    y
+  two   2    4
+  three 3    9
 </code></pre>
 
                     <p>
-                        <code>ls</code>の実行結果を見ると、ここではディレクトリが青色で表示されている。
-                        <code>test</code>ディレクトリの中身をすべて詳細表示すると、ファイルの属性、所有者、サイズ、最終更新日などを見ることができる。
-                        オプションは組み合わせて使うことができるので<code>ls -ltrh</code>などを活用するのがおすすめである。
+                        2つ目の例では文字列「zero」または「one」が含まれる行以外を抽出している。
+                        <code>grep</code>はデータ加工に非常に便利であり、出力結果をリダイレクトして活用することが多い。
                     </p>
                 </div>
 
                 <div class="content-block">
-                    <h3>mkdir</h3>
+                    <h3>awk</h3>
                     <p>
-                        <code>mkdir</code>はディレクトリを新規作成するコマンドである。<code>mkdir ディレクトリ名</code>として使用する。
+                        <code>awk</code>はテキストの加工とパターン処理を行うコマンドである。
+                        と言われても釈然としないが、<code>awk</code>には本当にたくさんの使用方法がある。
+                        ここでは<code>grep</code>と組み合わせたデータ抽出の例を取り上げる。
+                        <br><br>
+                        一般的に<code>awk</code>は<code>awk (パターン) {アクション}</code>の形で使用する。
+                        <code>grep</code>と組み合わせる場合は<code>grep ファイル名 | awk '{print 出力したい部分}'</code>とすることで、必要な数値のみを抽出できる。
+                        例えば、data.dat内の「two」の行の「4」という数字がほしい場合は以下のコマンドを実行する。
                     </p>
                    
-<pre><code>[user@local gmx_tutorial]$ ls
-1aki.pdb    ions.mdp    md.mdp    minim.mdp    npt.mdp    nvt.mdp    <span>test</span>
-[user@local gmx_tutorial]$ mkdir analysis
-[user@local gmx_tutorial]$ ls
-1aki.pdb    <span>analysis</span>    ions.mdp    md.mdp    minim.mdp    npt.mdp    nvt.mdp    <span>test</span>
+<pre><code>[user@local ~]$ grep two data.dat | awk '{print $3}'
+4
 </code></pre>
 
                     <p>
-                        上の例では<code>analysis</code>というディレクトリを新規作成している。
-                        <code>mkdir</code>で指定するディレクトリが既に存在する場合はエラーとなる。
+                        この例では<code>grep</code>で「two」を含む行を抽出した後、<code>awk</code>により空白区切りで3番目の文字列を出力するようにしている。
+                        書式は例を参考にしてそのまま覚えてほしい。
+                        なお、2つのコマンドを繋ぐ「|」の記号は<strong>パイプ</strong>と呼ばれており、左側の処理結果を右のコマンドに受け渡す役割を担っている。
+                        パイプの使用例としては<code>ls</code>で表示した内容のうち、<code>grep</code>で指定したものだけを取り出す場合などがある。
+                    </p>
+
+<pre><code>[user@local ~]$ ls
+data.dat    submit1.sh    submit2.sh    plot.py    analysis.py
+[user@local ~]$ ls | grep py
+plot.py
+analysis.py
+</code></pre>
+                
+                </div>
+
+                <div class="content-block">
+                    <h3>sed</h3>
+                    <p>
+                        <code>sed</code>は文字や文字列を変換するコマンドである。
+                        このコマンドの使用方法も様々であるので、ここではファイル文字列の置換処理と行削除の例を扱う。
+                    </p>
+                    <h4>sed -e 's/xxx/XXX/g' ファイル名</h4>
+                    <p>
+                        あるファイル内の「xxx」という文字列全てを「XXX」に置換して出力する場合に使用する。
+                        さらに<code>-i</code>オプションをつけることでファイルの直接置換を行うことも可能。
+                    </p>
+                   
+<pre><code>[user@local ~]$ sed -e 's/1/-1/g' data.dat
+function data
+# id    x    y
+  zero  0    0
+  one   -1    -1
+  two   2    4
+  three 3    9
+[user@local ~]$ sed -i -e 's/function/incorrect/g' data.dat
+[user@local ~]$ cat data.dat | head -1
+incorrect data
+</code></pre>
+                    <p>
+                        ファイル名の部分には複数ファイルを指定することもできる。
+                        なお、<code>s</code>は正規表現で置換処理をする、<code>g</code>は全てのマッチした文字列を置換するという意味を持っている。
+                    </p>
+                    <h4>sed (行数)d</h4>
+                    <p>
+                        <code>sed</code>の<code>d</code>は行削除を行うコマンドである。
+                        単純に<code>sed d</code>とすると全ての行が削除されてしまうので、基本は行数を同時に指定して削除を行う。
+                    </p>
+
+<pre><code>[user@local ~]$ sed 1d data.dat
+# id    x    y
+  zero  0    0
+  one   1    1
+  two   2    4
+  three 3    9
+[user@local ~]$ sed 2,4d data.dat
+incorrect data
+  two   2    4
+  three 3    9
+</code></pre>
+
+                    <p>
+                        1つ目の例はファイルの1行目を、2つ目の例はファイルの2行目から4行目までを削除したものである。
                     </p>
                 </div>
 
                 <div class="content-block">
-                    <h3>cp</h3>
+                    <h3>ln</h3>
                     <p>
-                        <code>cp</code>はファイルまたはディレクトリをコピーするコマンドである。
+                        <code>ln</code>はファイルやディレクトリにリンクを設定するコマンドである。
                     </p>
-                    <h4>cp オリジナルファイル名 コピーファイル名</h4>
-                    <p>
-                        <code>test1.dat</code>というファイルを<code>test2.dat</code>という名前でコピーするには、次のコマンドを実行する。
-                    </p>
-                   
-<pre><code>[user@local test]$ ls
-test1.dat
-[user@local test]$ cp test1.dat test2.dat
-[user@local test]$ ls
-test1.dat    test2.dat
-</code></pre>
-                    <p>
-                        すると<code>test1.dat</code>がコピーされ、<code>test2.dat</code>というファイルが生成する。
-                        コマンドを実行する前に<code>test2.dat</code>が存在していた場合、<strong>警告なしで上書きされる</strong>ので注意すること。
-                    </p>
-                    <h4>cp ファイル名 コピー先</h4>
-                    <p>
-                        <code>test</code>ディレクトリにある<code>test1.dat</code>というファイルを1つ上のディレクトリにコピーするには、次のコマンドを実行する。
-                    </p>
-
-
-                    <div id="summary" class="table-of-contents">
-                        <ol>
-                            <li>タンパク質のPDBファイルを<code>gmx pdb2gmx</code>によりGROMACSフォーマットに変換した。</li>
-                            <li>シミュレーションボックスを<code>gmx editconf</code>で作成し、<code>gmx solvate</code>によりボックス内を溶媒で満たした。</li>
-                            <li>ボックス内に<code>gmx genion</code>でイオンを追加した。</li>
-                        </ol>
-                    </div>
-                    <p>次回は作成した系を用いて実際にMD計算をしていく。</p>
                 </div>
                 
                 <div class="hierarchie-bottom">
-                    <a href="">PREVIOUS</a>
-                    <a href="">TOP</a>
-                    <a href="">NEXT</a>
+                    <a href="./linux_command1.html">PREVIOUS</a>
+                    <a href="./linux_command_top.html">TOP</a>
+                    <a href="./linux_command3.html">NEXT</a>
                 </div>
 
             </div>

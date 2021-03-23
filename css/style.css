@@ -281,6 +281,12 @@ ul, li {
     #home-linux {
         background-image: url(../linux/images/linux_sl.png);
     }
+    #home-python {
+        background-image: url(../python/images/matplotlib_bg.png);
+    }
+    #home-gcc {
+        background-image: url(../c_c++/images/chemlab.png);
+    }
 
 
     /* ABOUT LAB
@@ -489,6 +495,15 @@ ul, li {
     background-position: center;
     background-color: rgba(255, 255, 255, 0.35);
     background-blend-mode: lighten;
+}
+#matplotlib-bg {
+    background-image: url(../python/images/matplotlib_bg.png);
+}
+#gcc-bg {
+    background-image: url(../c_c++/images/chemlab.png);
+    background-position: center;
+    background-color: #a6e3ff80;
+    background-blend-mode: overlay;
 }
 
 #lysozyme-structure-top,

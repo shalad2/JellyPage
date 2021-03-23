@@ -2,8 +2,8 @@
 <html lang="ja">
     <head>
         <meta charset="UTF-8">
-        <title>Linuxコマンドの使い方【中級編】</title>
-        <meta name="description" content="Linuxコマンドの使い方【中級編】">
+        <title>Linuxコマンドの使い方【上級編】</title>
+        <meta name="description" content="Linuxコマンドの使い方【上級編】">
         <meta name="viewport" content="width=device-width,initial-scale=1">
 
     <!-- CSS -->
@@ -32,13 +32,13 @@
             <div class="main-text wrapper">
                 <div class="hierarchie">
                     <a href="../index.html"><img class="home-icon" src="../images/logo_original.png" alt="home"></a>
-                    <p> ＞ <a href="linux_command_top.html">Linixコマンド</a> ＞ Linuxコマンド【中級編】</p>
+                    <p> ＞ <a href="linux_command_top.html">Linixコマンド</a> ＞ Linuxコマンド【上級編】</p>
                 </div>
                 <div>
-                    <h2 class="content-title">Linuxコマンド【中級編】</h2>
+                    <h2 class="content-title">Linuxコマンド【上級編】</h2>
                     <p>
-                        ここでは、<a href="./linux_command1.html">Linuxコマンド【初級編】</a>で紹介しきれなかったLinuxコマンドを取り上げる。
-                        実際の作業で便利なコマンドがたくさんあるのでマスターしてほしい。
+                        Linuxコマンド上級編は、主にPCスペックの確認やハードディスクに関するものをまとめた。
+                        普段の研究では使用しないだろうが、PCのメンテナンス時には便利なものが多いと思う。
                     </p>
                     <table>
                         <tr>
@@ -46,11 +46,11 @@
                             <th>説明</th>
                         </tr>
                         <tr>
-                            <td>cat</td>
-                            <td>ファイルの中身を表示</td>
+                            <td>lscpu</td>
+                            <td>CPUの情報を表示</td>
                         </tr>
                         <tr>
-                            <td>tail</td>
+                            <td></td>
                             <td>ファイルの末尾を表示</td>
                         </tr>
                         <tr>
@@ -85,10 +85,11 @@
                 </div>
 
                 <div class="content-block">
-                    <h3>cat</h3>
+                    <h3>lscpu</h3>
                     <p>
-                        <code>cat</code>はファイルの中身を表示するコマンドである。
-                        <code>cat ファイル名</code>として使用する。
+                        <code>lscpu</code>はCPUの情報を表示するコマンドである。
+                        CPUの種類やコア数などを確認できる。
+                        <code>cat /proc/cpuinfo</code>でも同様の操作が可能。
                     </p>
 
 <pre><code>[user@local ~]$ cat data.dat
@@ -280,7 +281,7 @@ incorrect data
                     <h3>ln</h3>
                     <p>
                         <code>ln</code>はファイルやディレクトリにリンクを設定するコマンドである。
-                        リンクは通常<code>ln ファイル名</code>でハードリンクを作成するが、<code>-s</code>をつけることでシンボリックリンクを作成することができる。
+                        リンクにはハードリンクとシンボリックリンクがあり、
                     </p>
                 </div>
                 

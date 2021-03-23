@@ -847,11 +847,63 @@ plt.rcParams["legend.fancybox"] = False
 
                 <div class="content-block">
                     <h3 id="matplotlib2-string">文字の設定</h3>
+                    <h4>フォントとサイズ</h4>
+                    <p>
+                        文字のフォントは全体で統一するため<code>plt.rcParams</code>に記述する。
+                        また、文字サイズのデフォルト値も同時に指定するとよい。
+                    </p>
+
+<pre><code>
+plt.rcParams["font.family"] = "serif"
+plt.rcParams["font.serif"] = "Times New Roman"
+<span id="comment">デフォルトの文字サイズ</span>
+plt.rcParams["font.size"] = 18
+</code></pre>
 
                     <h4>上付き文字・下付き文字</h4>
                     <p>
-
+                        上付き文字・下付き文字は書式<code>$^{}$</code>や<code>$_{}$</code>を用いる。
+                        次の例を参考にしてほしい。
                     </p>
+
+<pre><code><span id="comment"># ラベルに'y = x<sup>2</sup>'と書きたい（上付き）</span>
+label='$y = x^{2}$'
+<span id="comment"># ラベルに'Time, t<sub>i</sub>'と書きたい（下付き）</span>
+label='Time, $t_{i}$'
+</code></pre>
+
+                    <p>
+                        なお、この書式では文字が斜体となるため、これを修正する場合は<code>\mathregular{}</code>を記述する。
+                        また、<code>$\it{}$</code>を使用すると、斜体を宣言することができる。
+                    </p>
+
+<pre><code><span id="comment"># 斜体の修正</span>
+label='Wavenumber ($\mathregular{cm^{-1}}$)'
+</code></pre>
+
+                    <h4>ギリシャ文字</h4>
+                    <p>
+                        ギリシャ文字を使用するには<code>$$</code>の中にその文字を表す単語を記述する。
+                        大文字と小文字の区別は、記述する単語の先頭に合わせて決定される。
+                        一部の文字は先頭のアルファベットが意味を持ってしまうので、エスケープが必要である。
+                    </p>
+
+<pre><code><span id="comment"># デルタ（大文字と小文字）</span>
+label='$\Delta$'    <span id="comment"># &Delta;</span>
+label='$\delta$'    <span id="comment"># &delta;</span>
+<span id="comment"># \tは意味を持つのでrを用いてエスケープ</span>
+label=r'Angle $\theta$'     <span id="comment"># Angle &theta;</span>
+</code></pre>
+
+                    <p>
+                        また、ギリシャ文字以外の特殊文字も類似の方法で使用できる。
+                    </p>
+
+<pre><code><span id="comment"># オングストローム</span>
+label='Distance [$\mathregular{\mathring{A}$]'    <span id="comment"># Distance [&Aring;]</span>
+</code></pre>
+
+
                 </div>
                 
                 <div class="hierarchie-bottom">

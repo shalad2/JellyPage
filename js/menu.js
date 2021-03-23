@@ -40,16 +40,7 @@ function loadMenu(rootDir){
                             '<li><a href="' + rootDir + 'gromacs/gromacs_mdp.html">GROMACS.mdpオプション</a></li>' +
                         '</ul>' +
                     '</li>' +
-                '</ul>' +
-                '<ul class="menu-click">' +
-                    '<li>' +
-                        '<div class="menu">LAMMPS</div>' +
-                        '<ul>' +
-                            '<li>開発中</li>' +
-                            //'<li><a href="' + rootDir + 'lammps/lammps_input.html">LAMMPSインプットコマンド</a></li>' +
-                        '</ul>' +
-                    '</li>' +
-                '</ul>' +
+                '</ul>' +          
                 '<ul class="menu-click">' +
                     '<li>' +
                         '<div class="menu">Linux</div>' +
@@ -67,6 +58,24 @@ function loadMenu(rootDir){
                         '<ul>' +
                             '<li><a href="' + rootDir + 'python/matplotlib1.html">matplotlibの使い方</a></li>' +
                             '<li><a href="' + rootDir + 'python/matplotlib2.html">matplotlib詳細設定</a></li>' +
+                        '</ul>' +
+                    '</li>' +
+                '</ul>' +
+                '<ul class="menu-click">' +
+                    '<li>' +
+                        '<div class="menu">C/C++</div>' +
+                        '<ul>' +
+                            '<li><a href="' + rootDir + 'c_c++/compiler_install.html">gccのインストール</a></li>' +
+                            //'<li><a href="' + rootDir + 'lammps/lammps_input.html">LAMMPSインプットコマンド</a></li>' +
+                        '</ul>' +
+                    '</li>' +
+                '</ul>' +
+                '<ul class="menu-click">' +
+                    '<li>' +
+                        '<div class="menu">LAMMPS</div>' +
+                        '<ul>' +
+                            '<li>開発中</li>' +
+                            //'<li><a href="' + rootDir + 'lammps/lammps_input.html">LAMMPSインプットコマンド</a></li>' +
                         '</ul>' +
                     '</li>' +
                 '</ul>' +

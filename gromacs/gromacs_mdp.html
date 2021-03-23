@@ -303,20 +303,142 @@ continuation          = yes
 
                 <div class="content-block">
                     <h3 id="mdp-neighbor-params">近接原子情報</h3>
+                    <h4>cutoff-scheme</h4>
+                    <p>
+                        近接原子を探索し、相互作用のペアリストを作成するための方法を指定する。
+                        <code>Verlet</code>と<code>group</code>があるが、基本的に前者を使用する印象。
+                    </p>
                     <h4>nstlist</h4>
                     <p>
-                        
+                        ペアリストの更新頻度を指定する。デフォルトは10[steps]となっている。
+                        0[steps]にするとリストは一度だけ作成され、その後は更新されない。
+                        エネルギー最小化ではデフォルトでよいが、本計算では20[steps]や40[steps]にするとパフォーマンスがよいらしい。
                     </p>
                     <h4>ns_type</h4>
+                    <p>
+                        近接原子の探索タイプを指定する。
+                        <code>grid</code>と<code>simple</code>が選択できる。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>ns_type</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>grid</td>
+                            <td>ボックス内にグリッドを作成し、近接グリッドの原子をチェックする。<br>
+                                大きな系では<code>simple</code>よりも速い。</td>
+                        </tr>
+                        <tr>
+                            <td>simple</td>
+                            <td>単純にペアリストが生成した時、ボックス内の全ての原子をチェックする。</td>
+                        </tr>
+                    </table>
+                    <h4>rlist</h4>
+                    <p>
+                        近接原子ペアリストのカットオフ距離を指定する。デフォルトは1[nm]である。
+                        <code>cutoff-scheme = Verlet</code>の場合は無視されるらしい。
+                    </p>
+                    <br>
+                    <p>
+                        ペアリストに関しては<code>nstlist</code>の数値だけ調整して、次の3つを設定すればよいだろう。
+                    </p>
+
+<pre><code><span id="comment"># 近接原子情報</span>
+cutoff-scheme = Verlet
+nstlist       = 20
+ns_type       = grid
+</code></pre>
+
                 </div>
 
                 <div class="content-block">
                     <h3 id="mdp-nonbonded-params">非結合情報（LJ相互作用、クーロン相互作用）</h3>
                     <h4>coulombtype</h4>
                     <p>
-                        クーロン相互作用の計算タイプを指定する。
+                        クーロン相互作用の計算タイプを指定する。特にこだわりがなければ<code>PME</code>を指定しておこう。
                     </p>
+                    <table>
+                        <tr>
+                            <th>coulombtype</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>Cut-off</td>
+                            <td>
+                                <code>rlist</code>と<code>rcoulomb</code>を使用した通常のカットオフ。
+                                "rlist >= rcoulomb"である必要がある。
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Ewald</td>
+                            <td>古典的なエワルドの方法。実空間のカットオフ<code>rcoulomb</code>は<code>rlist</code>と同じにする必要がある。</td>
+                        </tr>
+                        <tr>
+                            <td>PME</td>
+                            <td>高速でスムーズなパーティクルメッシュエワルド法。実空間はエワルドに似ているが、逆空間はフーリエ変換を使用する。</td>
+                        </tr>
+                    </table>
+
+                    <h4>rcoulomb</h4>
+                    <p>
+                        クーロン相互作用のカットオフ距離を指定する。デフォルトは1[nm]。
+                    </p>
+
                     <h4>vdwtype</h4>
+                    <p>
+                        LJ相互作用の計算タイプを指定する。基本的に<code>Cut-off</code>を指定する。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>vdwtype</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>Cut-off</td>
+                            <td><code>rlist</code>と<code>rvdw</code>を使用したツインレンジカットオフ。"rvdw >= rlist"である必要がある。</td>
+                        </tr>
+                        <tr>
+                            <td>PME</td>
+                            <td>LJ相互作用のための高速スムーズパーティクルメッシュエワルド法。</td>
+                        </tr>
+                    </table>
+
+                    <h4>vdw-modifier</h4>
+                    <p>
+                        LJポテンシャルを修正する。カットオフで力をスムーズに0とするための<code>Force-switch</code>やポテンシャルを0とするための<code>Potential-switch</code>が利用できる。
+                        これらのオプションは<code>rvdw-switch</code>から<code>rvdw</code>までの範囲に適用される。
+                    </p>
+
+                    <h4>rvdw-switch</h4>
+                    <p>
+                        LJポテンシャルスイッチングの開始点（開始距離）。デフォルトは0[nm]で、スイッチングを使用する場合のみ指定する。
+                    </p>
+
+                    <h4>rvdw</h4>
+                    <p>
+                        LJ相互作用のカットオフ距離を指定する。デフォルトは1[nm]。
+                    </p>
+
+                    <h4>DispCorr</h4>
+                    <p>
+                        長距離分散補正の指定。エネルギーと圧力に使用する<code>EnerPres</code>とエネルギーのみに使用する<code>Ener</code>がある。
+                    </p>
+                    <br>
+                    <p>
+                        クーロン相互作用とLJ相互作用の例を示す。LJはスイッチングを使用することが多い。
+                    </p>
+
+<pre><code><span id="comment"># クーロン相互作用</span>
+coulombtype  = PME
+rcoulomb     = 1.2
+<span id="comment"># LJ相互作用</span>
+vdwtype      = Cut-off
+vdw-modifier = Force-switch
+rvdw-switch  = 1.0
+rvdw         = 1.2
+</code></pre>
+
                 </div>
 
                 <div class="content-block">

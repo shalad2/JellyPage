@@ -71,7 +71,7 @@
                         </tr>
                         <tr>
                             <td>find</td>
-                            <td>ファイルを検索</td>
+                            <td>ファイルやディレクトリを検索</td>
                         </tr>
                         <tr>
                             <td>tar</td>
@@ -282,6 +282,141 @@ incorrect data
                         <code>ln</code>はファイルやディレクトリにリンクを設定するコマンドである。
                         リンクは通常<code>ln ファイル名</code>でハードリンクを作成するが、<code>-s</code>をつけることでシンボリックリンクを作成することができる。
                     </p>
+
+<pre><code>[user@local ~]$ ln data.dat data_hardLink
+[user@local ~]$ ls
+data.dat    data_hardLink
+[user@local ~]$ ln -s data.dat data_symbolicLink
+[user@local ~]$ ls
+data.dat    data_hardLink    <span id="symbolic-link">data_symbolicLink</span>
+</code></pre>
+
+                    <p>
+                        ハードリンクはファイルに別名をつけたものであり、実体は元のファイルとなる。
+                        一方でシンボリックリンクは元ファイルのポインタを指す。
+                        同じファイルをいくつも使用したい場合にはシンボリックリンクを使用した方が効果的な場合が多い。
+                    </p>
+                </div>
+
+                <div class="content-block">
+                    <h3>find</h3>
+                    <p>
+                        <code>find</code>はファイルやディレクトリを検索するコマンドである。
+                        基本的には<code>find ファイル名</code>として使用するが、便利なオプションがいくつか存在する。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>findオプション</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>-name</td>
+                            <td>ワイルドカードを使用して、ファイルやディレクトリの名前の一部から検索する。</td>
+                        </tr>
+                        <tr>
+                            <td>-atime</td>
+                            <td>任意の日付にアクセスされたファイルやディレクトリを検索する。</td>
+                        </tr>
+                        <tr>
+                            <td>-mtime</td>
+                            <td>任意の日付に更新されたファイルやディレクトリを検索する。</td>
+                        </tr>
+                        <tr>
+                            <td>-amin</td>
+                            <td>任意の時刻にアクセスされたファイルやディレクトリを検索する。</td>
+                        </tr>
+                        <tr>
+                            <td>-mmin</td>
+                            <td>任意の時刻に更新されたファイルやディレクトリを検索する。</td>
+                        </tr>
+                        <tr>
+                            <td>-size</td>
+                            <td>ファイル容量を指定して検索する。</td>
+                        </tr>
+                        <tr>
+                            <td>-type f</td>
+                            <td>ファイルのみを対象として検索する。ディレクトリの場合は<code>-type d</code>とする。</td>
+                        </tr>
+                    </table>
+
+<pre><code>[user@local ~]$ ls test_dir
+data1.dat    data2.dat    setup.py    <span id="symbolic-link">data_symbolicLink</span>
+[user@local ~]$ find test_dir -name \*.dat
+test_dir/data1.dat
+test_dir/data2.dat
+</code></pre>
+
+                    <p>
+                        例ではtest_dirディレクトリ内に存在するdatファイルを検索している。
+                        検索は頻繁に使用するものではないが、シェルスクリプトに組み込むと便利に使えたりする。
+                    </p>
+                </div>
+
+                <div class="content-block">
+                    <h3>tar</h3>
+                    <p>
+                        <code>tar</code>はアーカイブの作成、または復元を行うコマンドである。
+                        一番よく使用する用法は<code>tar xvf アーカイブ名</code>として展開をするものであるだろう。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>tarオプション</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>-c</td>
+                            <td>新しいアーカイブを作成（圧縮）する。</td>
+                        </tr>
+                        <tr>
+                            <td>-x</td>
+                            <td>アーカイブを展開（解凍）する。</td>
+                        </tr>
+                        <tr>
+                            <td>-v</td>
+                            <td>圧縮・解凍状況を表示する。</td>
+                        </tr>
+                        <tr>
+                            <td>-f</td>
+                            <td>圧縮ファイル名を指定する。</td>
+                        </tr>
+                        <tr>
+                            <td>-z</td>
+                            <td>拡張子gzのアーカイブを使用する。</td>
+                        </tr>
+                        <tr>
+                            <td>-j</td>
+                            <td>拡張子bz2のアーカイブを使用する。</td>
+                        </tr>
+                        <tr>
+                            <td>-J</td>
+                            <td>拡張子xzのアーカイブを使用する。</td>
+                        </tr>
+                    </table>
+
+<pre><code>[user@local ~]$ tar cvf test_dir.tar test_dir
+test_dir/
+test_dir/data1.dat
+test_dir/data2.dat
+test_dir/setup.py
+[user@local ~]$ ls
+<span>test_dir</span>    <span id="tar-command">test_dir.tar</span>
+[user@local ~]$ rm -r test_dir
+[user@local ~]$ tar xvf test_dir.tar
+test_dir/
+test_dir/data1.dat
+test_dir/data2.dat
+test_dir/setup.py
+</code></pre>
+
+                <p>
+                    <code>tar</code>のオプションについてはハイフンを付けなくてもよい。
+                    また、<code>-z</code>などの拡張子オプションについても、指定しなくてもアーカイブ名から自動で判別してくれる。
+                </p>
+                <br>
+                <p>
+                    Linuxコマンド【中級編】はここまでにしておく。
+                    ここまで分かれば通常の操作は問題ないであろう。
+                </p>
                 </div>
                 
                 <div class="hierarchie-bottom">

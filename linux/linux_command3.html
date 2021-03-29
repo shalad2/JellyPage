@@ -50,38 +50,34 @@
                             <td>CPUの情報を表示</td>
                         </tr>
                         <tr>
-                            <td></td>
-                            <td>ファイルの末尾を表示</td>
+                            <td>top</td>
+                            <td>実行中のプロセスの状態を表示</td>
                         </tr>
                         <tr>
-                            <td>grep</td>
-                            <td>指定した文字列がファイル内に存在する場合、その行を抽出</td>
+                            <td>free</td>
+                            <td>メモリの空き容量や使用量を表示</td>
                         </tr>
                         <tr>
-                            <td>awk</td>
-                            <td>テキストの加工とパターン処理</td>
+                            <td>lshw</td>
+                            <td>ハードウェアの情報を表示</td>
                         </tr>
                         <tr>
-                            <td>sed</td>
-                            <td>文字や文字列を変換</td>
+                            <td>df</td>
+                            <td>ディスクの空き容量を表示</td>
                         </tr>
                         <tr>
-                            <td>ln</td>
-                            <td>ファイルやディレクトリにリンクを設定</td>
+                            <td>fdisk</td>
+                            <td>パーテーションを作成・削除</td>
                         </tr>
                         <tr>
-                            <td>find</td>
-                            <td>ファイルを検索</td>
+                            <td>mkfs</td>
+                            <td>ディスクのフォーマットを実行</td>
                         </tr>
                         <tr>
-                            <td>tar</td>
-                            <td>アーカイブを作成または復元</td>
+                            <td>mount</td>
+                            <td>デバイスのマウントを実行</td>
                         </tr>
                     </table>
-                    <p>
-                        ここまでのコマンドが使えるのであれば、Linuxでほとんどの作業ができるであろう。
-                        <a href="./linux_command3.html">Linuxコマンド【上級編】</a>では筆者の備忘録も兼ねて、さらにいくつかのコマンド（システム関係）を紹介している。
-                    </p>
                 </div>
 
                 <div class="content-block">
@@ -89,206 +85,222 @@
                     <p>
                         <code>lscpu</code>はCPUの情報を表示するコマンドである。
                         CPUの種類やコア数などを確認できる。
-                        <code>cat /proc/cpuinfo</code>でも同様の操作が可能。
-                    </p>
-
-<pre><code>[user@local ~]$ cat data.dat
-function data
-# id    x    y
-  zero  0    0
-  one   1    1
-  two   2    4
-  three 3    9
-</code></pre>
-
-                    <p>
-                        コマンドを実行すると、ファイルの中身がターミナル上に出力される。
+                        <code>cat /proc/cpuinfo</code>や<code>lshw -class cpu</code>でも同様の操作が可能。
                     </p>
                 </div>
 
                 <div class="content-block">
-                    <h3>tail</h3>
+                    <h3>top</h3>
                     <p>
-                        <code>tail</code>はファイルの末尾を表示するコマンドである。
-                        <code>tail ファイル名</code>で使用できるが、オプションを指定すると便利である。
+                        <code>top</code>は実行中のプロセスの状態を表示するコマンドである。
+                        PID（プロセスID）やユーザー名、CPU使用率、メモリ使用率などが確認できる。
+                        <code>q</code>か<code>Ctrl + C</code>で終了する。
                     </p>
                     <table>
                         <tr>
-                            <th>tailオプション</th>
+                            <th>topオプション</th>
                             <th>説明</th>
                         </tr>
                         <tr>
-                            <td>-c</td>
-                            <td>最後から出力する文字数を指定する。</td>
-                        </tr>
-                        <tr>
                             <td>-n</td>
-                            <td>最後から出力する行数を指定する。<code>n</code>は省略できる。</td>
+                            <td>指定回数だけ表示した後、コマンドを自動で終了する。</td>
                         </tr>
                         <tr>
-                            <td>-f</td>
-                            <td>ファイルへの追記をリアルタイムで監視する。</td>
+                            <td>-u</td>
+                            <td>指定したユーザーのプロセス状態を確認する。</td>
+                        </tr>
+                        <tr>
+                            <td>-d</td>
+                            <td>指定した間隔（秒）でプロセス状態を表示する。</td>
                         </tr>
                     </table>
                     <p>
-                        ファイルの最終行から3行を表示する場合には次のコマンドを実行する。
-                    </p>
-
-<pre><code>[user@local ~]$ tail -3 data.dat
-  one   1    1
-  two   2    4
-  three 3    9
-</code></pre>
-
-                    <p>
-                        このコマンドはログファイルのリアルタイム監視時に<code>tail -f　ログファイル名</code>で用いると便利である。
-                        また似たようなコマンドに、ファイルの先頭から出力する<code>head</code>が存在する。
+                        特定のプロセスのみを表示したい場合は<code>grep</code>と組み合わせるとよい。
                     </p>
                 </div>
                 
                 <div class="content-block">
-                    <h3>grep</h3>
+                    <h3>free</h3>
                     <p>
-                        <code>grep</code>は指定した文字列がファイル内に存在する場合、その行を抽出するコマンドである。
-                        基本的には<code>grep 文字列 ファイル名</code>として使用する。
-                        便利なオプションも多いので表にまとめておく。
+                        <code>free</code>はメモリの空き容量や使用量を表示するコマンドである。
+                        <code>-t</code>をつけるとメモリとスワップ領域の合計を表示する。
                     </p>
                     <table>
                         <tr>
-                            <th>grepオプション</th>
+                            <th>freeオプション</th>
                             <th>説明</th>
                         </tr>
                         <tr>
-                            <td>-v</td>
-                            <td>指定した文字列を含まない行を抽出する。</td>
+                            <td>-b</td>
+                            <td>メモリ容量をバイト単位で表示</td>
                         </tr>
                         <tr>
-                            <td>-n</td>
-                            <td>抽出結果に行番号を表示する。</td>
+                            <td>-k</td>
+                            <td>メモリ容量をキロバイト単位で表示</td>
                         </tr>
                         <tr>
-                            <td>-c</td>
-                            <td>指定した文字列を含む行の数を表示する。</td>
+                            <td>-m</td>
+                            <td>メモリ容量をメガバイト単位で表示</td>
                         </tr>
                         <tr>
-                            <td>-i</td>
-                            <td>大文字・小文字を区別せずに抽出する。</td>
-                        </tr>
-                        <tr>
-                            <td>-e</td>
-                            <td>拡張正規表現で抽出を行う。実際には複数条件（OR）での抽出に使用する。</td>
+                            <td>-g</td>
+                            <td>メモリ容量をギガバイト単位で表示</td>
                         </tr>
                     </table>
+                </div>
 
-<pre><code>[user@local ~]$ grep one data.dat
-  one   1    1
-[user@local ~]$ grep -ve zero -ve one data.dat
-function data
-# id    x    y
-  two   2    4
-  three 3    9
-</code></pre>
-
+                <div class="content-block">
+                    <h3>lshw</h3>
                     <p>
-                        2つ目の例では文字列「zero」または「one」が含まれる行以外を抽出している。
-                        <code>grep</code>はデータ加工に非常に便利であり、出力結果をリダイレクトして活用することが多い。
+                        <code>lshw</code>はハードウェアの情報を表示するコマンドである。
+                        そのままでは全ての情報を表示するが、オプションをつけることによって便利に利用できる。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>lshwオプション</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>-class</td>
+                            <td>表示するクラスを指定する。<code>-class cpu</code>や<code>-class memory</code>などが指定できる。</td>
+                        </tr>
+                        <tr>
+                            <td>-short</td>
+                            <td>概要を短縮表示する。</td>
+                        </tr>
+                        <tr>
+                            <td>-html</td>
+                            <td>HTML形式で表示する。</td>
+                        </tr>
+                    </table>                
+                </div>
+
+                <div class="content-block">
+                    <h3>df</h3>
+                    <p>
+                        <code>df</code>はディスクの空き容量を表示するコマンドである。
+                        マウントされているハードディスクの空き容量、使用率、マウント先などを確認できる。
+                        オプションは<code>df -Th</code>とすると便利。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>dfオプション</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>-T</td>
+                            <td>各ファイルシステムの種類を併せて表示する。</td>
+                        </tr>
+                        <tr>
+                            <td>-h</td>
+                            <td>サイズに応じて読みやすい単位で表示する。</td>
+                        </tr>
+                        <tr>
+                            <td>--total</td>
+                            <td>空き領域の合計も併せて表示する。</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="content-block">
+                    <h3>fdisk</h3>
+                    <p>
+                        <code>fdisk</code>はパーテーションの作成や削除を行うコマンドである。
+                        パーテーションはハードディスクの領域を分けるものであり、それぞれの領域にsda1やsda2のような名前が付けられる。
+                    </p>
+                    <h4>fdisk -l</h4>
+                    <p>
+                        <code>-l</code>をつけると、/proc/partitionsに書かれているパーテーション情報を表示する。
+                        デバイス名を指定することで、限定的に表示することも可能。
+                    </p>
+                    <h4>fdisk デバイス名</h4>
+                    <p>
+                        <code>fdisk デバイス名</code>とすると、対話形式でパーテーションの作成・削除ができる。
+                        アルファベット1文字で次のような操作が可能。
+                    </p>
+                    <table>
+                        <tr>
+                            <th>fdisk操作</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>m</td>
+                            <td>対話モードコマンドの一覧を表示する。</td>
+                        </tr>
+                        <tr>
+                            <td>p</td>
+                            <td>パーテーションテーブルを表示する。パーテーション一覧とファイルシステムが確認できる。</td>
+                        </tr>
+                        <tr>
+                            <td>n</td>
+                            <td>パーテーションを新規作成する。基本は既定値に合わせて作成すればOK。</td>
+                        </tr>
+                        <tr>
+                            <td>d</td>
+                            <td>パーテーションを削除する。</td>
+                        </tr>
+                        <tr>
+                            <td>w</td>
+                            <td>パーテーションテーブルの変更を保存して終了する。</td>
+                        </tr>
+                        <tr>
+                            <td>q</td>
+                            <td>パーテーションテーブルの変更を保存せずに終了する。</td>
+                        </tr>
+                    </table>
+                    <p>
+                        なお、パーテーションを管理する方式はMBR（Master Boot Record）とGPT（GUID Pattition Table）があり、<code>fdisk</code>はMBRのみに対応している。
+                        MBRは管理可能なパーテーションサイズが最大2TBであるので、より大きなパーテーションを利用する場合はGPTを選択する。
+                        GPTは<code>gdisk</code>や<code>parted</code>などのコマンドで管理できる。
                     </p>
                 </div>
 
                 <div class="content-block">
-                    <h3>awk</h3>
+                    <h3>mkfs</h3>
                     <p>
-                        <code>awk</code>はテキストの加工とパターン処理を行うコマンドである。
-                        と言われても釈然としないが、<code>awk</code>には本当にたくさんの使用方法がある。
-                        ここでは<code>grep</code>と組み合わせたデータ抽出の例を取り上げる。
-                        <br><br>
-                        一般的に<code>awk</code>は<code>awk (パターン) {アクション}</code>の形で使用する。
-                        <code>grep</code>と組み合わせる場合は<code>grep ファイル名 | awk '{print 出力したい部分}'</code>とすることで、必要な数値のみを抽出できる。
-                        例えば、data.dat内の「two」の行の「4」という数字がほしい場合は以下のコマンドを実行する。
+                        <code>mkfs</code>はディスクをフォーマットするコマンドである。
+                        これを実行することでハードディスクなどのファイルシステムを構築し、Linuxで読み込みができるようになる。
                     </p>
-                   
-<pre><code>[user@local ~]$ grep two data.dat | awk '{print $3}'
-4
-</code></pre>
-
-                    <p>
-                        この例では<code>grep</code>で「two」を含む行を抽出した後、<code>awk</code>により空白区切りで3番目の文字列を出力するようにしている。
-                        書式は例を参考にしてそのまま覚えてほしい。
-                        なお、2つのコマンドを繋ぐ「|」の記号は<strong>パイプ</strong>と呼ばれており、左側の処理結果を右のコマンドに受け渡す役割を担っている。
-                        パイプの使用例としては<code>ls</code>で表示した内容のうち、<code>grep</code>で指定したものだけを取り出す場合などがある。
-                    </p>
-
-<pre><code>[user@local ~]$ ls
-data.dat    submit1.sh    submit2.sh    plot.py    analysis.py
-[user@local ~]$ ls | grep py
-plot.py
-analysis.py
-</code></pre>
-                
+                    <table>
+                        <tr>
+                            <th>mkfsオプション</th>
+                            <th>説明</th>
+                        </tr>
+                        <tr>
+                            <td>-t</td>
+                            <td>ファイルシステムの種類を指定する。Linuxでは<code>xfs</code>や<code>ext4</code>が使える。</td>
+                        </tr>
+                        <tr>
+                            <td>mkfs.xfs</td>
+                            <td>xfsでファイルシステムを構築する。<code>-t xfs</code>でも呼び出される。</td>
+                        </tr>
+                        <tr>
+                            <td>mkfs.ext4</td>
+                            <td>ext4でファイルシステムを構築する。<code>-t ext4</code>でも呼び出される。</td>
+                        </tr>
+                    </table>
                 </div>
 
                 <div class="content-block">
-                    <h3>sed</h3>
+                    <h3>mount</h3>
                     <p>
-                        <code>sed</code>は文字や文字列を変換するコマンドである。
-                        このコマンドの使用方法も様々であるので、ここではファイル文字列の置換処理と行削除の例を扱う。
+                        <code>mount</code>はディスクをマウントするコマンドである。
+                        ディスクを指定した場所で使えるようにするコマンドであり、<code>mount デバイス名 マウント先</code>として使用する。
+                        マウントしたディスクを取り外す場合は<code>umount</code>を使用する。
                     </p>
-                    <h4>sed -e 's/xxx/XXX/g' ファイル名</h4>
+                    <br>
                     <p>
-                        あるファイル内の「xxx」という文字列全てを「XXX」に置換して出力する場合に使用する。
-                        さらに<code>-i</code>オプションをつけることでファイルの直接置換を行うことも可能。
-                    </p>
-                   
-<pre><code>[user@local ~]$ sed -e 's/1/-1/g' data.dat
-function data
-# id    x    y
-  zero  0    0
-  one   -1    -1
-  two   2    4
-  three 3    9
-[user@local ~]$ sed -i -e 's/function/incorrect/g' data.dat
-[user@local ~]$ cat data.dat | head -1
-incorrect data
-</code></pre>
-                    <p>
-                        ファイル名の部分には複数ファイルを指定することもできる。
-                        なお、<code>s</code>は正規表現で置換処理をする、<code>g</code>は全てのマッチした文字列を置換するという意味を持っている。
-                    </p>
-                    <h4>sed (行数)d</h4>
-                    <p>
-                        <code>sed</code>の<code>d</code>は行削除を行うコマンドである。
-                        単純に<code>sed d</code>とすると全ての行が削除されてしまうので、基本は行数を同時に指定して削除を行う。
+                        なお、PC起動時にディスクを自動マウントする方法もあり、/etc/fstabにUUIDを追加することで実現できる。
+                        <br>
+                        （この方法では起動時にディスクが物理的に接続されていないとGUIが起動しない）
                     </p>
 
-<pre><code>[user@local ~]$ sed 1d data.dat
-# id    x    y
-  zero  0    0
-  one   1    1
-  two   2    4
-  three 3    9
-[user@local ~]$ sed 2,4d data.dat
-incorrect data
-  two   2    4
-  three 3    9
-</code></pre>
-
-                    <p>
-                        1つ目の例はファイルの1行目を、2つ目の例はファイルの2行目から4行目までを削除したものである。
-                    </p>
-                </div>
-
-                <div class="content-block">
-                    <h3>ln</h3>
-                    <p>
-                        <code>ln</code>はファイルやディレクトリにリンクを設定するコマンドである。
-                        リンクにはハードリンクとシンボリックリンクがあり、
-                    </p>
                 </div>
                 
                 <div class="hierarchie-bottom">
-                    <a href="./linux_command1.html">PREVIOUS</a>
+                    <a href="./linux_command2.html">PREVIOUS</a>
                     <a href="./linux_command_top.html">TOP</a>
-                    <a href="./linux_command3.html">NEXT</a>
+                    <a href="./linux_command4.html">NEXT</a>
                 </div>
 
             </div>

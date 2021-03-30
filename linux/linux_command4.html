@@ -37,8 +37,97 @@
                 <div>
                     <h2 class="content-title">シェルスクリプト</h2>
                     <p>
-                        編集中
+                        シェルスクリプトとは、Linuxコマンドをまとめて実行するためのファイルである。
+                        繰り返しコマンドを実行する場合や、時間のかかる処理を自動で実行する場合に便利である。
                     </p>
+                    <div id="list-bottom" class="table-of-contents">
+                        <ol>
+                            <li>シェルスクリプトの書き方</li>
+                            <li>変数</li>
+                            <li>繰り返し処理</li>
+                            <li>シェルスクリプトの実行方法</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>シェルスクリプトの書き方</h3>
+                    <p>
+                        シェルスクリプトは基本的に実行したいコマンドを並べて書いていけばよく、ファイルの拡張子は.shで作成する。
+                        ただし、コマンドを書く前の最初の一行には<code>#!/bin/bash</code>と記述する。
+                    </p>
+
+<pre><code><p class="filename">test.sh</p>
+#!/bin/bash
+<span id="comment"># ここからコマンドを記述する</span>
+echo Hello World
+</code></pre>
+
+                </div>
+
+                <div class="content-block">
+                    <h3>変数</h3>
+                    <p>
+                        シェルスクリプトでは変数を使用できる。
+                        変数は等号「=」を用いて代入を行い、「$」をつけて展開する。
+                        なお、ホームディレクトリへのパスは${HOME}とすることで取得できる。
+                    </p>
+
+<pre><code><p class="filename">test.sh</p>
+#!/bin/bash
+<span id="comment"># 変数textを使用する</span>
+text="Hello World"
+echo ${text}
+</code></pre>
+
+                </div>
+
+                <div class="content-block">
+                    <h3>繰り返し処理</h3>
+                    <p>
+                        シェルスクリプトでの繰り返し処理はfor文を使用して実行する。
+                        for文の書き方は以下の例の通りである。
+                    </p>
+
+<pre><code><p class="filename">test.sh</p>
+#!/bin/bash
+<span id="comment"># for文で繰り返し処理をする</span>
+for i in 0 1 2 3 4; do
+    showNum=number:${i}
+    echo ${showNum}
+done
+</code></pre>
+
+                    <p>
+                        書式は<code>for 変数 in 範囲; do コマンド done</code>である。
+                        範囲の部分は様々な書き方があるが、連続する番号の場合はブレース展開を使用すると簡単に書ける。
+                    </p>
+
+<pre><code><p class="filename">test.sh</p>
+#!/bin/bash
+<span id="comment"># ブレース展開を使用した場合（0から4まで連番）</span>
+for i in {0..4}; do
+    showNum=number:${i}
+    echo ${showNum}
+done
+</code></pre>
+                    
+                </div>
+
+                <div class="content-block">
+                    <h3>シェルスクリプトの実行方法</h3>
+                    <p>
+                        シェルスクリプトは実行権を付与した後、<code>bash シェルスクリプト名</code>で実行できる。
+                    </p>
+                    
+<pre><code>chmod 755 test.sh
+bash test.sh
+</code></pre>
+
+                    <p>
+                        <code>bash</code>の部分は<code>sh</code>でも可。
+                    </p>
+
                 </div>
                 
                 <div class="hierarchie-bottom">

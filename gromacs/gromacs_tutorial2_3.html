@@ -100,7 +100,7 @@ gmx mdrun -deffnm 00_em
                         エネルギー最小化過程のポテンシャルエネルギー変化を出力してみた。
                     </p>
 
-<pre><code>gmx energy -f 00_em.tpr -o potential.xvg</code></pre>
+<pre><code>gmx energy -f 00_em.edr -o potential.xvg</code></pre>
 
                     <div class="image-center">
                         <img id="C16OH-em-plot" src="images/C16OH_em_plot.png" alt="C16OH_em_plot">
@@ -191,7 +191,7 @@ gmx mdrun -deffnm 01_nvt
                         グラフにプロットすると、125.0 psの間温度が安定していることがわかる。
                     </p>
 
-<pre><code>gmx energy -f 01_nvt.tpr -o temperature.xvg</code></pre>
+<pre><code>gmx energy -f 01_nvt.edr -o temperature.xvg</code></pre>
 
                     <div class="image-center">
                         <img id="C16OH-temp-plot" src="images/C16OH_temp_plot.png" alt="C16OH_temp_plot">
@@ -272,7 +272,7 @@ gmx mdrun -deffnm 02_npt
                         圧力についてもグラフにプロットしてみた。
                     </p>
                         
-<pre><code>gmx energy -f 02_npt.tpr -o pressure.xvg</code></pre>
+<pre><code>gmx energy -f 02_npt.edr -o pressure.xvg</code></pre>
                         
                     <div class="image-center">
                         <img id="C16OH-press-plot" src="images/C16OH_press_plot.png" alt="C16OH_press_plot">
